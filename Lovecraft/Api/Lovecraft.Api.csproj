@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.1.12" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />

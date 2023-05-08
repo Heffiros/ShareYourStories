@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using DocumentFormat.OpenXml.Packaging;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -10,19 +11,20 @@ using Microsoft.Net.Http.Headers;
 
 namespace Lovecraft.Api.Controllers;
 
-public class UploadImageController : ControllerBase
+[Route("upload")]
+[ApiController]
+public class UploadController : ControllerBase
 {
     public IConfiguration _configuration;
 
-
-    public UploadImageController(IConfiguration configuration)
+	public UploadController(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
     [HttpPost]
-    [Route("upload")]
-    public async Task<IActionResult> UploadFile(IFormFile file)
+	[Route("image")]
+	public async Task<IActionResult> UploadFile(IFormFile file)
     {
         string connectionString = _configuration["ConnectionStrings:storageConnection"];
         string targetFolder = $"wonderland";
@@ -41,5 +43,21 @@ public class UploadImageController : ControllerBase
             }
         }, connectionString);
         return Ok(url);
+    }
+
+    [HttpPost("file")]
+	public async Task<ActionResult> ImportDocx(IFormFile file)
+    {
+	    using (var stream = new MemoryStream())
+	    {
+		    await file.CopyToAsync(stream);
+		    using (var doc = WordprocessingDocument.Open(stream, false))
+		    {
+			    var body = doc.MainDocumentPart.Document.Body.InnerText;
+			    // Faire quelque chose avec le contenu, comme l'afficher dans la console
+			    System.Console.WriteLine(body);
+		    }
+	    }
+	    return Ok();
     }
 }
