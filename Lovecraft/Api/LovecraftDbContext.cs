@@ -19,6 +19,7 @@ namespace Lovecraft.Datas
         public virtual DbSet<Team> Teams { get; set; }
         public virtual DbSet<UserTeam> UserTeams { get; set; }
         public virtual DbSet<Story> Stories { get; set; }
+        public virtual DbSet<Page> Pages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,15 @@ namespace Lovecraft.Datas
                 .WithMany(u => u.Stories)
                 .HasForeignKey(ut => ut.TeamId);
 
-        }
-    }
+            modelBuilder.Entity<Page>()
+	            .HasKey(p => p.Id);
+            modelBuilder.Entity<Page>().Property(p => p.Content).IsRequired();
+            modelBuilder.Entity<Page>().Property(p => p.LastUpdatedDateTime).IsRequired();
+            modelBuilder.Entity<Page>()
+	            .HasOne(p => p.Story)
+	            .WithMany(s => s.Pages)
+	            .HasForeignKey(ut => ut.StoryId);
+
+		}
+	}
 }

@@ -42,7 +42,8 @@ export default {
       dialog: false,
       step: 1,
       story: {
-        title: null
+        title: null,
+        coverUrl: 'https://png.pngtree.com/png-clipart/20200826/original/pngtree-colorful-warm-autumn-book-cover-png-image_5490983.jpg'
       },
       file: null
     }
@@ -53,19 +54,19 @@ export default {
     },
     async submitForm() {
       try {
-        const formData = new FormData();
-        formData.append("file", this.file);
-        formData.append("title", this.story.title);
+        const formData = new FormData()
+        formData.append("file", this.file)
+        formData.append("story", JSON.stringify(this.story))
 
         const response = await this.$axios.post("stories", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
-        });
+        })
 
-        console.log(response.data);
+        this.emit('uploaded')
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
   }

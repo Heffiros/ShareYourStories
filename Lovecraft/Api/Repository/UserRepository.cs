@@ -2,7 +2,6 @@
 using Lovecraft.Datas;
 using Lovecraft.Model;
 using Lovecraft.Model.PublicApi;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Lovecraft.Api.Repository;
 

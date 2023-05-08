@@ -4,6 +4,7 @@ using Lovecraft.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lovecraft.Api.Migrations
 {
     [DbContext(typeof(LovecraftDbContext))]
-    partial class LovecraftDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230508170501_create-page-table")]
+    partial class createpagetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,12 +42,7 @@ namespace Lovecraft.Api.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoryId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("StoryId");
 
                     b.ToTable("Pages");
                 });
@@ -168,17 +165,6 @@ namespace Lovecraft.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Lovecraft.Api.Model.Page", b =>
-                {
-                    b.HasOne("Lovecraft.Api.Model.Story", "Story")
-                        .WithMany("Pages")
-                        .HasForeignKey("StoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Story");
-                });
-
             modelBuilder.Entity("Lovecraft.Api.Model.Story", b =>
                 {
                     b.HasOne("Lovecraft.Api.Model.Team", "Team")
@@ -211,11 +197,6 @@ namespace Lovecraft.Api.Migrations
                     b.Navigation("Team");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.Story", b =>
-                {
-                    b.Navigation("Pages");
                 });
 
             modelBuilder.Entity("Lovecraft.Api.Model.Team", b =>

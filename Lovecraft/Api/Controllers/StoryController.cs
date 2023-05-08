@@ -1,10 +1,15 @@
 ﻿using System.Linq.Expressions;
+using System.Security.Claims;
+using Azure.Core;
 using DocumentFormat.OpenXml.Packaging;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
 using Lovecraft.Api.Repository;
+using Lovecraft.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Lovecraft.Api.Controllers
 {
@@ -14,10 +19,16 @@ namespace Lovecraft.Api.Controllers
 	{
 		public IConfiguration _configuration;
 		private readonly ICommonRepository<Story> _storyRepository;
+		private readonly ICommonRepository<Page> _pageRepository;
 
-		public StoryController(ICommonRepository<Story> storyRepository, IConfiguration configuration)
+		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
+		{
+			NullValueHandling = NullValueHandling.Ignore
+		};
+		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration)
 		{
 			_storyRepository = storyRepository;
+			_pageRepository = pageRepository;
 			_configuration = configuration;
 		}
 
@@ -51,13 +62,16 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> UploadFile()
+		[Authorize]
+		public async Task<IActionResult> CreateStory()
 		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+			
 			try
 			{
 				var file = Request.Form.Files.GetFile("file");
-				var title = Request.Form["title"].ToString().ToUpper();
-
+				PublicApi_StoryModel storyToCreate = JsonConvert.DeserializeObject<PublicApi_StoryModel>(Request.Form["story"], MultiPartMessageJsonSerializerSettings);
+				 
 				if (file == null || file.Length == 0)
 				{
 					return BadRequest("Please select a file");
@@ -71,12 +85,34 @@ namespace Lovecraft.Api.Controllers
 						var body = doc.MainDocumentPart.Document.Body.InnerText;
 						StoryHelper storyHelper = new StoryHelper();
 						List<string> pages = storyHelper.extractPagesFromText(body);
+						Story story = new Story
+						{
+							Title = storyToCreate.Title,
+							CoverUrl = storyToCreate.CoverUrl,
+							UserId = Int32.Parse(userIdClaim),
+							DateCreated = DateTime.Now,
+							Status = Status.Pending
+						};
+						_storyRepository.Add(story);
 
-						var tmp = pages;
+						int orderPage = 0;
+						foreach (string page in pages)
+						{
+							Page pageToCreate = new Page
+							{
+								Content = page,
+								LastUpdatedDateTime = DateTime.Now,
+								Order = orderPage,
+								StoryId = story.Id
+							};
+
+							_pageRepository.Add(pageToCreate);
+							orderPage++;
+						}
 					}
 				}
 
-				return Ok(new { message = "File uploaded successfully", title });
+				return Ok(new { message = "File uploaded successfully" });
 			}
 			catch (Exception ex)
 			{

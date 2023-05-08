@@ -32,8 +32,10 @@ public class StoryRepository : ICommonRepository<Story>
 
     public Story Add(Story entity)
     {
-        throw new NotImplementedException();
-    }
+		_dbContext.Stories.Add(entity);
+		_dbContext.SaveChanges();
+		return entity;
+	}
 
     public void Update(Story entity)
     {

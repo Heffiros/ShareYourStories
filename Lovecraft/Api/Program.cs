@@ -20,6 +20,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ICommonRepository<Team>, TeamRepository>();
 builder.Services.AddTransient<ICommonRepository<UserTeam>, UserTeamRepository>();
 builder.Services.AddTransient<ICommonRepository<Story>, StoryRepository>();
+builder.Services.AddTransient<ICommonRepository<Page>, PageRepository>();
 //End Repository
 
 builder.Services.AddControllers();

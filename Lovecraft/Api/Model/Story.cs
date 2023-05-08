@@ -15,7 +15,7 @@ namespace Lovecraft.Api.Model
         public Status Status { get; set; }
         public virtual User? User { get; set; }
         public virtual Team? Team { get; set; }
-
+        public virtual List<Page> Pages { get; set; }
     }
 
     public enum Status

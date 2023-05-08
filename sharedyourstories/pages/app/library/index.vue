@@ -10,7 +10,7 @@
           Créer une histoire
         </v-btn>
         <v-dialog v-model="dialog" max-width="40%">
-          <create-story />
+          <create-story @uploaded="dialog = false"/>
         </v-dialog>
       </v-col>
     </v-col>
