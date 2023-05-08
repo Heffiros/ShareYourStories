@@ -25,13 +25,11 @@
 </template>
 
 <script>
-import { readDocxFile } from "docx";
 export default {
   data () {
     return {
       file: null,
-      text: null,
-      content: null
+      text: null
     };
   },
   methods: {
