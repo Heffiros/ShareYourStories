@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
-
+  debug:true,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - sharedyourstories',
@@ -25,7 +25,9 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
-
+  router: {
+    middleware: ['authenticated']
+  },
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios.js',
