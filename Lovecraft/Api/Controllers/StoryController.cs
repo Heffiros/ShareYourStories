@@ -35,17 +35,21 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet]
 		public ActionResult GetAll([FromQuery] int? userId, [FromQuery] int? teamsId, [FromQuery] int page = 0)
 		{
-
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+			if (userIdClaim == null)
+			{
+				return BadRequest();
+			}
 			Expression<Func<Story, bool>> storyAuthorFilter = s => true;
-			if (userId != null)
+			/*if (userId != null)
 			{
 				storyAuthorFilter = s => s.UserId == userId;
 			}
 			else if (teamsId != null)
 			{
 				storyAuthorFilter = s => s.UserId == userId;
-			}
-
+			}*/
+			storyAuthorFilter = s => s.UserId == Int32.Parse(userIdClaim);
 			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter);
 			List<PublicApi_StoryModel> results = queryable.Select(story => new PublicApi_StoryModel
 			{
