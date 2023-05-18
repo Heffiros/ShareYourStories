@@ -8,7 +8,7 @@ export const getters = {
 
 export const mutations = {
   SET_STORIES (state, stories) {
-    state.stories = stories
+    state.stories = state.stories.concat(stories)
   }
 }
 

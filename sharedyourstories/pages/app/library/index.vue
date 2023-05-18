@@ -18,12 +18,27 @@
     </v-row>
 
     <v-row>
-      <v-col v-for="(story, index) in stories" :key="index" cols="12" sm="6" md="4" lg="3">
-        <v-card>
-          <v-img :src="story.coverUrl" height="200"></v-img>
-          <v-card-title>{{ story.title }}</v-card-title>
-        </v-card>
-      </v-col>
+      <v-row>
+        <v-col v-for="(story, index) in stories" :key="index" cols="12" sm="6" md="4" lg="3">
+          <v-card>
+            <v-img :src="story.coverUrl" height="200"></v-img>
+            <v-card-title>{{ story.title }}</v-card-title>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="auto">
+          <v-btn
+            :disabled="!hasMore"
+            size="large"
+            color="info"
+            @click="loadMore"
+            >
+            Charger plus
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-row>
   </div>
 </template>
@@ -31,8 +46,12 @@
 <script>
 import createStory from '~/components/popups/CreateStory'
 
-function fetch(context) {
-  context.$store.dispatch('stories/FETCH_STORIES', { page: context.page })
+async function fetch(context) {
+  await context.$store.dispatch('stories/FETCH_STORIES', { page: context.page })
+  const currentNbStories = context.stories.length
+  if (currentNbStories % 5 != 0) {
+    context.hasMore = false
+  }
   context.page++
 }
 export default {
@@ -42,7 +61,8 @@ export default {
   data () {
     return {
       dialog: false,
-      page: 0
+      page: 0,
+      hasMore: true
     }
   },
   computed: {
@@ -52,6 +72,11 @@ export default {
   },
   mounted () {
     fetch(this)
+  },
+  methods: {
+    loadMore () {
+      fetch(this)
+    }
   }
 }
 </script>
