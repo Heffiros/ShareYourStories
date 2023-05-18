@@ -44,12 +44,10 @@ export default {
           email: this.email,
           authorName: this.authorName,
           id: this.currentUser.id
-          // Ajoutez d'autres propriétés selon votre modèle d'utilisateur
         })
         await this.$auth.fetchUser();
         this.$toast.success('Profil enregistré', {  timeout: 2000 });
       } catch (e) {
-        // Login failed, show error message
         console.error(e);
         this.errorMessage = 'Il y a eu un soucis pendant la mise à jour de votre profil';
       }

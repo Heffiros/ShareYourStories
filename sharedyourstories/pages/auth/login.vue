@@ -35,7 +35,6 @@ export default {
         })
         this.$router.push('/app/dashboard');
       } catch (e) {
-        // Login failed, show error message
         console.error(e);
         this.errorMessage = 'Invalid email or password.';
       }
