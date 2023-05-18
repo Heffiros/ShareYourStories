@@ -9,7 +9,7 @@ namespace Lovecraft.Api.Model.PublicApi
         public int Id { get; set; }
         [DataMember(Name = "title")]
         public string Title { get; set; }
-        [DataMember(Name = "coverPageUrl")]
+        [DataMember(Name = "coverUrl")]
         public string? CoverUrl { get; set; }
         [DataMember(Name = "summary")]
         public string? Summary { get; set; }

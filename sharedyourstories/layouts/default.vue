@@ -62,9 +62,9 @@ export default {
           to: '/'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: 'mdi-book-open-variant',
+          title: 'Ma Bibliothèque',
+          to: '/app/library'
         }
       ],
       miniVariant: false,
