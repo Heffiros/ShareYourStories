@@ -15,12 +15,15 @@
           router
           exact
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+          <template v-if="(item.hasToBeAuth && isAuth) || !item.hasToBeAuth">
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -59,16 +62,29 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Welcome',
+          hasToBeAuth: false,
           to: '/'
         },
         {
           icon: 'mdi-book-open-variant',
           title: 'Ma Bibliothèque',
+          hasToBeAuth: true,
           to: '/app/library'
+        },
+        {
+          icon: 'mdi-account',
+          title: 'Mon Profil',
+          hasToBeAuth: true,
+          to: '/app/user/me'
         }
       ],
       miniVariant: false,
       title: 'SharedYourStories'
+    }
+  },
+  computed: {
+    isAuth () {
+      return this.$auth.loggedIn
     }
   }
 }

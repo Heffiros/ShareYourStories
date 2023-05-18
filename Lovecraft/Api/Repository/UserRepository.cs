@@ -65,4 +65,25 @@ public class UserRepository : IUserRepository
     {
         return _dbContext.Users.Any(u => u.Email == email);
     }
+
+    public void Update(PublicApi_UserModel model)
+    {
+	    User? user = _dbContext.Users
+		    .FirstOrDefault(b => b.Id == model.Id);
+	    if (user != null)
+	    {
+		    if (user.AuthorName != model.AuthorName)
+		    {
+                user.AuthorName = model.AuthorName;
+		    }
+
+		    if (user.Email != model.Email)
+		    {
+			    user.Email = model.Email;
+		    }
+
+			_dbContext.Users.Update(user);
+		    _dbContext.SaveChanges();
+		}
+	}
 }

@@ -9,4 +9,5 @@ public interface IUserRepository
     public User? Add(PublicApi_UserModel model);
     public User GetById(int userId);
     public bool UserEmailAlreadyExist(string email);
+    public void Update(PublicApi_UserModel model);
 }
