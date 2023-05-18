@@ -35,18 +35,16 @@ export default {
   methods: {
     async importDocx() {
       try {
-        const formData = new FormData();
-        formData.append("file", this.file);
+        const formData = new FormData()
+        formData.append("file", this.file)
 
         const response = await this.$axios.post("upload/file", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
-        });
-
-        console.log(response.data);
+        })
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
   },

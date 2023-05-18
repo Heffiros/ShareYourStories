@@ -16,10 +16,12 @@
 
 <script>
 export default {
+  auth: false,
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      errorMessage: ''
     }
   },
   methods: {
@@ -30,8 +32,7 @@ export default {
             email: this.email,
             password: this.password
           }
-        });
-        // Login successful, redirect to home page
+        })
         this.$router.push('/app/dashboard');
       } catch (e) {
         // Login failed, show error message

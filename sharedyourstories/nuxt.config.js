@@ -21,13 +21,13 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
+  router: {
+    middleware: ['auth']
+  },
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
-  router: {
-    middleware: ['authenticated']
-  },
+
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios.js',
@@ -50,6 +50,10 @@ export default {
     '@nuxtjs/axios',
   ],
   auth: {
+    redirect: {
+      login: '/auth/login',
+      home: '/app/dashboard'
+    },
     strategies: {
       local: {
         endpoints: {

@@ -38,14 +38,17 @@ namespace Lovecraft.Api.Controllers
 				return NotFound();
 			}
 
-			return Ok(new PublicApi_UserModel
+			return Ok(new
 			{
-				Id = user.Id,
-				Email = user.Email,
-				AuthorName = user.AuthorName,
-				BirthDate = user.BirthDate,
-				DateCreated = user.CreatedDate,
-				ProfilePictureUrl = user.ProfilePictureUrl
+				user = new PublicApi_UserModel
+				{
+					Id = user.Id,
+					Email = user.Email,
+					AuthorName = user.AuthorName,
+					BirthDate = user.BirthDate,
+					DateCreated = user.CreatedDate,
+					ProfilePictureUrl = user.ProfilePictureUrl
+				}
 			});
 		}
 

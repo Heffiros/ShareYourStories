@@ -18,6 +18,7 @@
 <script>
 export default {
   name: 'register',
+  auth: false,
   data() {
     return {
       authorName: '',
