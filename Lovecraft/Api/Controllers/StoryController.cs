@@ -60,7 +60,15 @@ namespace Lovecraft.Api.Controllers
 				UserId = story.UserId,
 				TeamId = story.TeamId,
 				DateCreated = story.DateCreated,
-				Status = story.Status
+				Status = story.Status,
+				Pages = story.Pages.Select(page => new PublicApi_PageModel
+				{
+					Id = page.Id,
+					Content = page.Content,
+					LastUpdatedDateTime = page.LastUpdatedDateTime,
+					Order = page.Order,
+					StoryId = page.StoryId
+				}).ToList()
 			}).ToList();
 			return Ok(results);
 		}

@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Lovecraft.Api.Model;
 using Lovecraft.Datas;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Repository;
 
@@ -21,7 +22,7 @@ public class StoryRepository : ICommonRepository<Story>
         }
         else
         {
-            return _dbContext.Stories.Where(whereExpression).Skip(_nbStoriesByFetch * page.Value).Take(_nbStoriesByFetch);
+            return _dbContext.Stories.Include(s => s.Pages).Where(whereExpression).Skip(_nbStoriesByFetch * page.Value).Take(_nbStoriesByFetch);
         }
     }
 

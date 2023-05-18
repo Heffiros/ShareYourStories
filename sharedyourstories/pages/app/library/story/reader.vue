@@ -1,6 +1,6 @@
 <template>
   <div>
-    <app-reader ></app-reader>
+    <app-reader :story="story" ></app-reader>
   </div>
 </template>
 
@@ -11,8 +11,9 @@ export default {
     AppReader
   },
   computed: {
-    currentUser () {
-      return this.$auth.user
+    story () {
+      console.log(this.$store.state.stories.stories[2])
+      return this.$store.state.stories.stories[2]
     }
   }
 }

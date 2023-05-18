@@ -11,14 +11,47 @@ public class StoryHelper
 		string[] words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
 		List<string> pages = new List<string>();
-		StringBuilder currentPage = new StringBuilder();
+		//StringBuilder currentPage = new StringBuilder();
+		string currentPage = "";
 
 		int wordCount = 0;
 		foreach (string word in words)
 		{
-			wordCount++;
+			//wordCount++;
 
-			// If adding the current word would put us over the page limit, check if we need to end the page
+			if (wordCount < minWordsByPage)
+			{
+				currentPage = currentPage +  " " + word;
+				wordCount++;
+			}
+			else
+			{
+				if (IsLastPunctuation(word))
+				{
+					currentPage = currentPage + " " + word;
+					pages.Add(currentPage.TrimEnd());
+					wordCount = 0;
+					currentPage = "";
+				}
+				else
+				{
+					currentPage = currentPage + " " + word;
+					if (wordCount == maxWordsByPage)
+					{
+						pages.Add(currentPage.TrimEnd());
+						wordCount = 0;
+						currentPage = "";
+					}
+					else
+					{
+						wordCount++;
+					}
+				}
+
+			}
+
+
+			/*// If adding the current word would put us over the page limit, check if we need to end the page
 			if (currentPage.Length + word.Length + 1 > maxWordsByPage)
 			{
 				if (currentPage.Length >= minWordsByPage && IsLastPunctuation(currentPage.ToString()))
@@ -37,7 +70,7 @@ public class StoryHelper
 			else
 			{
 				currentPage.Append(word).Append(' ');
-			}
+			}*/
 		}
 		return pages;
 	}

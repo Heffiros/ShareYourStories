@@ -24,6 +24,11 @@
             <v-img :src="story.coverUrl" height="200"></v-img>
             <v-card-title>{{ story.title }}</v-card-title>
             <v-card-actions>
+              <nuxt-link :to="`/app/library/story/reader`" class="ml-auto">
+                <v-btn color="success" icon>
+                  <v-icon>mdi-magnify</v-icon>
+                </v-btn>
+              </nuxt-link>
               <nuxt-link :to="`/app/library/story/${story.id}`" class="ml-auto">
                 <v-btn color="info" icon>
                   <v-icon>mdi-magnify</v-icon>

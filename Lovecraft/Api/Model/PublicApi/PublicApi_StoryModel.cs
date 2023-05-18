@@ -21,5 +21,8 @@ namespace Lovecraft.Api.Model.PublicApi
         public DateTime DateCreated { get; set; }
         [DataMember(Name = "status")]
         public Status Status { get; set; }
-    }
+
+        [DataMember(Name = "pages")]
+        public List<PublicApi_PageModel> Pages { get; set; }
+	}
 }
