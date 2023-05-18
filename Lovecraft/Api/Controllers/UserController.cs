@@ -52,7 +52,21 @@ namespace Lovecraft.Api.Controllers
 			});
 		}
 
-        [HttpGet]
+		[Authorize]
+		[HttpPost("{userId}")]
+		public ActionResult Post([FromBody] PublicApi_UserModel userToUpdate)
+		{
+			var userIdString = User.FindFirstValue("userId");
+			if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+			{
+				return NotFound();
+			}
+
+			_userRepository.Update(userToUpdate);
+			return Ok();
+		}
+
+		[HttpGet]
         [Route("{userId}")]
         public ActionResult GetById([FromRoute] int userId)
         {
