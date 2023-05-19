@@ -12,8 +12,7 @@ export default {
   },
   computed: {
     story () {
-      console.log(this.$store.state.stories.stories[2])
-      return this.$store.state.stories.stories[2]
+      return this.$store.getters['stories/getStoryById'](parseInt(this.$route.params.id))
     }
   }
 }

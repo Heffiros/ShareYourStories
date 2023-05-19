@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <!-- Colonne 1 -->
       <v-col cols="2" class="d-flex justify-center align-center">
-        <v-btn fab dark small class="ma-2">
+        <v-btn v-if="currentPageIndex != 0" fab dark small class="ma-2" @click="currentPageIndex--">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </v-col>
@@ -13,11 +13,12 @@
         <v-sheet class="d-flex justify-center align-center fill-height sheet-with-padding">
           {{ currentPage.content }}
         </v-sheet>
+        <div class="fix-right">{{ currentPageIndex }} / {{ story.pages.length - 1}}</div>
       </v-col>
 
       <!-- Colonne 3 -->
       <v-col cols="2" class="d-flex justify-center align-center">
-        <v-btn fab dark small class="ma-2">
+        <v-btn v-if="currentPageIndex != story.pages.length - 1" fab dark small class="ma-2" @click="currentPageIndex++">
           <v-icon>mdi-arrow-right</v-icon>
         </v-btn>
       </v-col>
@@ -27,7 +28,7 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       currentPageIndex: 0
     }
@@ -40,7 +41,6 @@ export default {
   },
   computed: {
     currentPage () {
-      console.log(this.story)
       return this.story.pages[this.currentPageIndex]
     }
   }
@@ -51,5 +51,9 @@ export default {
 .sheet-with-padding {
   padding: 15px;
   font-size: 18px;
+}
+
+.fix-right {
+  text-align: right;
 }
 </style>

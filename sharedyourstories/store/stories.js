@@ -3,7 +3,9 @@ export const state = () => ({
 })
 
 export const getters = {
-
+  getStoryById: (state) => (id) => {
+    return state.stories.find(m => m.id === id)
+  }
 }
 
 export const mutations = {
@@ -14,7 +16,7 @@ export const mutations = {
 
 export const actions = {
   async FETCH_STORIES (store, params) {
-    const result = await this.$axios.get('stories', { params: { userId: params.userId, page: params.page} })
+    const result = await this.$axios.get('stories', { params: { userId: params.userId, page: params.page } })
     store.commit('SET_STORIES', result.data)
   }
 }
