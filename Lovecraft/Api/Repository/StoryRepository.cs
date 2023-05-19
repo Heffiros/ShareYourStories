@@ -28,8 +28,8 @@ public class StoryRepository : ICommonRepository<Story>
 
     public Story? GetById(int id)
     {
-        throw new NotImplementedException();
-    }
+		return _dbContext.Stories.Include(s => s.Pages).FirstOrDefault(u => u.Id == id);
+	}
 
     public Story Add(Story entity)
     {

@@ -73,6 +73,37 @@ namespace Lovecraft.Api.Controllers
 			return Ok(results);
 		}
 
+		[Authorize]
+		[HttpGet("{storyId}")]
+		public ActionResult Get([FromRoute] int storyId)
+		{
+			Story story = _storyRepository.GetById(storyId);
+			if (story == null)
+			{
+				return BadRequest();
+			}
+
+			return Ok(new PublicApi_StoryModel
+			{
+				Id = story.Id,
+				Title = story.Title,
+				CoverUrl = story.CoverUrl,
+				Summary = story.Summary,
+				UserId = story.UserId,
+				TeamId = story.TeamId,
+				DateCreated = story.DateCreated,
+				Status = story.Status,
+				Pages = story.Pages.Select(page => new PublicApi_PageModel
+				{
+					Id = page.Id,
+					Content = page.Content,
+					LastUpdatedDateTime = page.LastUpdatedDateTime,
+					Order = page.Order,
+					StoryId = page.StoryId
+				}).ToList()
+			});
+		}
+
 		[HttpPost]
 		[Authorize]
 		public async Task<IActionResult> CreateStory()
