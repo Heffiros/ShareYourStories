@@ -61,6 +61,7 @@ namespace Lovecraft.Api.Controllers
 				TeamId = story.TeamId,
 				DateCreated = story.DateCreated,
 				Status = story.Status,
+				EventId = story.EventId,
 				Pages = story.Pages.Select(page => new PublicApi_PageModel
 				{
 					Id = page.Id,
@@ -93,6 +94,7 @@ namespace Lovecraft.Api.Controllers
 				TeamId = story.TeamId,
 				DateCreated = story.DateCreated,
 				Status = story.Status,
+				EventId = story.EventId,
 				Pages = story.Pages.Select(page => new PublicApi_PageModel
 				{
 					Id = page.Id,
@@ -119,7 +121,7 @@ namespace Lovecraft.Api.Controllers
 				{
 					return BadRequest("Please select a file");
 				}
-
+				//Todo si y a un event envoyé il faut vérifier qu'on a bien encore le droit de participer date + duplicité.
 				using (var stream = new MemoryStream())
 				{
 					await file.CopyToAsync(stream);
@@ -134,7 +136,8 @@ namespace Lovecraft.Api.Controllers
 							CoverUrl = storyToCreate.CoverUrl,
 							UserId = Int32.Parse(userIdClaim),
 							DateCreated = DateTime.Now,
-							Status = Status.Pending
+							Status = Status.Pending,
+							EventId = storyToCreate.EventId,
 						};
 						_storyRepository.Add(story);
 
