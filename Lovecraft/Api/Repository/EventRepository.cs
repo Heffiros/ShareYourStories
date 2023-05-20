@@ -28,7 +28,7 @@ namespace Lovecraft.Api.Repository
 		
 		public Event? GetById(int id)
 		{
-			throw new NotImplementedException();
+			return _dbContext.Events.Include(s => s.Stories).FirstOrDefault(u => u.Id == id);
 		}
 
 		public Event Add(Event entity)

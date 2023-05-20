@@ -1,6 +1,7 @@
 ﻿using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
 using Lovecraft.Api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System.Linq.Expressions;
@@ -37,6 +38,27 @@ namespace Lovecraft.Api.Controllers
 				NbStories = e.Stories.Count
 			}).ToList();
 			return Ok(results);
+		}
+
+		[Authorize]
+		[HttpGet("{eventId}")]
+		public ActionResult Get([FromRoute] int eventId)
+		{
+			Event e = _eventRepository.GetById(eventId);
+			if (e == null)
+			{
+				return BadRequest();
+			}
+
+			return Ok(new PublicApi_EventModel
+			{
+				Id = e.Id,
+				Title = e.Title,
+				CoverUrl = e.CoverUrl,
+				DateBegin = e.DateBegin,
+				DateEnd = e.DateEnd,
+				NbStories = e.Stories.Count
+			});
 		}
 	}
 }

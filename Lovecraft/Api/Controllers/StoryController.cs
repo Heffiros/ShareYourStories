@@ -45,7 +45,8 @@ namespace Lovecraft.Api.Controllers
 			if (teamsId != null)
 			{
 				storyAuthorFilter = s => s.TeamId == teamsId;
-			} else if (eventId != null)
+			} 
+			else if (eventId != null)
 			{
 				storyAuthorFilter = s => s.EventId == eventId;
 			}

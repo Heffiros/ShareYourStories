@@ -10,9 +10,9 @@ export const getters = {
 
 export const mutations = {
   SET_EVENTS (state, events) {
-    state.events = state.events.concat(stories)
+    state.events = state.events.concat(events)
   },
-  SET_EVENTS (state, event) {
+  SET_EVENT (state, event) {
     state.events = state.events.concat(event)
   },
   RESET_EVENTS (state) {
@@ -25,8 +25,8 @@ export const actions = {
     const result = await this.$axios.get('events', { params: { page: params.page } })
     store.commit('SET_EVENTS', result.data)
   },
-  async FETCH_STORY (store, params) {
-    const result = await this.$axios.get('stories/' + params.id)
+  async FETCH_EVENT (store, params) {
+    const result = await this.$axios.get('events/' + params.eventId)
     store.commit('SET_EVENT', result.data)
   },
   async RESET_EVENTS (store) {
