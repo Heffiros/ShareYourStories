@@ -33,7 +33,7 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult GetAll([FromQuery] int? userId, [FromQuery] int? teamsId, [FromQuery] int page = 0)
+		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] int page = 0)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			if (userIdClaim == null)
@@ -41,15 +41,14 @@ namespace Lovecraft.Api.Controllers
 				return BadRequest();
 			}
 			Expression<Func<Story, bool>> storyAuthorFilter = s => true;
-			/*if (userId != null)
-			{
-				storyAuthorFilter = s => s.UserId == userId;
-			}
-			else if (teamsId != null)
-			{
-				storyAuthorFilter = s => s.UserId == userId;
-			}*/
 			storyAuthorFilter = s => s.UserId == Int32.Parse(userIdClaim);
+			if (teamsId != null)
+			{
+				storyAuthorFilter = s => s.TeamId == teamsId;
+			} else if (eventId != null)
+			{
+				storyAuthorFilter = s => s.EventId == eventId;
+			}
 			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter);
 			List<PublicApi_StoryModel> results = queryable.Select(story => new PublicApi_StoryModel
 			{
