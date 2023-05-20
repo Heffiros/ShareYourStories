@@ -53,7 +53,7 @@ namespace Lovecraft.Datas
 	            .HasForeignKey(ut => ut.StoryId);
 
             modelBuilder.Entity<Event>()
-	            .HasMany(ut => ut.stories)
+	            .HasMany(ut => ut.Stories)
 	            .WithOne(u => u.Event)
 	            .HasForeignKey(ut => ut.EventId);
 
