@@ -18,6 +18,7 @@
 <script>
 export default {
   name: 'register',
+  auth: false,
   data() {
     return {
       authorName: '',
@@ -32,7 +33,6 @@ export default {
           email: this.email,
           password: this.password,
           authorName: this.authorName
-          // Ajoutez d'autres propriétés selon votre modèle d'utilisateur
         })
 
         const responseLogin = await this.$auth.loginWith('local', {
@@ -41,10 +41,8 @@ export default {
             password: this.password
           }
         });
-        // Rediriger l'utilisateur vers une autre page
         this.$router.push('/app/dashboard')
       } catch (error) {
-        // Gestion des erreurs d'inscription
         console.error(error.response.data)
       }
     }
