@@ -11,14 +11,11 @@ public class StoryHelper
 		string[] words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
 		List<string> pages = new List<string>();
-		//StringBuilder currentPage = new StringBuilder();
 		string currentPage = "";
 
 		int wordCount = 0;
 		foreach (string word in words)
 		{
-			//wordCount++;
-
 			if (wordCount < minWordsByPage)
 			{
 				currentPage = currentPage +  " " + word;
