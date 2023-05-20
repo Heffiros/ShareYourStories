@@ -1,15 +1,12 @@
 <template>
   <div>
-    <app-reader ></app-reader>
+    Hello
   </div>
 </template>
 
 <script>
-import AppReader from '~/components/AppReader'
+
 export default {
-  components: {
-    AppReader
-  },
   computed: {
     currentUser () {
       return this.$auth.user
