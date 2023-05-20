@@ -1,5 +1,7 @@
 <template>
-  <div>Hello <span v-if="currentUser">{{ currentUser.authorName }}</span> </div>
+  <div>
+    Hello
+  </div>
 </template>
 
 <script>
