@@ -14,6 +14,9 @@ export const mutations = {
   },
   SET_STORY (state, story) {
     state.stories = state.stories.concat(story)
+  },
+  RESET_STORIES (state) {
+    state.stories = []
   }
 }
 
@@ -25,5 +28,8 @@ export const actions = {
   async FETCH_STORY (store, params) {
     const result = await this.$axios.get('stories/' + params.id)
     store.commit('SET_STORIES', result.data)
+  },
+  async RESET_STORIES (store) {
+    store.commit('RESET_STORIES')
   }
 }

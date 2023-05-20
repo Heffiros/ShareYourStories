@@ -83,6 +83,8 @@ export default {
     }
   },
   mounted () {
+    this.$store.dispatch('stories/RESET_STORIES')
+    this.page = 0
     fetch(this)
   },
   methods: {
