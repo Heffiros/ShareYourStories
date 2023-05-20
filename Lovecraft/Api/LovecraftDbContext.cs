@@ -20,6 +20,7 @@ namespace Lovecraft.Datas
         public virtual DbSet<UserTeam> UserTeams { get; set; }
         public virtual DbSet<Story> Stories { get; set; }
         public virtual DbSet<Page> Pages { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +51,11 @@ namespace Lovecraft.Datas
 	            .HasOne(p => p.Story)
 	            .WithMany(s => s.Pages)
 	            .HasForeignKey(ut => ut.StoryId);
+
+            modelBuilder.Entity<Event>()
+	            .HasMany(ut => ut.stories)
+	            .WithOne(u => u.Event)
+	            .HasForeignKey(ut => ut.EventId);
 
 		}
 	}
