@@ -25,5 +25,8 @@ namespace Lovecraft.Api.Model.PublicApi
 
 		[DataMember(Name = "nbStories")]
 		public int NbStories { get; set; }
+
+		[DataMember(Name = "hasAlreadyParticipate")]
+		public bool HasAlreadyParticipate { get; set; }
 	}
 }

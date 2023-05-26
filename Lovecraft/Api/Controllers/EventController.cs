@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace Lovecraft.Api.Controllers
 {
@@ -24,6 +25,8 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet]
 		public ActionResult GetAll([FromQuery] int page)
 		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+
 			DateTime today = DateTime.Now;
 			Expression<Func<Event, bool>> eventDateFilter = s => true;
 			eventDateFilter = e => e.DateBegin <= today && e.DateEnd >= today; 
@@ -35,7 +38,8 @@ namespace Lovecraft.Api.Controllers
 				CoverUrl = e.CoverUrl,
 				DateBegin = e.DateBegin,
 				DateEnd = e.DateEnd,
-				NbStories = e.Stories.Count
+				NbStories = e.Stories.Count,
+				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
 			}).ToList();
 			return Ok(results);
 		}
@@ -44,6 +48,7 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet("{eventId}")]
 		public ActionResult Get([FromRoute] int eventId)
 		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			Event e = _eventRepository.GetById(eventId);
 			if (e == null)
 			{
@@ -57,7 +62,8 @@ namespace Lovecraft.Api.Controllers
 				CoverUrl = e.CoverUrl,
 				DateBegin = e.DateBegin,
 				DateEnd = e.DateEnd,
-				NbStories = e.Stories.Count
+				NbStories = e.Stories.Count,
+				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
 			});
 		}
 	}
