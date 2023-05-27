@@ -30,7 +30,7 @@ export default {
     return {
       file: null,
       text: null
-    };
+    }
   },
   methods: {
     async importDocx() {

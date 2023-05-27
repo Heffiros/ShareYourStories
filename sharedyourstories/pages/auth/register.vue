@@ -40,7 +40,7 @@ export default {
             email: this.email,
             password: this.password
           }
-        });
+        })
         this.$router.push('/app/dashboard')
       } catch (error) {
         console.error(error.response.data)

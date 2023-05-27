@@ -61,9 +61,9 @@ export default {
       items: [
         {
           icon: 'mdi-apps',
-          title: 'Welcome',
+          title: 'Dashboard',
           hasToBeAuth: false,
-          to: '/'
+          to: '/app/dashboard'
         },
         {
           icon: 'mdi-book-open-variant',
