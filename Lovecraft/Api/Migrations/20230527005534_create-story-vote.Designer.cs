@@ -4,6 +4,7 @@ using Lovecraft.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lovecraft.Api.Migrations
 {
     [DbContext(typeof(LovecraftDbContext))]
-    partial class LovecraftDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527005534_create-story-vote")]
+    partial class createstoryvote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
