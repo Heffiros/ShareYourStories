@@ -11,11 +11,9 @@
     </v-tabs>
 
     <div v-if="activeTab === 0" class="col-6">
-      <!-- Contenu de la première tab -->
       <h2 v-if="event" class="carousel-title">{{ event.title }}</h2>
     </div>
     <div v-if="activeTab === 1" class="col-12">
-      <!-- Contenu de la deuxième tab -->
       <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
     </div>
   </div>
@@ -30,26 +28,22 @@ export default {
   },
   data() {
     return {
-      activeTab: 0, // Onglet actif par défaut
+      activeTab: 0,
       tabs: [
         { label: 'Découvrir les récits ', value: 0 },
         { label: this.event && this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 }
       ]
-    };
+    }
   },
   computed: {
     event () {
-      return this.$store.getters['events/getEventById'](parseInt(this.$route.params.eventId));
+      return this.$store.getters['events/getEventById'](parseInt(this.$route.params.eventId))
     }
   },
   async beforeMount() {
     if (!this.$store.getters['events/getEventById'](parseInt(this.$route.params.eventId))) {
-      await this.$store.dispatch('events/FETCH_EVENT', { eventId: parseInt(this.$route.params.eventId) });
+      await this.$store.dispatch('events/FETCH_EVENT', { eventId: parseInt(this.$route.params.eventId) })
     }
   }
-};
+}
 </script>
-
-<style>
-/* Styles personnalisés */
-</style>

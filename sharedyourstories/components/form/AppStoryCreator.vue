@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     nextStep() {
-      this.step = 2;
+      this.step = 2
     },
     async submitForm() {
       try {

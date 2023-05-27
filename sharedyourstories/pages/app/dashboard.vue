@@ -34,10 +34,11 @@ export default {
       this.$router.push('/app/event/' + eventId)
     }
   },
-  mounted () {
+  async mounted () {
+    await this.$store.dispatch('events/RESET_EVENTS')
     fetch (this)
   }
-};
+}
 </script>
 
 

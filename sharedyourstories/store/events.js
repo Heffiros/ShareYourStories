@@ -30,6 +30,6 @@ export const actions = {
     store.commit('SET_EVENT', result.data)
   },
   async RESET_EVENTS (store) {
-    store.commit('RESET_STORIES')
+    store.commit('RESET_EVENTS')
   }
 }
