@@ -22,6 +22,7 @@ namespace Lovecraft.Datas
         public virtual DbSet<Story> Stories { get; set; }
         public virtual DbSet<Page> Pages { get; set; }
         public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<StoryVote> StoryVotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
