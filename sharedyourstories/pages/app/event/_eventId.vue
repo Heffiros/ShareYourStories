@@ -33,7 +33,7 @@ export default {
       activeTab: 0, // Onglet actif par défaut
       tabs: [
         { label: 'Découvrir les récits ', value: 0 },
-        { label: this.event && this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participer à cet event', value: 1 }
+        { label: this.event && this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 }
       ]
     };
   },
