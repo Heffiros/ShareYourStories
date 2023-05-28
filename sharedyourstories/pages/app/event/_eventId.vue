@@ -15,7 +15,7 @@
         <h2 v-if="event" class="carousel-title">{{ event.title }}</h2>
       </div>
       <div>
-        <app-podium v-if="event" :event-id="event.id" :class="podium"/>
+        <app-podium v-if="event" :event-id="event.id" :event-date-end="event.dateEnd"/>
       </div>
     </div>
     <div v-if="activeTab === 1" class="col-12">

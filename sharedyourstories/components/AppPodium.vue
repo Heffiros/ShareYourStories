@@ -1,42 +1,47 @@
 <template>
-  <div>
-    <v-row class="podium">
-      <v-col cols="4" class="flex-column">
-        <v-card class="place-card firstPlace" color="#FFCA28" prepend-icon="mdi-home">
-          <v-card-text>
-            <div v-if="podiums[0]">{{ podiums[0].count }}</div>
-            <div v-if="podiums[0]">{{ podiums[0].storyName }}</div>
-          </v-card-text>
-          <v-card-subtitle>
-            <!-- Informations supplémentaires sur le premier gagnant -->
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
+  <div class="result-container">
+    <div class="result-title">Résultats du concours</div>
+    <div v-if="!eventIsOver" class="result-subtitle">Le concours n'est pas encore terminé les résultats ci-dessous ne sont définitifs</div>
 
-      <v-col cols="4" class="flex-column">
-        <v-card class="place-card secondPlace" color="#546E7A" prepend-icon="mdi-home">
-          <v-card-text>
-            <div v-if="podiums[1]">{{ podiums[1].count }}</div>
-            <div v-if="podiums[1]">{{ podiums[1].storyName }}</div>
-          </v-card-text>
-          <v-card-subtitle>
-            <!-- Informations supplémentaires sur le deuxième gagnant -->
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
+    <v-container class="result-grid">
+      <v-row>
+        <v-col cols="4">
+          <v-card class="result-card first-place" color="#FFCA28">
+            <div class="result-card-header">1er</div>
+            <div class="result-card-content">
+              <template v-if="podiums[0]">
+                <div>{{ podiums[0].storyName }}</div>
+                <div>{{ podiums[0].count }}</div>
+              </template>
+            </div>
+          </v-card>
+        </v-col>
 
-      <v-col cols="4" class="flex-column">
-        <v-card class="place-card thirdPlace" color="#6D4C41" prepend-icon="mdi-home">
-          <v-card-text>
-            <div v-if="podiums[2]">{{ podiums[2].count }}</div>
-            <div v-if="podiums[2]">{{ podiums[2].storyName }}</div>
-          </v-card-text>
-          <v-card-subtitle>
-            <!-- Informations supplémentaires sur le troisième gagnant -->
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
-    </v-row>
+        <v-col cols="4">
+          <v-card class="result-card second-place" color="#546E7A">
+            <div class="result-card-header">2ème</div>
+            <div class="result-card-content">
+              <template v-if="podiums[1]">
+                <div>{{ podiums[1].storyName }}</div>
+                <div>{{ podiums[1].count }}</div>
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+        <v-col cols="4">
+          <v-card class="result-card third-place" color="#6D4C41">
+            <div class="result-card-header">3ème</div>
+            <div class="result-card-content">
+              <template v-if="podiums[2]">
+                <div>{{ podiums[2].storyName }}</div>
+                <div>{{ podiums[2].count }}</div>
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -47,6 +52,10 @@ export default {
     eventId: {
       type: Number,
       default: 0
+    },
+    eventDateEnd: {
+      type: String,
+      default: null
     }
   },
   data () {
@@ -54,10 +63,20 @@ export default {
       podiums: []
     }
   },
+  computed: {
+    eventIsOver () {
+      if (this.eventDateEnd){
+        const date = new Date(this.eventDateEnd);
+        const currentDate = new Date();
+        return date < currentDate
+      }
+      return true
+    }
+  },
   async mounted () {
+    console.log(typeof this.eventDateEnd)
     const result = await this.$axios.get('storyVote/podium/' + this.eventId)
     if (result.data) {
-      console.log(result.data)
       this.podiums = result.data
     }
   }
@@ -66,37 +85,51 @@ export default {
 </script>
 
 <style>
-.podium {
-  justify-content: space-around;
-  margin: 16px;
+.result-container {
+  padding: 16px;
 }
 
-.flex-column {
-  display: flex; /* Ajoutez cette ligne */
-  flex-direction: column; /* Ajoutez cette ligne */
-}
-
-.place-card {
+.result-title {
   text-align: center;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.result-subtitle {
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.result-grid {
+  justify-content: center;
+}
+
+.result-card {
+  text-align: center;
+  padding: 16px;
+  border-radius: 8px;
   margin: 16px;
-  align-self: flex-end;
 }
 
-.firstPlace {
+.result-card-header {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.result-card-content {
+  min-height: 40px;
+}
+
+.first-place {
   background-color: #FFCA28;
-  height: 100%;
-  min-width: 130px;
 }
 
-.secondPlace {
+.second-place {
   background-color: #546E7A;
-  height: 75%;
-  min-width: 130px;
 }
 
-.thirdPlace {
+.third-place {
   background-color: #6D4C41;
-  height: 50%;
-  min-width: 130px;
 }
 </style>

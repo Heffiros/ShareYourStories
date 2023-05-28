@@ -25,6 +25,7 @@ public class StoryVoteRepository
 				.Select(g => new { Count = g.Count(), StoryId = g.Key, Title = g.First().Story.Title })
 				.OrderByDescending(g => g.Count)
 				.ThenBy(g => g.StoryId)
+				.Where(g => g.Count > 0)
 				.Take(3)
 				.ToList();
 
