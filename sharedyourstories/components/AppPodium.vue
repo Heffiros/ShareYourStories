@@ -6,12 +6,15 @@
     <v-container class="result-grid">
       <v-row>
         <v-col cols="4">
-          <v-card class="result-card first-place" color="#FFCA28">
+          <v-card class="result-card first-place" color="#FBC02D">
             <div class="result-card-header">1er</div>
             <div class="result-card-content">
               <template v-if="podiums[0]">
                 <div>{{ podiums[0].storyName }}</div>
                 <div>{{ podiums[0].count }}</div>
+              </template>
+              <template v-else>
+                <div class="no-vote-label">Pas encore de vote. Tentez votre chance et participez</div>
               </template>
             </div>
           </v-card>
@@ -25,6 +28,9 @@
                 <div>{{ podiums[1].storyName }}</div>
                 <div>{{ podiums[1].count }}</div>
               </template>
+              <template v-else>
+                <div class="no-vote-label">Pas encore de vote. Tentez votre chance et participez</div>
+              </template>
             </div>
           </v-card>
         </v-col>
@@ -36,6 +42,9 @@
               <template v-if="podiums[2]">
                 <div>{{ podiums[2].storyName }}</div>
                 <div>{{ podiums[2].count }}</div>
+              </template>
+              <template v-else>
+                <div class="no-vote-label">Pas encore de vote. Tentez votre chance et participez</div>
               </template>
             </div>
           </v-card>
@@ -119,6 +128,11 @@ export default {
 
 .result-card-content {
   min-height: 40px;
+}
+
+.no-vote-label {
+  font-size: 12px;
+  color: #000000
 }
 
 .first-place {
