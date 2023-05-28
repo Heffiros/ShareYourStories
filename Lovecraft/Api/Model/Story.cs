@@ -18,6 +18,7 @@ namespace Lovecraft.Api.Model
         public virtual Event? Event { get; set; }
         public virtual List<Page> Pages { get; set; }
         public virtual List<StoryVote> StoryVotes { get; set; }
+        public virtual List<StoryStoryTag> StoryStoryTags { get; set; }
     }
 
     public enum Status
