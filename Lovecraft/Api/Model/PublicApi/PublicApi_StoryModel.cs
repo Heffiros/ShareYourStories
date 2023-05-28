@@ -27,5 +27,11 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "eventId")]
         public int? EventId { get; set; }
+        
+        [DataMember(Name = "hasVoted")]
+        public bool HasVoted { get; set; }
+
+        [DataMember(Name = "nbVote")]
+        public int NbVote { get; set; }
 	}
 }

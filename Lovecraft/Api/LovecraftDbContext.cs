@@ -1,4 +1,5 @@
 ﻿using Lovecraft.Api.Model;
+using Lovecraft.Datas.Configuration;
 using Lovecraft.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,42 +22,15 @@ namespace Lovecraft.Datas
         public virtual DbSet<Story> Stories { get; set; }
         public virtual DbSet<Page> Pages { get; set; }
         public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<StoryVote> StoryVotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserTeam>()
-                .HasOne(ut => ut.Team)
-                .WithMany(t => t.Members)
-                .HasForeignKey(ut => ut.TeamId);
-
-            modelBuilder.Entity<UserTeam>()
-                .HasOne(ut => ut.User)
-                .WithMany(u => u.UserTeams)
-                .HasForeignKey(ut => ut.UserId);
-            modelBuilder.Entity<Story>()
-                .HasOne(ut => ut.User)
-                .WithMany(u => u.Stories)
-                .HasForeignKey(ut => ut.UserId);
-
-            modelBuilder.Entity<Story>()
-                .HasOne(ut => ut.Team)
-                .WithMany(u => u.Stories)
-                .HasForeignKey(ut => ut.TeamId);
-
-            modelBuilder.Entity<Page>()
-	            .HasKey(p => p.Id);
-            modelBuilder.Entity<Page>().Property(p => p.Content).IsRequired();
-            modelBuilder.Entity<Page>().Property(p => p.LastUpdatedDateTime).IsRequired();
-            modelBuilder.Entity<Page>()
-	            .HasOne(p => p.Story)
-	            .WithMany(s => s.Pages)
-	            .HasForeignKey(ut => ut.StoryId);
-
-            modelBuilder.Entity<Event>()
-	            .HasMany(ut => ut.Stories)
-	            .WithOne(u => u.Event)
-	            .HasForeignKey(ut => ut.EventId);
-
-		}
+			modelBuilder.ApplyConfiguration(new UserTeamConfiguration());
+			modelBuilder.ApplyConfiguration(new StoryConfiguration());
+			modelBuilder.ApplyConfiguration(new PageConfiguration());
+			modelBuilder.ApplyConfiguration(new EventConfiguration());
+			modelBuilder.ApplyConfiguration(new StoryVoteConfiguration());
+        }
 	}
 }
