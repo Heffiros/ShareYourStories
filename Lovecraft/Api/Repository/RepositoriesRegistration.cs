@@ -12,6 +12,6 @@ public class RepositoriesRegistration
 		services.AddTransient<ICommonRepository<Story>, StoryRepository>();
 		services.AddTransient<ICommonRepository<Page>, PageRepository>();
 		services.AddTransient<ICommonRepository<Event>, EventRepository>();
-		services.AddTransient<ICommonRepository<StoryVote>, StoryVoteRepository>();
+		services.AddTransient<StoryVoteRepository, StoryVoteRepository>();
 	}
 }

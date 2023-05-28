@@ -1,32 +1,39 @@
 ﻿using System.Linq.Expressions;
 using Lovecraft.Api.Model;
+using Lovecraft.Api.Model.PublicApi;
+using Lovecraft.Datas;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Repository;
 
-public class StoryVoteRepository : ICommonRepository<StoryVote>
+public class StoryVoteRepository
 {
-	public IQueryable<StoryVote> GetAll(int? page, Expression<Func<StoryVote, bool>>? whereExpression)
-	{
-		throw new NotImplementedException();
-	}
+	readonly LovecraftDbContext _dbContext = new();
 
-	public StoryVote? GetById(int id)
+	public StoryVoteRepository(LovecraftDbContext dbContext)
 	{
-		throw new NotImplementedException();
+		_dbContext = dbContext;
 	}
-
-	public StoryVote Add(StoryVote entity)
+	public List<PublicApi_StoryVote> GetTop3StoryVotes(int eventId)
 	{
-		throw new NotImplementedException();
-	}
+		using (var dbContext = _dbContext)
+		{
+			var result = dbContext.StoryVotes
+				.Include(sv => sv.Story)
+				.Where(sv => sv.Story.EventId == eventId)
+				.GroupBy(sv => sv.StoryId)
+				.Select(g => new { Count = g.Count(), StoryId = g.Key, Title = g.First().Story.Title })
+				.OrderByDescending(g => g.Count)
+				.ThenBy(g => g.StoryId)
+				.Take(3)
+				.ToList();
 
-	public void Update(StoryVote entity)
-	{
-		throw new NotImplementedException();
-	}
-
-	public void Delete(StoryVote id)
-	{
-		throw new NotImplementedException();
+			return result.Select(r => new PublicApi_StoryVote
+			{
+				Count = r.Count,
+				StoryId = r.StoryId,
+				StoryName = r.Title
+			}).ToList();
+		}
 	}
 }

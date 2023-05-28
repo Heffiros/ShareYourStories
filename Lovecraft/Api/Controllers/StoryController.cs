@@ -65,6 +65,8 @@ namespace Lovecraft.Api.Controllers
 				DateCreated = story.DateCreated,
 				Status = story.Status,
 				EventId = story.EventId,
+				HasVoted = story.StoryVotes.Any(sv =>  sv.UserId == Int32.Parse(userIdClaim)),
+				NbVote = story.StoryVotes.Count,
 				Pages = story.Pages.Select(page => new PublicApi_PageModel
 				{
 					Id = page.Id,
@@ -81,6 +83,7 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet("{storyId}")]
 		public ActionResult Get([FromRoute] int storyId)
 		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			Story story = _storyRepository.GetById(storyId);
 			if (story == null)
 			{
@@ -98,6 +101,8 @@ namespace Lovecraft.Api.Controllers
 				DateCreated = story.DateCreated,
 				Status = story.Status,
 				EventId = story.EventId,
+				HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
+				NbVote = story.StoryVotes.Count,
 				Pages = story.Pages.Select(page => new PublicApi_PageModel
 				{
 					Id = page.Id,

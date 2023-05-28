@@ -10,8 +10,13 @@
       </v-tab>
     </v-tabs>
 
-    <div v-if="activeTab === 0" class="col-6">
-      <h2 v-if="event" class="carousel-title">{{ event.title }}</h2>
+    <div v-if="activeTab === 0" class="col-12">
+      <div class="eventTitle text-center">
+        <h2 v-if="event" class="carousel-title">{{ event.title }}</h2>
+      </div>
+      <div>
+        <app-podium v-if="event" :event-id="event.id" :class="podium"/>
+      </div>
     </div>
     <div v-if="activeTab === 1" class="col-12">
       <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
@@ -21,10 +26,12 @@
 
 <script>
 import appStoryCreator from '~/components/form/AppStoryCreator'
+import AppPodium from '~/components/AppPodium'
 
 export default {
   components: {
-    appStoryCreator
+    appStoryCreator,
+    AppPodium
   },
   data() {
     return {
@@ -47,3 +54,10 @@ export default {
   }
 }
 </script>
+
+<style>
+  .eventTitle {
+    margin: 16px;
+    font-size: 24px;
+  }
+</style>

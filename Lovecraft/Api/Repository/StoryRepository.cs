@@ -22,13 +22,20 @@ public class StoryRepository : ICommonRepository<Story>
         }
         else
         {
-            return _dbContext.Stories.Include(s => s.Pages).Where(whereExpression).Skip(_nbStoriesByFetch * page.Value).Take(_nbStoriesByFetch);
+            return _dbContext.Stories
+	            .Include(s => s.Pages)
+	            .Include(s => s.StoryVotes)
+	            .Where(whereExpression)
+	            .Skip(_nbStoriesByFetch * page.Value)
+	            .Take(_nbStoriesByFetch);
         }
     }
 
     public Story? GetById(int id)
     {
-		return _dbContext.Stories.Include(s => s.Pages).FirstOrDefault(u => u.Id == id);
+		return _dbContext.Stories
+			.Include(s => s.Pages)
+			.FirstOrDefault(u => u.Id == id);
 	}
 
     public Story Add(Story entity)
