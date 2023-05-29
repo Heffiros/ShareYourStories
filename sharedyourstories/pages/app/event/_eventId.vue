@@ -5,7 +5,7 @@
       bg-color="indigo-darken-2"
       v-model="activeTab"
     >
-      <v-tab v-for="(tab, index) in tabs" :key="index" :disabled="tab.value === 1 && event && event.hasAlreadyParticipate">
+      <v-tab v-for="(tab, index) in tabs" :key="index" :disabled="event && event.hasAlreadyParticipate">
           {{ tab.label }}
       </v-tab>
     </v-tabs>
@@ -36,10 +36,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      tabs: [
-        { label: 'Découvrir les récits ', value: 0 },
-        { label: this.event && this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 }
-      ]
+      tabs: []
     }
   },
   computed: {
@@ -51,6 +48,10 @@ export default {
     if (!this.$store.getters['events/getEventById'](parseInt(this.$route.params.eventId))) {
       await this.$store.dispatch('events/FETCH_EVENT', { eventId: parseInt(this.$route.params.eventId) })
     }
+    this.tabs = [
+        { label: 'Découvrir les récits ', value: 0 },
+        { label: this.event && !this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 }
+      ]
   }
 }
 </script>

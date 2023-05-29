@@ -83,7 +83,6 @@ export default {
     }
   },
   async mounted () {
-    console.log(typeof this.eventDateEnd)
     const result = await this.$axios.get('storyVote/podium/' + this.eventId)
     if (result.data) {
       this.podiums = result.data

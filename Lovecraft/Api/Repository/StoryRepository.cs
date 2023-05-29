@@ -25,6 +25,8 @@ public class StoryRepository : ICommonRepository<Story>
             return _dbContext.Stories
 	            .Include(s => s.Pages)
 	            .Include(s => s.StoryVotes)
+	            .Include(s => s.StoryStoryTags)
+					.ThenInclude(st => st.StoryTag)
 	            .Where(whereExpression)
 	            .Skip(_nbStoriesByFetch * page.Value)
 	            .Take(_nbStoriesByFetch);
@@ -35,6 +37,9 @@ public class StoryRepository : ICommonRepository<Story>
     {
 		return _dbContext.Stories
 			.Include(s => s.Pages)
+			.Include(s => s.StoryVotes)
+			.Include(s => s.StoryStoryTags)
+				.ThenInclude(st => st.StoryTag)
 			.FirstOrDefault(u => u.Id == id);
 	}
 

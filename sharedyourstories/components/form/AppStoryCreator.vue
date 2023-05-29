@@ -2,7 +2,7 @@
   <v-card class="popup">
     <v-card v-if="step === 1">
       <v-card-title>
-        Étape 1
+        Étape 1: Information
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent="nextStep">
@@ -18,7 +18,18 @@
     </v-card>
     <v-card v-if="step === 2">
       <v-card-title>
-        Étape 2
+        Étape 2 : Ajouter vos tags
+      </v-card-title>
+      <v-card-text>
+        <v-form @submit.prevent="nextStep">
+          <app-story-tags-researcher v-model="story.storyTags"/>
+          <v-btn type="submit" color="primary">Suivant</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+    <v-card v-if="step === 3">
+      <v-card-title>
+        Étape 3: Il est temps de nous partager votre récit
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submitForm">
@@ -36,7 +47,12 @@
 </template>
 
 <script>
+import AppStoryTagsResearcher from '~/components/AppStoryTagsResearcher'
+
 export default {
+  components : {
+    AppStoryTagsResearcher
+  },
   props: {
     eventId: {
       type: Number,
@@ -50,14 +66,15 @@ export default {
       story: {
         title: null,
         coverUrl: 'https://png.pngtree.com/png-clipart/20200826/original/pngtree-colorful-warm-autumn-book-cover-png-image_5490983.jpg',
-        eventId: null
+        eventId: null,
+        storyTags: null
       },
       file: null
     }
   },
   methods: {
     nextStep() {
-      this.step = 2
+      this.step += 1
     },
     async submitForm() {
       try {

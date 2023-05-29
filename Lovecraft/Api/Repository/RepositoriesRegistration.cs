@@ -13,7 +13,7 @@ public class RepositoriesRegistration
 		services.AddTransient<ICommonRepository<Page>, PageRepository>();
 		services.AddTransient<ICommonRepository<Event>, EventRepository>();
 		services.AddTransient<StoryVoteRepository, StoryVoteRepository>();
-		services.AddTransient<ICommonRepository<StoryTag>, StoryTagRepository>();
-		services.AddTransient<ICommonRepository<StoryStoryTag>, StoryStoryTagRepository>();
+		services.AddTransient<StoryTagRepository, StoryTagRepository>();
+		services.AddTransient<StoryStoryTagRepository, StoryStoryTagRepository>();
 	}
 }

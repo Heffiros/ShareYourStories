@@ -1,10 +1,18 @@
 ﻿using System.Linq.Expressions;
 using Lovecraft.Api.Model;
+using Lovecraft.Datas;
 
 namespace Lovecraft.Api.Repository;
 
 public class StoryStoryTagRepository : ICommonRepository<StoryStoryTag>
 {
+
+	readonly LovecraftDbContext _dbContext = new();
+
+	public StoryStoryTagRepository(LovecraftDbContext dbContext)
+	{
+		_dbContext = dbContext;
+	}
 	public IQueryable<StoryStoryTag> GetAll(int? page, Expression<Func<StoryStoryTag, bool>>? whereExpression)
 	{
 		throw new NotImplementedException();
@@ -17,7 +25,9 @@ public class StoryStoryTagRepository : ICommonRepository<StoryStoryTag>
 
 	public StoryStoryTag Add(StoryStoryTag entity)
 	{
-		throw new NotImplementedException();
+		_dbContext.StoryStoryTags.Add(entity);
+		_dbContext.SaveChanges();
+		return entity;
 	}
 
 	public void Update(StoryStoryTag entity)

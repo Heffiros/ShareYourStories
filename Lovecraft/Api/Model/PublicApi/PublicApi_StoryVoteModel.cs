@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Lovecraft.Api.Model.PublicApi;
 
-public class PublicApi_StoryVote
+public class PublicApi_StoryVoteModel
 {
 	[DataMember(Name = "storyId")]
 	public int StoryId { get; set; }

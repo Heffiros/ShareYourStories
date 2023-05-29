@@ -29,8 +29,8 @@ export default {
       try {
         await this.$auth.loginWith('local', {
           data: {
-            email: this.email,
-            password: this.password
+            email: 'vasax.levy@gmail.com',//this.email,
+            password: 'alex1994'//this.password
           }
         })
         this.$router.push('/app/dashboard')

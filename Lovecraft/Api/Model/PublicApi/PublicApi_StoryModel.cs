@@ -33,5 +33,8 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "nbVote")]
         public int NbVote { get; set; }
+
+        [DataMember(Name = "storyTags")]
+        public List<PublicApi_StoryTagModel>? StoryTags { get; set; }
 	}
 }

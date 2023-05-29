@@ -34,7 +34,7 @@ namespace Lovecraft.Api.Controllers
 				return NotFound();
 			}
 
-			List<PublicApi_StoryVote> votes = _storyVoteRepository.GetTop3StoryVotes(eventId);
+			List<PublicApi_StoryVoteModel> votes = _storyVoteRepository.GetTop3StoryVotes(eventId);
 			return Ok(votes);
 		}
 	}

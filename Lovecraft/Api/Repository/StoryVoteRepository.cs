@@ -14,7 +14,7 @@ public class StoryVoteRepository
 	{
 		_dbContext = dbContext;
 	}
-	public List<PublicApi_StoryVote> GetTop3StoryVotes(int eventId)
+	public List<PublicApi_StoryVoteModel> GetTop3StoryVotes(int eventId)
 	{
 		using (var dbContext = _dbContext)
 		{
@@ -29,7 +29,7 @@ public class StoryVoteRepository
 				.Take(3)
 				.ToList();
 
-			return result.Select(r => new PublicApi_StoryVote
+			return result.Select(r => new PublicApi_StoryVoteModel
 			{
 				Count = r.Count,
 				StoryId = r.StoryId,

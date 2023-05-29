@@ -22,17 +22,19 @@ namespace Lovecraft.Api.Controllers
 		private readonly ICommonRepository<Story> _storyRepository;
 		private readonly ICommonRepository<Page> _pageRepository;
 		private readonly ICommonRepository<Event> _eventRepository;
+		private readonly StoryStoryTagRepository _storyStoryTagRepository;
 
 		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository)
+		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, StoryStoryTagRepository storyStoryTagRepository)
 		{
 			_storyRepository = storyRepository;
 			_pageRepository = pageRepository;
 			_eventRepository = eventRepository;
 			_configuration = configuration;
+			_storyStoryTagRepository = storyStoryTagRepository;
 		}
 
 		[HttpGet]
@@ -74,6 +76,11 @@ namespace Lovecraft.Api.Controllers
 					LastUpdatedDateTime = page.LastUpdatedDateTime,
 					Order = page.Order,
 					StoryId = page.StoryId
+				}).ToList(),
+				StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+				{
+					Id = sst.StoryTag.Id,
+					Label = sst.StoryTag.Label,
 				}).ToList()
 			}).ToList();
 			return Ok(results);
@@ -110,6 +117,11 @@ namespace Lovecraft.Api.Controllers
 					LastUpdatedDateTime = page.LastUpdatedDateTime,
 					Order = page.Order,
 					StoryId = page.StoryId
+				}).ToList(),
+				StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+				{
+					Id = sst.StoryTag.Id,
+					Label = sst.StoryTag.Label,
 				}).ToList()
 			});
 		}
@@ -148,8 +160,11 @@ namespace Lovecraft.Api.Controllers
 							return BadRequest();
 						}
 					}
+					else
+					{
 
-					return NotFound();
+						return NotFound();
+					}
 				}
 				//Todo si y a un event envoyé il faut vérifier qu'on a bien encore le droit de participer date + duplicité.
 				using (var stream = new MemoryStream())
@@ -184,6 +199,19 @@ namespace Lovecraft.Api.Controllers
 
 							_pageRepository.Add(pageToCreate);
 							orderPage++;
+						}
+
+						if (storyToCreate.StoryTags != null)
+						{
+							foreach (PublicApi_StoryTagModel storyTagToLink in storyToCreate.StoryTags)
+							{
+								StoryStoryTag storyStoryTag = new StoryStoryTag
+								{
+									StoryId = story.Id,
+									StoryTagId = storyTagToLink.Id
+								};
+								_storyStoryTagRepository.Add(storyStoryTag);
+							}
 						}
 					}
 				}
