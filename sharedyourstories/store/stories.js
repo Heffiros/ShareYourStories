@@ -27,7 +27,7 @@ export const actions = {
   },
   async FETCH_STORY (store, params) {
     const result = await this.$axios.get('stories/' + params.id)
-    store.commit('SET_STORIES', result.data)
+    store.commit('SET_STORY', result.data)
   },
   async RESET_STORIES (store) {
     store.commit('RESET_STORIES')

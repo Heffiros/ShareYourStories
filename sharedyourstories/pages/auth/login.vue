@@ -33,10 +33,10 @@ export default {
             password: this.password
           }
         })
-        this.$router.push('/app/dashboard');
+        this.$router.push('/app/dashboard')
       } catch (e) {
-        console.error(e);
-        this.errorMessage = 'Invalid email or password.';
+        console.error(e)
+        this.errorMessage = 'Invalid email or password.'
       }
     }
   }

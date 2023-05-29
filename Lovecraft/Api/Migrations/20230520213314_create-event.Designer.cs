@@ -4,6 +4,7 @@ using Lovecraft.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lovecraft.Api.Migrations
 {
     [DbContext(typeof(LovecraftDbContext))]
-    partial class LovecraftDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230520213314_create-event")]
+    partial class createevent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,72 +127,6 @@ namespace Lovecraft.Api.Migrations
                     b.ToTable("Stories");
                 });
 
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryStoryTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("StoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoryTagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoryId");
-
-                    b.HasIndex("StoryTagId");
-
-                    b.ToTable("StoryStoryTags");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("StoryTags");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryVote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("DateVoted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StoryVotes");
-                });
-
             modelBuilder.Entity("Lovecraft.Api.Model.Team", b =>
                 {
                     b.Property<int>("Id")
@@ -284,7 +220,7 @@ namespace Lovecraft.Api.Migrations
             modelBuilder.Entity("Lovecraft.Api.Model.Story", b =>
                 {
                     b.HasOne("Lovecraft.Api.Model.Event", "Event")
-                        .WithMany("Stories")
+                        .WithMany("stories")
                         .HasForeignKey("EventId");
 
                     b.HasOne("Lovecraft.Api.Model.Team", "Team")
@@ -298,44 +234,6 @@ namespace Lovecraft.Api.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("Team");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryStoryTag", b =>
-                {
-                    b.HasOne("Lovecraft.Api.Model.Story", "Story")
-                        .WithMany("StoryStoryTags")
-                        .HasForeignKey("StoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lovecraft.Api.Model.StoryTag", "StoryTag")
-                        .WithMany("StoryStoryTags")
-                        .HasForeignKey("StoryTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Story");
-
-                    b.Navigation("StoryTag");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryVote", b =>
-                {
-                    b.HasOne("Lovecraft.Api.Model.Story", "Story")
-                        .WithMany("StoryVotes")
-                        .HasForeignKey("StoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lovecraft.Model.User", "User")
-                        .WithMany("StoryVotes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Story");
 
                     b.Navigation("User");
                 });
@@ -361,21 +259,12 @@ namespace Lovecraft.Api.Migrations
 
             modelBuilder.Entity("Lovecraft.Api.Model.Event", b =>
                 {
-                    b.Navigation("Stories");
+                    b.Navigation("stories");
                 });
 
             modelBuilder.Entity("Lovecraft.Api.Model.Story", b =>
                 {
                     b.Navigation("Pages");
-
-                    b.Navigation("StoryStoryTags");
-
-                    b.Navigation("StoryVotes");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryTag", b =>
-                {
-                    b.Navigation("StoryStoryTags");
                 });
 
             modelBuilder.Entity("Lovecraft.Api.Model.Team", b =>
@@ -388,8 +277,6 @@ namespace Lovecraft.Api.Migrations
             modelBuilder.Entity("Lovecraft.Model.User", b =>
                 {
                     b.Navigation("Stories");
-
-                    b.Navigation("StoryVotes");
 
                     b.Navigation("UserTeams");
                 });

@@ -11,7 +11,7 @@
             Créer une histoire
           </v-btn>
           <v-dialog v-model="dialog" max-width="40%">
-            <create-story @uploaded="dialog = false"/>
+            <create-story @created="dialog = false"/>
           </v-dialog>
         </v-col>
       </v-col>
@@ -24,9 +24,9 @@
             <v-img :src="story.coverUrl" height="200"></v-img>
             <v-card-title>{{ story.title }}</v-card-title>
             <v-card-actions>
-              <nuxt-link :to="`/app/library/story/${story.id}/reader`" class="ml-auto">
-                <v-btn color="success" icon>
-                  <v-icon>mdi-magnify</v-icon>
+              <nuxt-link :to="`/app/library/story/${story.id}/reader`">
+                <v-btn color="info" icon>
+                  <v-icon>mdi-book-open</v-icon>
                 </v-btn>
               </nuxt-link>
               <nuxt-link :to="`/app/library/story/${story.id}`" class="ml-auto">

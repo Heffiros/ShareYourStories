@@ -45,11 +45,11 @@ export default {
           authorName: this.authorName,
           id: this.currentUser.id
         })
-        await this.$auth.fetchUser();
-        this.$toast.success('Profil enregistré', {  timeout: 2000 });
+        await this.$auth.fetchUser()
+        this.$toast.success('Profil enregistré', {  timeout: 2000 })
       } catch (e) {
-        console.error(e);
-        this.errorMessage = 'Il y a eu un soucis pendant la mise à jour de votre profil';
+        console.error(e)
+        this.errorMessage = 'Il y a eu un soucis pendant la mise à jour de votre profil'
       }
     }
   },

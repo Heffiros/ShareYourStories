@@ -24,5 +24,17 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "pages")]
         public List<PublicApi_PageModel> Pages { get; set; }
+
+        [DataMember(Name = "eventId")]
+        public int? EventId { get; set; }
+        
+        [DataMember(Name = "hasVoted")]
+        public bool HasVoted { get; set; }
+
+        [DataMember(Name = "nbVote")]
+        public int NbVote { get; set; }
+
+        [DataMember(Name = "storyTags")]
+        public List<PublicApi_StoryTagModel>? StoryTags { get; set; }
 	}
 }

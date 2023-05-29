@@ -16,12 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<LovecraftDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection")));
 //Repository
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<ICommonRepository<Team>, TeamRepository>();
-builder.Services.AddTransient<ICommonRepository<UserTeam>, UserTeamRepository>();
-builder.Services.AddTransient<ICommonRepository<Story>, StoryRepository>();
-builder.Services.AddTransient<ICommonRepository<Page>, PageRepository>();
-//End Repository
+RepositoriesRegistration.RegisterRepositories(builder.Services);
 
 builder.Services.AddControllers();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

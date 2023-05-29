@@ -9,6 +9,7 @@ using Lovecraft.Api.Repository;
 using Lovecraft.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Lovecraft.Api.Controllers
@@ -20,20 +21,24 @@ namespace Lovecraft.Api.Controllers
 		public IConfiguration _configuration;
 		private readonly ICommonRepository<Story> _storyRepository;
 		private readonly ICommonRepository<Page> _pageRepository;
+		private readonly ICommonRepository<Event> _eventRepository;
+		private readonly StoryStoryTagRepository _storyStoryTagRepository;
 
 		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration)
+		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, StoryStoryTagRepository storyStoryTagRepository)
 		{
 			_storyRepository = storyRepository;
 			_pageRepository = pageRepository;
+			_eventRepository = eventRepository;
 			_configuration = configuration;
+			_storyStoryTagRepository = storyStoryTagRepository;
 		}
 
 		[HttpGet]
-		public ActionResult GetAll([FromQuery] int? userId, [FromQuery] int? teamsId, [FromQuery] int page = 0)
+		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] int page = 0)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			if (userIdClaim == null)
@@ -41,15 +46,15 @@ namespace Lovecraft.Api.Controllers
 				return BadRequest();
 			}
 			Expression<Func<Story, bool>> storyAuthorFilter = s => true;
-			/*if (userId != null)
-			{
-				storyAuthorFilter = s => s.UserId == userId;
-			}
-			else if (teamsId != null)
-			{
-				storyAuthorFilter = s => s.UserId == userId;
-			}*/
 			storyAuthorFilter = s => s.UserId == Int32.Parse(userIdClaim);
+			if (teamsId != null)
+			{
+				storyAuthorFilter = s => s.TeamId == teamsId;
+			} 
+			else if (eventId != null)
+			{
+				storyAuthorFilter = s => s.EventId == eventId;
+			}
 			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter);
 			List<PublicApi_StoryModel> results = queryable.Select(story => new PublicApi_StoryModel
 			{
@@ -61,6 +66,9 @@ namespace Lovecraft.Api.Controllers
 				TeamId = story.TeamId,
 				DateCreated = story.DateCreated,
 				Status = story.Status,
+				EventId = story.EventId,
+				HasVoted = story.StoryVotes.Any(sv =>  sv.UserId == Int32.Parse(userIdClaim)),
+				NbVote = story.StoryVotes.Count,
 				Pages = story.Pages.Select(page => new PublicApi_PageModel
 				{
 					Id = page.Id,
@@ -68,6 +76,11 @@ namespace Lovecraft.Api.Controllers
 					LastUpdatedDateTime = page.LastUpdatedDateTime,
 					Order = page.Order,
 					StoryId = page.StoryId
+				}).ToList(),
+				StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+				{
+					Id = sst.StoryTag.Id,
+					Label = sst.StoryTag.Label,
 				}).ToList()
 			}).ToList();
 			return Ok(results);
@@ -77,6 +90,7 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet("{storyId}")]
 		public ActionResult Get([FromRoute] int storyId)
 		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			Story story = _storyRepository.GetById(storyId);
 			if (story == null)
 			{
@@ -93,6 +107,9 @@ namespace Lovecraft.Api.Controllers
 				TeamId = story.TeamId,
 				DateCreated = story.DateCreated,
 				Status = story.Status,
+				EventId = story.EventId,
+				HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
+				NbVote = story.StoryVotes.Count,
 				Pages = story.Pages.Select(page => new PublicApi_PageModel
 				{
 					Id = page.Id,
@@ -100,6 +117,11 @@ namespace Lovecraft.Api.Controllers
 					LastUpdatedDateTime = page.LastUpdatedDateTime,
 					Order = page.Order,
 					StoryId = page.StoryId
+				}).ToList(),
+				StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+				{
+					Id = sst.StoryTag.Id,
+					Label = sst.StoryTag.Label,
 				}).ToList()
 			});
 		}
@@ -120,6 +142,31 @@ namespace Lovecraft.Api.Controllers
 					return BadRequest("Please select a file");
 				}
 
+				if (storyToCreate.EventId.HasValue)
+				{
+					Event eventLink = _eventRepository.GetById(storyToCreate.EventId.Value);
+					if (eventLink != null)
+					{
+						DateTime today = DateTime.Now;
+						if (eventLink.DateBegin <= today && eventLink.DateEnd >= today)
+						{
+							if (eventLink.Stories.Any(s => s.EventId == storyToCreate.EventId))
+							{
+								return BadRequest();
+							}
+						}
+						else
+						{
+							return BadRequest();
+						}
+					}
+					else
+					{
+
+						return NotFound();
+					}
+				}
+				//Todo si y a un event envoyé il faut vérifier qu'on a bien encore le droit de participer date + duplicité.
 				using (var stream = new MemoryStream())
 				{
 					await file.CopyToAsync(stream);
@@ -134,7 +181,8 @@ namespace Lovecraft.Api.Controllers
 							CoverUrl = storyToCreate.CoverUrl,
 							UserId = Int32.Parse(userIdClaim),
 							DateCreated = DateTime.Now,
-							Status = Status.Pending
+							Status = Status.Pending,
+							EventId = storyToCreate.EventId,
 						};
 						_storyRepository.Add(story);
 
@@ -151,6 +199,19 @@ namespace Lovecraft.Api.Controllers
 
 							_pageRepository.Add(pageToCreate);
 							orderPage++;
+						}
+
+						if (storyToCreate.StoryTags != null)
+						{
+							foreach (PublicApi_StoryTagModel storyTagToLink in storyToCreate.StoryTags)
+							{
+								StoryStoryTag storyStoryTag = new StoryStoryTag
+								{
+									StoryId = story.Id,
+									StoryTagId = storyTagToLink.Id
+								};
+								_storyStoryTagRepository.Add(storyStoryTag);
+							}
 						}
 					}
 				}
