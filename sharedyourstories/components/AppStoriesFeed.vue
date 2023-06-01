@@ -11,6 +11,11 @@
                   <v-icon>mdi-book-open</v-icon>
                 </v-btn>
               </nuxt-link>
+
+              <v-btn color="info" icon @click="$emit('voted', story.id)">
+                <v-icon>mdi-star-outline</v-icon>
+              </v-btn>
+
               <nuxt-link :to="`/app/library/story/${story.id}`" class="ml-auto">
                 <v-btn color="info" icon>
                   <v-icon>mdi-magnify</v-icon>

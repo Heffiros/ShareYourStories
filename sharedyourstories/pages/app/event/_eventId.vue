@@ -15,7 +15,7 @@
         <div class="eventTitle text-center">
           <h2 class="carousel-title">{{ event.title }}</h2>
         </div>
-        <app-stories-feed :event-id="event.id"/>
+        <app-stories-feed :event-id="event.id" @voted="vote"/>
       </div>
       <div v-if="activeTab === 1" class="col-12">
         <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
@@ -59,7 +59,6 @@ export default {
       await this.$store.dispatch('events/FETCH_EVENT', { eventId: parseInt(this.$route.params.eventId) })
     }
 
-    //Il faudra fetch ici que si le user sont logs on a le droit de voir le contenu mais de voter si pas auth
     if (this.$auth.loggedIn) {
       const result = await this.$axios.get('storyVote/event/'+ parseInt(this.$route.params.eventId) +'/avaiable')
       if (result.data)
@@ -74,6 +73,18 @@ export default {
       { label: this.event && !this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 },
       { label: 'Suivez les résultats', value: 2 }
     ]
+  },
+  methods: {
+    async vote (storyId) {
+      try {
+        await this.$axios.post('storyVote/event/'+ this.event.id + '/story/' + parseInt(storyId))
+        this.storyVotesAvaiable--
+        this.storyVotes = this.storyVotes.concat({userId: this.$auth.user.id, storyId: storyId})
+      } catch (error) {
+        this.$toast.error('Vous avez déjà voté pour ce récit', {  timeout: 2000 })
+      }
+
+    }
   }
 }
 </script>
