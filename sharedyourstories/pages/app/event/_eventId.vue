@@ -34,12 +34,14 @@
 
 <script>
 import appStoryCreator from '~/components/form/AppStoryCreator'
+import AppStoriesFeed from '~/components/AppStoriesFeed'
 import AppPodium from '~/components/AppPodium'
 
 export default {
   components: {
     appStoryCreator,
-    AppPodium
+    AppPodium,
+    AppStoriesFeed
   },
   data() {
     return {
