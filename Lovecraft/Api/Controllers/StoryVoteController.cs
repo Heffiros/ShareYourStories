@@ -4,6 +4,7 @@ using Lovecraft.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace Lovecraft.Api.Controllers
 {
@@ -34,8 +35,22 @@ namespace Lovecraft.Api.Controllers
 				return NotFound();
 			}
 
-			List<PublicApi_StoryVoteModel> votes = _storyVoteRepository.GetTop3StoryVotes(eventId);
+			List<PublicApi_PodiumModel> votes = _storyVoteRepository.GetTop3StoryVotes(eventId);
 			return Ok(votes);
+		}
+
+		[HttpGet("event/{eventId}/avaiable")]
+		public ActionResult GetStoryVoteAvaible(int eventId)
+		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+			Event eventToGet = _eventRepository.GetById(eventId);
+			if (eventToGet == null)
+			{
+				return NotFound();
+			}
+
+			List<PublicApi_StoryVoteModel> nbStoryVoteAvaible = _storyVoteRepository.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
+			return Ok(nbStoryVoteAvaible);
 		}
 	}
 }

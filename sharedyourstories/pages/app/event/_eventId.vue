@@ -44,7 +44,9 @@ export default {
   data() {
     return {
       activeTab: 0,
-      tabs: []
+      tabs: [],
+      storyVotes: [],
+      storyVotesAvaiable: 0
     }
   },
   computed: {
@@ -56,6 +58,17 @@ export default {
     if (!this.$store.getters['events/getEventById'](parseInt(this.$route.params.eventId))) {
       await this.$store.dispatch('events/FETCH_EVENT', { eventId: parseInt(this.$route.params.eventId) })
     }
+
+    //Il faudra fetch ici que si le user sont logs on a le droit de voir le contenu mais de voter si pas auth
+    if (this.$auth.loggedIn) {
+      const result = await this.$axios.get('storyVote/event/'+ parseInt(this.$route.params.eventId) +'/avaiable')
+      if (result.data)
+      {
+        this.storyVotes = result.data
+        this.storyVotesAvaiable = 3 - this.storyVotes.length
+      }
+    }
+
     this.tabs = [
       { label: 'Découvrir les récits ', value: 0 },
       { label: this.event && !this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 },

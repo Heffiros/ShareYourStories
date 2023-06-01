@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using DocumentFormat.OpenXml.InkML;
 using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
 using Lovecraft.Datas;
@@ -14,7 +15,7 @@ public class StoryVoteRepository
 	{
 		_dbContext = dbContext;
 	}
-	public List<PublicApi_StoryVoteModel> GetTop3StoryVotes(int eventId)
+	public List<PublicApi_PodiumModel> GetTop3StoryVotes(int eventId)
 	{
 		using (var dbContext = _dbContext)
 		{
@@ -29,11 +30,26 @@ public class StoryVoteRepository
 				.Take(3)
 				.ToList();
 
-			return result.Select(r => new PublicApi_StoryVoteModel
+			return result.Select(r => new PublicApi_PodiumModel
 			{
 				Count = r.Count,
 				StoryId = r.StoryId,
 				StoryName = r.Title
+			}).ToList();
+		}
+	}
+
+	public List<PublicApi_StoryVoteModel> GetStoryVoteAvaible(int eventId, int userId)
+	{
+		using (var dbContext = _dbContext)
+		{
+			var result = dbContext.StoryVotes
+				.Where(e => e.Story.EventId == eventId && e.UserId == userId).ToList(); ;
+			return result.Select(r => new PublicApi_StoryVoteModel()
+			{
+				Id = r.Id,
+				UserId = r.UserId,
+				StoryId = r.StoryId
 			}).ToList();
 		}
 	}
