@@ -1,5 +1,5 @@
 <template>
-  <v-carousel>
+  <v-carousel v-if="events">
     <v-carousel-item class="carousel-item" v-for="(event, index) in events" :key="index" @click="goEventFeed(event.id)">
       <!-- Image du carrousel -->
       <v-img :src="event.coverUrl" :alt="event.title"></v-img>

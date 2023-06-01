@@ -22,7 +22,7 @@ export const mutations = {
 
 export const actions = {
   async FETCH_STORIES (store, params) {
-    const result = await this.$axios.get('stories', { params: { userId: params.userId, page: params.page } })
+    const result = await this.$axios.get('stories', { params: params })
     store.commit('SET_STORIES', result.data)
   },
   async FETCH_STORY (store, params) {

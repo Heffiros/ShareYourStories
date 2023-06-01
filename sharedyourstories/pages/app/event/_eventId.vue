@@ -5,22 +5,30 @@
       bg-color="indigo-darken-2"
       v-model="activeTab"
     >
-      <v-tab v-for="(tab, index) in tabs" :key="index" :disabled="event && event.hasAlreadyParticipate">
+      <v-tab v-for="(tab, index) in tabs" :key="index" :disabled="event && event.hasAlreadyParticipate && index === 1">
           {{ tab.label }}
       </v-tab>
     </v-tabs>
 
-    <div v-if="activeTab === 0" class="col-12">
-      <div class="eventTitle text-center">
-        <h2 v-if="event" class="carousel-title">{{ event.title }}</h2>
+    <template v-if="event">
+      <div v-if="activeTab === 0" class="col-12">
+        <div class="eventTitle text-center">
+          <h2 class="carousel-title">{{ event.title }}</h2>
+        </div>
+        <app-stories-feed :event-id="event.id"/>
       </div>
-      <div>
-        <app-podium v-if="event" :event-id="event.id" :event-date-end="event.dateEnd"/>
+      <div v-if="activeTab === 1" class="col-12">
+        <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
       </div>
-    </div>
-    <div v-if="activeTab === 1" class="col-12">
-      <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
-    </div>
+      <div v-if="activeTab === 2" class="col-12">
+        <div class="eventTitle text-center">
+          <h2 class="carousel-title">{{ event.title }}</h2>
+        </div>
+        <div>
+          <app-podium :event-id="event.id" :event-date-end="event.dateEnd"/>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -49,9 +57,10 @@ export default {
       await this.$store.dispatch('events/FETCH_EVENT', { eventId: parseInt(this.$route.params.eventId) })
     }
     this.tabs = [
-        { label: 'Découvrir les récits ', value: 0 },
-        { label: this.event && !this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 }
-      ]
+      { label: 'Découvrir les récits ', value: 0 },
+      { label: this.event && !this.event.hasAlreadyParticipate ? 'Créer mon histoire' : 'Vous avez déjà participé à cet event', value: 1 },
+      { label: 'Suivez les résultats', value: 2 }
+    ]
   }
 }
 </script>
