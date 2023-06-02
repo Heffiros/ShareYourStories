@@ -64,12 +64,12 @@ export default {
         token: {
           property: 'accessToken',
           global: true,
-          maxAge: 60
+          maxAge: 60 * 60 * 24 * 30
         },
         refreshToken: {
           property: 'refreshToken',
           data: 'refreshToken',
-          maxAge: 60
+          maxAge: 60 * 60 * 24 * 30
         },
         autoRefresh: true,
         user: {
