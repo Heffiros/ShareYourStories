@@ -2,27 +2,7 @@
   <v-row>
       <v-row>
         <v-col v-for="(story, index) in stories" :key="index" cols="12" sm="6" md="4" lg="3">
-          <v-card>
-            <v-img :src="story.coverUrl" height="200"></v-img>
-            <v-card-title>{{ story.title }}</v-card-title>
-            <v-card-actions>
-              <nuxt-link :to="`/app/library/story/${story.id}/reader`">
-                <v-btn color="info" icon>
-                  <v-icon>mdi-book-open</v-icon>
-                </v-btn>
-              </nuxt-link>
-
-              <v-btn color="info" icon @click="$emit('voted', story.id)">
-                <v-icon>mdi-star-outline</v-icon>
-              </v-btn>
-
-              <nuxt-link :to="`/app/library/story/${story.id}`" class="ml-auto">
-                <v-btn color="info" icon>
-                  <v-icon>mdi-magnify</v-icon>
-                </v-btn>
-              </nuxt-link>
-            </v-card-actions>
-          </v-card>
+          <app-story :story="story" :storyVotes="storyVotes" :eventId="eventId" @voted="vote" />
         </v-col>
       </v-row>
 
@@ -42,6 +22,8 @@
 </template>
 
 <script>
+import AppStory from '~/components/AppStory'
+
 async function fetch(context) {
   let data = { page: context.page }
   if (context.eventId) {
@@ -55,6 +37,9 @@ async function fetch(context) {
   context.page++
 }
 export default {
+  components: {
+    AppStory
+  },
   data () {
     return {
       page: 0,
@@ -65,6 +50,10 @@ export default {
     eventId: {
       type: Number,
       default: 0
+    },
+    storyVotes: {
+      type: Array,
+      default: null
     }
   },
   computed: {
@@ -80,6 +69,9 @@ export default {
   methods: {
     loadMore () {
       fetch(this)
+    },
+    vote (storyId) {
+      this.$emit('voted', storyId)
     }
   }
 }

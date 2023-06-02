@@ -15,7 +15,7 @@
         <div class="eventTitle text-center">
           <h2 class="carousel-title">{{ event.title }}</h2>
         </div>
-        <app-stories-feed :event-id="event.id" @voted="vote"/>
+        <app-stories-feed :event-id="event.id" :story-votes="storyVotes" @voted="vote"/>
       </div>
       <div v-if="activeTab === 1" class="col-12">
         <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
