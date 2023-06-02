@@ -50,7 +50,7 @@ export default {
   methods: {
     vote () {
       if (!this.currentUserHasVotedForThisStory) {
-        $emit('voted', this.story.id)
+        this.$emit('voted', this.story.id)
       }
     }
   }
