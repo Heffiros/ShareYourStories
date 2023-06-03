@@ -3,7 +3,7 @@
     <v-img :src="story.coverUrl" height="200"></v-img>
     <v-card-title>{{ story.title }}</v-card-title>
     <v-card-actions>
-      <nuxt-link :to="`/app/library/story/${story.id}/reader`">
+      <nuxt-link :to="`/app/story/${story.id}/reader`">
         <v-btn color="info" icon>
           <v-icon>mdi-book-open</v-icon>
         </v-btn>
@@ -14,7 +14,7 @@
         <v-icon v-else>mdi-star-outline</v-icon>
       </v-btn>
 
-      <nuxt-link :to="`/app/library/story/${story.id}`" class="ml-auto">
+      <nuxt-link :to="`/app/story/${story.id}`" class="ml-auto">
         <v-btn color="info" icon>
           <v-icon>mdi-magnify</v-icon>
         </v-btn>

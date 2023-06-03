@@ -60,18 +60,12 @@ export default {
     },
     strategies: {
       local: {
-        scheme: 'refresh',
+        scheme: 'local',
         token: {
           property: 'accessToken',
           global: true,
           maxAge: 60 * 60 * 24 * 30
         },
-        refreshToken: {
-          property: 'refreshToken',
-          data: 'refreshToken',
-          maxAge: 60 * 60 * 24 * 30
-        },
-        autoRefresh: true,
         user: {
           property: 'user',
           // autoFetch: true
@@ -79,7 +73,7 @@ export default {
         endpoints: {
           login: { url: '/jwt/login', method: 'post' },
           register: { url: '/jwt/register', method: 'post' },
-          refresh: { url: '/jwt/refresh', method: 'post' },
+          //refresh: { url: '/jwt/refresh', method: 'post' },
           user: { url: '/user/me', method: 'get'},
           logout: false
         }
