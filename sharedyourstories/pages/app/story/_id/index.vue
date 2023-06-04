@@ -2,8 +2,23 @@
   <v-container>
     <v-row class="justify-center">
       <!-- Colonne 1 -->
-      <v-col cols="2" class="d-flex justify-center align-center" color="red">
-
+      <v-col cols="3">
+        <v-list v-if="story && currentUser.id === story.userId" class="scrollList">
+          <v-list-item
+            v-for="(item, i) in items"
+            :key="i"
+            :to="item.to"
+            router
+            exact
+          >
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
       </v-col>
 
       <!-- Colonne 2 -->
@@ -19,7 +34,7 @@
       </v-col>
 
       <!-- Colonne 3 -->
-      <v-col cols="2" class="d-flex justify-center align-center">
+      <v-col cols="1" class="d-flex justify-center align-center">
 
       </v-col>
     </v-row>
@@ -40,21 +55,42 @@ export default {
       page: 0,
       list: [],
       infiniteId: +new Date(),
-      storyId: 0
-    };
+      storyId: 0,
+      items: [
+        {
+          icon: 'mdi-chart-line',
+          title: 'Statisques',
+          to: '/app/dashboard'
+        },
+        {
+          icon: 'mdi-cog',
+          title: 'Editer les informations',
+          to: '/app/library'
+        }
+      ],
+    }
+  },
+  computed: {
+    currentUser () {
+      return this.$auth.user
+    },
+    story () {
+      console.log(this)
+      return this.$store.getters['stories/getStoryById'](parseInt(this.storyId))
+    }
   },
   methods: {
     infiniteHandler($state) {
       this.$axios.get('storyComments', { params: { page: this.page, storyId: this.storyId } })
       .then(({ data }) => {
         if (data.length > 0) {
-          this.page += 1;
-          this.list.push(...data);
-          $state.loaded();
+          this.page += 1
+          this.list.push(...data)
+          $state.loaded()
         } else {
-          $state.complete();
+          $state.complete()
         }
-      });
+      })
     },
     async sendComment (text) {
       const comment = {
@@ -68,16 +104,19 @@ export default {
       })
     }
   },
-  mounted () {
+  async mounted () {
     this.storyId = parseInt(this.$route.params.id)
+    if (!this.$store.getters['stories/getStoryById'](parseInt(this.storyId))) {
+      await this.$store.dispatch('stories/FETCH_STORY', {id : parseInt(this.storyId)})
+    }
   }
-};
+}
 </script>
 
 <style>
 
 .scrollContainer {
-  height: 750px;
+  height: 700px;
   overflow: auto;
   padding-right: 8px;
 }
@@ -98,5 +137,9 @@ export default {
 
 .scrollContainer::-webkit-scrollbar-track {
   background-color: transparent;
+}
+
+.scrollList {
+  margin-top: 150px;
 }
 </style>
