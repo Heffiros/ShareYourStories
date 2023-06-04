@@ -15,19 +15,12 @@ public class StoryCommentRepository
 		_dbContext = dbContext;
 	}
 
-	public IQueryable<StoryComment> GetAll(int? page, Expression<Func<StoryComment, bool>>? whereExpression)
+	public IQueryable<StoryComment> GetAll(int page, Expression<Func<StoryComment, bool>> whereExpression)
 	{
-		if (!page.HasValue && whereExpression == null)
-		{
-			return null;
-		}
-		else
-		{
-			return _dbContext.StoryComments
-				.Include(s => s.User)
-				.Where(whereExpression)
-				.Skip(_nbStoriesByFetch * page.Value)
-				.Take(_nbStoriesByFetch);
-		}
+		return _dbContext.StoryComments
+			.Include(s => s.User)
+			.Where(whereExpression)
+			.Skip(_nbStoriesByFetch * page)
+			.Take(_nbStoriesByFetch);
 	}
 }

@@ -9,7 +9,7 @@
       <!-- Colonne 2 -->
       <v-col cols="8">
         <div v-for="(item, $index) in list" :key="$index">
-          <!-- Hacker News item loop -->
+          {{ item.text }}
         </div>
 
         <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
@@ -37,9 +37,9 @@
       infiniteHandler($state) {
         this.$axios.get('storyComments', { params: { page: this.page, storyId: this.storyId } })
         .then(({ data }) => {
-          if (data.hits.length) {
+          if (data.length > 0) {
             this.page += 1;
-            this.list.push(...data.hits);
+            this.list.push(...data);
             $state.loaded();
           } else {
             $state.complete();
