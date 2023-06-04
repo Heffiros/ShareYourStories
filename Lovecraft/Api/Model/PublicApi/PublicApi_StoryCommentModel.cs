@@ -19,6 +19,6 @@ public class PublicApi_StoryCommentModel
 	public DateTime DateCreated { get; set; }
 
 	[DataMember(Name = "user")]
-	public PublicApi_UserModel User { get; set; }
+	public PublicApi_UserModel? User { get; set; }
 
 }

@@ -8,8 +8,9 @@
 
       <!-- Colonne 2 -->
       <v-col cols="8">
+        <app-comment-creator @send="sendComment"/>
         <div v-for="(item, $index) in list" :key="$index">
-          <app-story-comment :storyComment="item"/>
+          <app-story-comment class="comment" :storyComment="item"/>
         </div>
 
         <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
@@ -25,10 +26,12 @@
 
 <script>
 import AppStoryComment from '~/components/AppStoryComment'
+import AppCommentCreator from '~/components/form/AppCommentCreator'
 
 export default {
   components: {
-    AppStoryComment
+    AppStoryComment,
+    AppCommentCreator
   },
   data() {
     return {
@@ -50,6 +53,17 @@ export default {
           $state.complete();
         }
       });
+    },
+    async sendComment (text) {
+      const comment = {
+          storyId: this.storyId,
+          text: text
+      }
+      await this.$axios.post('storyComments' , comment).then(({ data }) => {
+        comment.user = this.$auth.user
+        comment.dateCreated = new Date()
+        this.list.unshift(comment)
+      })
     }
   },
   mounted () {
@@ -57,3 +71,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.comment {
+  margin-top: 24px;
+}
+</style>

@@ -23,4 +23,11 @@ public class StoryCommentRepository
 			.Skip(_nbStoriesByFetch * page)
 			.Take(_nbStoriesByFetch);
 	}
+
+	public StoryComment Add(StoryComment entity)
+	{
+		_dbContext.StoryComments.Add(entity);
+		_dbContext.SaveChanges();
+		return entity;
+	}
 }
