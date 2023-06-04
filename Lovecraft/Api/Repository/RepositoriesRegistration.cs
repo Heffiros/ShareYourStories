@@ -15,6 +15,6 @@ public class RepositoriesRegistration
 		services.AddTransient<StoryVoteRepository, StoryVoteRepository>();
 		services.AddTransient<StoryTagRepository, StoryTagRepository>();
 		services.AddTransient<StoryStoryTagRepository, StoryStoryTagRepository>();
-		services.AddTransient<StoryComment, StoryComment>();
+		services.AddTransient<StoryCommentRepository, StoryCommentRepository>();
 	}
 }

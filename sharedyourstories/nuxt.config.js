@@ -32,7 +32,8 @@ export default {
   plugins: [
     '~/plugins/axios.js',
     '~/plugins/vuetify.js',
-    '~/plugins/toastification'
+    '~/plugins/toastification',
+    '~/plugins/vue-infinite-loading'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
