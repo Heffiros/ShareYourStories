@@ -9,7 +9,7 @@
       <!-- Colonne 2 -->
       <v-col cols="8">
         <div v-for="(item, $index) in list" :key="$index">
-          {{ item.text }}
+          <app-story-comment :storyComment="item"/>
         </div>
 
         <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
@@ -24,32 +24,36 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        page: 0,
-        list: [],
-        infiniteId: +new Date(),
-        storyId: 0
-      };
-    },
-    methods: {
-      infiniteHandler($state) {
-        this.$axios.get('storyComments', { params: { page: this.page, storyId: this.storyId } })
-        .then(({ data }) => {
-          if (data.length > 0) {
-            this.page += 1;
-            this.list.push(...data);
-            $state.loaded();
-          } else {
-            $state.complete();
-          }
-        });
-      }
-    },
-    mounted () {
-      this.storyId = parseInt(this.$route.params.id)
-      console.log(this.storyId)
+import AppStoryComment from '~/components/AppStoryComment'
+
+export default {
+  components: {
+    AppStoryComment
+  },
+  data() {
+    return {
+      page: 0,
+      list: [],
+      infiniteId: +new Date(),
+      storyId: 0
+    };
+  },
+  methods: {
+    infiniteHandler($state) {
+      this.$axios.get('storyComments', { params: { page: this.page, storyId: this.storyId } })
+      .then(({ data }) => {
+        if (data.length > 0) {
+          this.page += 1;
+          this.list.push(...data);
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
+      });
     }
-  };
+  },
+  mounted () {
+    this.storyId = parseInt(this.$route.params.id)
+  }
+};
 </script>
