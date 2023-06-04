@@ -55,19 +55,7 @@ export default {
       page: 0,
       list: [],
       infiniteId: +new Date(),
-      storyId: 0,
-      items: [
-        {
-          icon: 'mdi-chart-line',
-          title: 'Statisques',
-          to: '/app/dashboard'
-        },
-        {
-          icon: 'mdi-cog',
-          title: 'Editer les informations',
-          to: '/app/library'
-        }
-      ],
+      storyId: 0
     }
   },
   computed: {
@@ -77,6 +65,20 @@ export default {
     story () {
       console.log(this)
       return this.$store.getters['stories/getStoryById'](parseInt(this.storyId))
+    },
+    items () {
+      return  [
+        {
+          icon: 'mdi-chart-line',
+          title: 'Statisques',
+          to: '/app/story/' + this.storyId + '/statistics'
+        },
+        {
+          icon: 'mdi-cog',
+          title: 'Editer les informations',
+          to: '/app/story/' + this.storyId + '/update'
+        }
+      ]
     }
   },
   methods: {
