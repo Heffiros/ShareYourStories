@@ -9,11 +9,13 @@
       <!-- Colonne 2 -->
       <v-col cols="8">
         <app-comment-creator @send="sendComment"/>
-        <div v-for="(item, $index) in list" :key="$index">
-          <app-story-comment class="comment" :storyComment="item"/>
-        </div>
+        <div class="scrollContainer">
+          <div v-for="(item, $index) in list" :key="$index">
+            <app-story-comment class="comment" :storyComment="item"/>
+          </div>
 
-        <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
+          <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
+        </div>
       </v-col>
 
       <!-- Colonne 3 -->
@@ -73,7 +75,28 @@ export default {
 </script>
 
 <style>
+
+.scrollContainer {
+  height: 750px;
+  overflow: auto;
+  padding-right: 8px;
+}
+
 .comment {
   margin-top: 24px;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  width: 4px;
+  background-color: transparent;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background-color: #424242;
+  border-radius: 10px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 </style>
