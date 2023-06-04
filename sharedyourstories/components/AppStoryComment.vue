@@ -4,16 +4,18 @@
     max-width="600"
     rounded="lg"
     width="100%"
-    class="pa-4 text-center mx-auto"
+    class="pa-4  mx-auto container"
   >
-    <v-icon
-      class="mb-5"
-      color="success"
-      icon="mdi-check-circle"
-      size="112"
-    ></v-icon>
+  <div class="userInfo">
+    <v-avatar size="24">
+      <v-img cover :src="storyComment.user.profilePictureUrl" />
+    </v-avatar>
+    <span class="authorName">{{ storyComment.user.authorName }}</span>
+  </div>
 
-    <p class="mb-4 text-medium-emphasis text-body-2">
+
+
+    <p class="mb-4 text-medium-emphasis text-body-2 comment">
       {{ storyComment.text }}
     </p>
 
@@ -46,6 +48,22 @@ export default {
 </script>
 
 <style>
+.container {
+  min-height: 120px;
+}
+
+.userInfo {
+  padding: 4;
+}
+
+.authorName {
+  padding-left: 8px;
+}
+
+.comment {
+  padding: 12px;
+}
+
 .date {
   padding: 4px;
   font-size: 10px
