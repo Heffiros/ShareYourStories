@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Repository;
 
-public class StoryRepository : ICommonRepository<Story>
+public class StoryRepository
 {
     readonly LovecraftDbContext _dbContext = new();
     readonly int _nbStoriesByFetch = 5;
@@ -14,7 +14,7 @@ public class StoryRepository : ICommonRepository<Story>
     {
         _dbContext = dbContext;
     }
-    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression)
+    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression, Expression<Func<Story, bool>>? searchWhereExpression)
     {
         if (!page.HasValue && whereExpression == null)
         {
@@ -27,6 +27,7 @@ public class StoryRepository : ICommonRepository<Story>
 	            .Include(s => s.StoryVotes)
 	            .Include(s => s.StoryStoryTags)
 					.ThenInclude(st => st.StoryTag)
+	            .Where(searchWhereExpression)
 	            .Where(whereExpression)
 	            .Skip(_nbStoriesByFetch * page.Value)
 	            .Take(_nbStoriesByFetch);

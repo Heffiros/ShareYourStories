@@ -1,24 +1,35 @@
 <template>
   <v-row>
-      <v-row>
-        <v-col v-for="(story, index) in stories" :key="index" cols="12" sm="6" md="4" lg="3">
-          <app-story :story="story" :storyVotes="storyVotes" :eventId="eventId" @voted="vote" />
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="auto">
-          <v-btn
-            :disabled="!hasMore"
-            size="large"
-            color="info"
-            @click="loadMore"
-            >
-            Charger plus
-          </v-btn>
-        </v-col>
-      </v-row>
+    <v-row>
+      <v-col cols="3" offset="9">
+        <v-text-field
+          v-model="searchText"
+          label="Recherche"
+          outlined
+          dense
+          @input="search"
+        ></v-text-field>
+      </v-col>
     </v-row>
+    <v-row>
+      <v-col v-for="(story, index) in stories" :key="index" cols="12" sm="6" md="4" lg="3">
+        <app-story :story="story" :storyVotes="storyVotes" :eventId="eventId" @voted="vote" />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="auto">
+        <v-btn
+          :disabled="!hasMore"
+          size="large"
+          color="info"
+          @click="loadMore"
+          >
+          Charger plus
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-row>
 </template>
 
 <script>
@@ -29,6 +40,7 @@ async function fetch(context) {
   if (context.eventId) {
     data.eventId = context.eventId
   }
+  data.search = context.searchText
   await context.$store.dispatch('stories/FETCH_STORIES', data)
   const currentNbStories = context.stories.length
   if (currentNbStories % 5 != 0) {
@@ -43,7 +55,8 @@ export default {
   data () {
     return {
       page: 0,
-      hasMore: true
+      hasMore: true,
+      searchText: ''
     }
   },
   props: {
@@ -72,6 +85,13 @@ export default {
     },
     vote (storyId) {
       this.$emit('voted', storyId)
+    },
+    async search () {
+      if (this.searchText && this.searchText.length >= 3) {
+        await this.$store.dispatch('stories/RESET_STORIES')
+        this.page = 0
+        await fetch(this)
+      }
     }
   }
 }

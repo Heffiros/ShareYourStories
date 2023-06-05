@@ -19,7 +19,7 @@ namespace Lovecraft.Api.Controllers
 	public class StoryController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly ICommonRepository<Story> _storyRepository;
+		private readonly StoryRepository _storyRepository;
 		private readonly ICommonRepository<Page> _pageRepository;
 		private readonly ICommonRepository<Event> _eventRepository;
 		private readonly StoryStoryTagRepository _storyStoryTagRepository;
@@ -28,7 +28,7 @@ namespace Lovecraft.Api.Controllers
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, StoryStoryTagRepository storyStoryTagRepository)
+		public StoryController(StoryRepository storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, StoryStoryTagRepository storyStoryTagRepository)
 		{
 			_storyRepository = storyRepository;
 			_pageRepository = pageRepository;
@@ -38,7 +38,7 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] int page = 0)
+		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] string? search, [FromQuery] int page = 0)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			if (userIdClaim == null)
@@ -55,7 +55,15 @@ namespace Lovecraft.Api.Controllers
 			{
 				storyAuthorFilter = s => s.EventId == eventId;
 			}
-			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter);
+
+			Expression<Func<Story, bool>> storySearchFilter = s => true;
+			if (search != null)
+			{
+				storySearchFilter = s =>  s.Title.Contains(search);
+			}
+
+
+			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter, storySearchFilter);
 			List<PublicApi_StoryModel> results = queryable.Select(story => new PublicApi_StoryModel
 			{
 				Id = story.Id,
