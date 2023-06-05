@@ -18,7 +18,15 @@
         <app-stories-feed :event-id="event.id" :story-votes="storyVotes" @voted="vote"/>
       </div>
       <div v-if="activeTab === 1" class="col-12">
-        <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
+        <div>
+          <v-sheet class="rulesContainer">
+            <h2 class="rulesTitle">Les règles de ce concours</h2>
+            <p class="rules" v-html="event.rules"></p>
+          </v-sheet>
+        </div>
+        <div>
+          <app-story-creator :event-id="event.id" @created="activeTab = 0"/>
+        </div>
       </div>
       <div v-if="activeTab === 2" class="col-12">
         <div class="eventTitle text-center">
@@ -95,5 +103,18 @@ export default {
   .eventTitle {
     margin: 16px;
     font-size: 24px;
+  }
+
+  .rulesContainer {
+    min-height: 150px;
+    margin-bottom: 24px;
+  }
+
+  .rules {
+    padding: 16px
+  }
+
+  .rulesTitle {
+    padding: 16px
   }
 </style>
