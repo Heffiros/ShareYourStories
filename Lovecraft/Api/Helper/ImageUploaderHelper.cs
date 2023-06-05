@@ -29,7 +29,7 @@ public class ImageUploaderHelper
             ContentType = data.MimeType
         });
 
-        string pictureUrl = $"{blobContainer.Uri.ToString().Replace("http://", "https://")}/{data.Name}{data.Extension}";
+        string pictureUrl = $"{blobContainer.Uri.ToString()}/{data.Name}{data.Extension}";
         return pictureUrl;
     }
 }

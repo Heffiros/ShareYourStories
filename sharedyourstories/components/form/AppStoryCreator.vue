@@ -11,6 +11,7 @@
             label="Nom"
             required
           />
+          <app-image-uploader v-model="story.coverUrl"/>
           <!-- Todo rajouter ici le choix de l'équipe quand on pourra-->
           <v-btn type="submit" color="primary">Suivant</v-btn>
         </v-form>
@@ -48,10 +49,12 @@
 
 <script>
 import AppStoryTagsResearcher from '~/components/AppStoryTagsResearcher'
+import AppImageUploader from '~/components/form/AppImageUploader'
 
 export default {
   components : {
-    AppStoryTagsResearcher
+    AppStoryTagsResearcher,
+    AppImageUploader
   },
   props: {
     eventId: {

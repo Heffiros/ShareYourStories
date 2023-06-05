@@ -53,8 +53,8 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[Authorize]
-		[HttpPost("{userId}")]
-		public ActionResult Post([FromBody] PublicApi_UserModel userToUpdate)
+		[HttpPut("{userId}")]
+		public ActionResult Put([FromBody] PublicApi_UserModel userToUpdate)
 		{
 			var userIdString = User.FindFirstValue("userId");
 			if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))

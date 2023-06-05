@@ -82,6 +82,11 @@ public class UserRepository : IUserRepository
 			    user.Email = model.Email;
 		    }
 
+		    if (user.ProfilePictureUrl != model.ProfilePictureUrl)
+		    {
+			    user.ProfilePictureUrl = model.ProfilePictureUrl;
+		    }
+
 			_dbContext.Users.Update(user);
 		    _dbContext.SaveChanges();
 		}
