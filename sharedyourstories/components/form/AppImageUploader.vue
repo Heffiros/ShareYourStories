@@ -6,7 +6,16 @@
       label="Choose an image"
       @change="handleFileUpload"
     ></v-file-input>
-    <v-img v-if="imageUrl" :src="imageUrl" contain></v-img>
+    <v-img
+      v-if="imageUrl"
+      :src="imageUrl"
+      :width="300"
+      :height="300"
+      class="imageUploaded"
+      aspect-ratio="16/9"
+      cover
+    ></v-img>
+    <v-img contain></v-img>
   </div>
 </template>
 
@@ -44,3 +53,11 @@ export default {
   },
 };
 </script>
+
+<style>
+
+.imageUploaded {
+  margin-bottom: 24px;
+}
+
+</style>
