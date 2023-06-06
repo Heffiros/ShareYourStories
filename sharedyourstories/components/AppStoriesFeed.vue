@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <div>
     <v-row>
       <v-col cols="3" offset="9">
         <v-text-field
@@ -15,6 +15,15 @@
         </v-btn>
       </v-col>
     </v-row>
+
+    <v-row v-if="storyTags">
+      <div v-for="item in storyTags" :key="item.id" class="item" @click="searchWithStoryTagsFilter(item.id)">
+        <div class="item-content">
+          {{ item.label }}
+        </div>
+      </div>
+    </v-row>
+
     <v-row>
       <v-col v-for="(story, index) in stories" :key="index" cols="12" sm="6" md="4" lg="3">
         <app-story :story="story" :storyVotes="storyVotes" :eventId="eventId" @voted="vote" />
@@ -33,7 +42,7 @@
         </v-btn>
       </v-col>
     </v-row>
-  </v-row>
+  </div>
 </template>
 
 <script>
@@ -44,6 +53,12 @@ async function fetch(context) {
   if (context.eventId) {
     data.eventId = context.eventId
   }
+
+  if (context.storyTagSelected) {
+    data.storyTagId = context.storyTagSelected
+    context.storyTagSelected = null
+  }
+
   data.search = context.searchText
   await context.$store.dispatch('stories/FETCH_STORIES', data)
   const currentNbStories = context.stories.length
@@ -60,7 +75,9 @@ export default {
     return {
       page: 0,
       hasMore: true,
-      searchText: ''
+      searchText: '',
+      storyTags: null,
+      storyTagSelected: null
     }
   },
   props: {
@@ -78,8 +95,16 @@ export default {
       return this.$store.state.stories.stories
     }
   },
-  mounted () {
+  async mounted () {
     this.$store.dispatch('stories/RESET_STORIES')
+    const result = await this.$axios.get('storyTags/library')
+    if (result.data) {
+      this.storyTags = result.data
+      this.storyTags.unshift({
+        id: null,
+        label: 'Tous'
+      })
+    }
     this.page = 0
     fetch(this)
   },
@@ -102,6 +127,12 @@ export default {
       this.page = 0
       this.searchText = ''
       await fetch(this)
+    },
+    async searchWithStoryTagsFilter (id) {
+      await this.$store.dispatch('stories/RESET_STORIES')
+      this.page = 0
+      this.storyTagSelected = id
+      await fetch(this)
     }
   }
 }
@@ -116,4 +147,27 @@ export default {
   vertical-align: middle;
   display: inline-block;
 }
+
+.item {
+  display: inline-block;
+  margin: 8px;
+  background-color: #4CAF50;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/*
+Le important là c'est parce que cette classe existe déjà dans AppStoryTagsResearcher.
+Todo Mettre stylus ou autre pour compilé le nom de classe
+*/
+.item:hover {
+  background-color: #22552b !important;
+  cursor: pointer;
+}
+
+.item-content {
+  color: white;
+}
+
 </style>

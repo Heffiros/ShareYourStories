@@ -14,7 +14,7 @@ public class StoryRepository
     {
         _dbContext = dbContext;
     }
-    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression, Expression<Func<Story, bool>>? searchWhereExpression)
+    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression, Expression<Func<Story, bool>>? searchWhereExpression, Expression<Func<Story, bool>>? storyTagsWhereExpression)
     {
         if (!page.HasValue && whereExpression == null)
         {
@@ -28,6 +28,7 @@ public class StoryRepository
 	            .Include(s => s.StoryStoryTags)
 					.ThenInclude(st => st.StoryTag)
 	            .Where(searchWhereExpression)
+	            .Where(storyTagsWhereExpression)
 	            .Where(whereExpression)
 	            .Skip(_nbStoriesByFetch * page.Value)
 	            .Take(_nbStoriesByFetch);

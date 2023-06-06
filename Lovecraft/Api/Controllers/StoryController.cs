@@ -38,7 +38,7 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] string? search, [FromQuery] int page = 0)
+		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] string? search, [FromQuery] int? storyTagId, [FromQuery] int page = 0)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			if (userIdClaim == null)
@@ -56,14 +56,20 @@ namespace Lovecraft.Api.Controllers
 				storyAuthorFilter = s => s.EventId == eventId;
 			}
 
-			Expression<Func<Story, bool>> storySearchFilter = s => true;
+			Expression<Func<Story, bool>> storyFilter = s => true;
 			if (search != null)
 			{
-				storySearchFilter = s =>  s.Title.Contains(search);
+				storyFilter = s =>  s.Title.Contains(search);
+			}
+
+			Expression<Func<Story, bool>> storyTagsFilter = s => true;
+			if (storyTagId.HasValue)
+			{
+				storyTagsFilter = s => s.StoryStoryTags.Any(sst => sst.StoryTagId == storyTagId.Value);
 			}
 
 
-			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter, storySearchFilter);
+			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter, storyFilter, storyTagsFilter);
 			List<PublicApi_StoryModel> results = queryable.Select(story => new PublicApi_StoryModel
 			{
 				Id = story.Id,
