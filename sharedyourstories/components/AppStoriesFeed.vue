@@ -1,7 +1,12 @@
 <template>
   <div>
-    <v-row>
-      <v-col cols="3" offset="9">
+    <v-row v-if="storyTags">
+      <div v-for="item in storyTags" :key="item.id" class="item" @click="searchWithStoryTagsFilter(item.id)">
+        <div class="item-content">
+          {{ item.label }}
+        </div>
+      </div>
+      <div>
         <v-text-field
           v-model="searchText"
           class="searchField"
@@ -13,14 +18,6 @@
         <v-btn class="resetButton" v-if="searchText" color="info" height="38" @click="reset">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row v-if="storyTags">
-      <div v-for="item in storyTags" :key="item.id" class="item" @click="searchWithStoryTagsFilter(item.id)">
-        <div class="item-content">
-          {{ item.label }}
-        </div>
       </div>
     </v-row>
 
@@ -141,10 +138,10 @@ export default {
 <style>
 .searchField {
   display: inline-block;
+  padding-top: 10px !important;
 }
 
 .resetButton {
-  vertical-align: middle;
   display: inline-block;
 }
 
@@ -155,8 +152,12 @@ export default {
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 10px;
+  height: 45px;
 }
 
+.tmp {
+  display: inline-block;
+}
 /*
 Le important là c'est parce que cette classe existe déjà dans AppStoryTagsResearcher.
 Todo Mettre stylus ou autre pour compilé le nom de classe
