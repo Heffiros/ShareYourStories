@@ -4,11 +4,15 @@
       <v-col cols="3" offset="9">
         <v-text-field
           v-model="searchText"
+          class="searchField"
           label="Recherche"
           outlined
           dense
           @input="search"
         ></v-text-field>
+        <v-btn class="resetButton" v-if="searchText" color="info" height="38" @click="reset">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -92,7 +96,24 @@ export default {
         this.page = 0
         await fetch(this)
       }
+    },
+    async reset () {
+      await this.$store.dispatch('stories/RESET_STORIES')
+      this.page = 0
+      this.searchText = ''
+      await fetch(this)
     }
   }
 }
 </script>
+
+<style>
+.searchField {
+  display: inline-block;
+}
+
+.resetButton {
+  vertical-align: middle;
+  display: inline-block;
+}
+</style>
