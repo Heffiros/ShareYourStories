@@ -19,6 +19,12 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
+        <v-sheet v-if="story && story.user" class="pa-4 authorContainer d-flex flex-column align-center">
+          <v-avatar size="40">
+            <v-img cover :src="currentUser.profilePictureUrl"></v-img>
+          </v-avatar>
+          <div class="mt-2 authorName">{{ story.user.authorName }}</div>
+        </v-sheet>
       </v-col>
 
       <!-- Colonne 2 -->
@@ -63,7 +69,6 @@ export default {
       return this.$auth.user
     },
     story () {
-      console.log(this)
       return this.$store.getters['stories/getStoryById'](parseInt(this.storyId))
     },
     items () {
@@ -111,11 +116,23 @@ export default {
     if (!this.$store.getters['stories/getStoryById'](parseInt(this.storyId))) {
       await this.$store.dispatch('stories/FETCH_STORY', {id : parseInt(this.storyId)})
     }
+    console.log(this.story)
   }
 }
 </script>
 
 <style>
+.authorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 24px
+}
+
+.authorName {
+  padding-top: 4px
+}
 
 .scrollContainer {
   height: 700px;

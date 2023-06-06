@@ -24,6 +24,7 @@ public class StoryRepository
         {
             return _dbContext.Stories
 	            .Include(s => s.Pages)
+	            .Include(s => s.User)
 	            .Include(s => s.StoryVotes)
 	            .Include(s => s.StoryStoryTags)
 					.ThenInclude(st => st.StoryTag)
@@ -39,6 +40,7 @@ public class StoryRepository
     {
 		return _dbContext.Stories
 			.Include(s => s.Pages)
+			.Include(s => s.User)
 			.Include(s => s.StoryVotes)
 			.Include(s => s.StoryStoryTags)
 				.ThenInclude(st => st.StoryTag)

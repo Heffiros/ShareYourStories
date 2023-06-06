@@ -7,6 +7,7 @@ using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
 using Lovecraft.Api.Repository;
 using Lovecraft.Model;
+using Lovecraft.Model.PublicApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -95,7 +96,12 @@ namespace Lovecraft.Api.Controllers
 				{
 					Id = sst.StoryTag.Id,
 					Label = sst.StoryTag.Label,
-				}).ToList()
+				}).ToList(),
+				User = new PublicApi_UserModel
+				{
+					AuthorName = story.User.AuthorName,
+					ProfilePictureUrl = story.User.ProfilePictureUrl
+				}
 			}).ToList();
 			return Ok(results);
 		}
@@ -136,7 +142,12 @@ namespace Lovecraft.Api.Controllers
 				{
 					Id = sst.StoryTag.Id,
 					Label = sst.StoryTag.Label,
-				}).ToList()
+				}).ToList(),
+				User = new PublicApi_UserModel
+				{
+					AuthorName = story.User.AuthorName,
+					ProfilePictureUrl = story.User.ProfilePictureUrl,
+				}
 			});
 		}
 
