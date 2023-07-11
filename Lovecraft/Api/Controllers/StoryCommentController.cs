@@ -1,0 +1,65 @@
+﻿using Lovecraft.Api.Model;
+using Lovecraft.Api.Model.PublicApi;
+using Lovecraft.Api.Repository;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using Lovecraft.Model.PublicApi;
+
+namespace Lovecraft.Api.Controllers
+{
+	[Route("storyComments")]
+	[ApiController]
+	public class StoryCommentController : ControllerBase
+	{
+		public IConfiguration _configuration;
+		private readonly StoryCommentRepository _storyCommentRepository;
+
+		public StoryCommentController(StoryCommentRepository storyCommentRepository, IConfiguration configuration)
+		{
+			_storyCommentRepository = storyCommentRepository;
+			_configuration = configuration;
+		}
+
+		[HttpGet]
+		public ActionResult GetAll([FromQuery] int storyId, [FromQuery] int page = 0)
+		{
+			Expression<Func<StoryComment, bool>> storyCommentFilter = s => true;
+			storyCommentFilter = sc => sc.StoryId == storyId && sc.Status == Status.Online;
+			IQueryable<StoryComment> queryable = _storyCommentRepository.GetAll(page, storyCommentFilter);
+
+			List<PublicApi_StoryCommentModel> results = queryable.Select(storyComment => new PublicApi_StoryCommentModel
+			{
+				Id = storyComment.Id,
+				Text = storyComment.Text,
+				DateCreated = storyComment.DateCreated,
+				User = new PublicApi_UserModel
+				{
+					Id = storyComment.User.Id,
+					AuthorName = storyComment.User.AuthorName,
+					ProfilePictureUrl = storyComment.User.ProfilePictureUrl
+				}
+			}).ToList();
+			return Ok(results);
+		}
+
+		[HttpPost]
+		public ActionResult GetAll([FromBody] PublicApi_StoryCommentModel storyComment)
+		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+			StoryComment storyCommentToAdd = new StoryComment
+			{
+				Text = storyComment.Text,
+				UserId = Int32.Parse(userIdClaim),
+				StoryId = storyComment.storyId,
+				DateCreated = DateTime.Now,
+				Status = Status.Online
+			};
+			storyCommentToAdd = _storyCommentRepository.Add(storyCommentToAdd);
+			return Ok(storyCommentToAdd);
+		}
+	}
+}

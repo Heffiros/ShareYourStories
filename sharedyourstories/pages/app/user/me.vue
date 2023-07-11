@@ -14,6 +14,7 @@
             <v-form @submit.prevent="submit" class="full-form">
               <v-text-field v-model="authorName" label="Nom d'auteur"></v-text-field>
               <v-text-field v-model="email" label="Adresse e-mail"></v-text-field>
+              <app-image-uploader v-model="profilePictureUrl"/>
               <v-btn type="submit" color="success" class="mr-4">Mettre à jour</v-btn>
             </v-form>
           </div>
@@ -24,12 +25,18 @@
 </template>
 
 <script>
+import AppImageUploader from '~/components/form/AppImageUploader'
+
 export default {
+  components: {
+    AppImageUploader
+  },
   data() {
     return {
       email: '',
       authorName: '',
-      errorMessage: ''
+      errorMessage: '',
+      profilePictureUrl: null
     }
   },
   computed: {
@@ -40,10 +47,11 @@ export default {
   methods: {
     async submit() {
       try {
-        await this.$axios.post('/user/' + this.currentUser.id , {
+        await this.$axios.put('/user/' + this.currentUser.id , {
           email: this.email,
           authorName: this.authorName,
-          id: this.currentUser.id
+          id: this.currentUser.id,
+          profilePictureUrl: this.profilePictureUrl
         })
         await this.$auth.fetchUser()
         this.$toast.success('Profil enregistré', {  timeout: 2000 })

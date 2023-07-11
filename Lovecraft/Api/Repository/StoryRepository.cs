@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Repository;
 
-public class StoryRepository : ICommonRepository<Story>
+public class StoryRepository
 {
     readonly LovecraftDbContext _dbContext = new();
     readonly int _nbStoriesByFetch = 5;
@@ -14,7 +14,7 @@ public class StoryRepository : ICommonRepository<Story>
     {
         _dbContext = dbContext;
     }
-    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression)
+    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression, Expression<Func<Story, bool>>? searchWhereExpression, Expression<Func<Story, bool>>? storyTagsWhereExpression)
     {
         if (!page.HasValue && whereExpression == null)
         {
@@ -24,9 +24,12 @@ public class StoryRepository : ICommonRepository<Story>
         {
             return _dbContext.Stories
 	            .Include(s => s.Pages)
+	            .Include(s => s.User)
 	            .Include(s => s.StoryVotes)
 	            .Include(s => s.StoryStoryTags)
 					.ThenInclude(st => st.StoryTag)
+	            .Where(searchWhereExpression)
+	            .Where(storyTagsWhereExpression)
 	            .Where(whereExpression)
 	            .Skip(_nbStoriesByFetch * page.Value)
 	            .Take(_nbStoriesByFetch);
@@ -37,6 +40,7 @@ public class StoryRepository : ICommonRepository<Story>
     {
 		return _dbContext.Stories
 			.Include(s => s.Pages)
+			.Include(s => s.User)
 			.Include(s => s.StoryVotes)
 			.Include(s => s.StoryStoryTags)
 				.ThenInclude(st => st.StoryTag)

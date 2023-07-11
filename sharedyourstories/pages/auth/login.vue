@@ -7,7 +7,10 @@
           <v-text-field v-model="email" label="Adresse e-mail"></v-text-field>
           <v-text-field v-model="password" label="Mot de passe" type="password"></v-text-field>
           <v-btn type="submit" color="primary" class="mr-4">Se connecter</v-btn>
-          <router-link :to="{ name: 'register' }">S'inscrire</router-link>
+          <router-link :to="{ name: 'register' }"></router-link>
+          <nuxt-link :to="`/auth/register`">
+            S'inscrire
+          </nuxt-link>
         </v-form>
       </v-card-text>
     </v-card>

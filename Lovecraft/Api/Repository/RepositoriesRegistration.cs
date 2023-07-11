@@ -9,11 +9,12 @@ public class RepositoriesRegistration
 		services.AddTransient<IUserRepository, UserRepository>();
 		services.AddTransient<ICommonRepository<Team>, TeamRepository>();
 		services.AddTransient<ICommonRepository<UserTeam>, UserTeamRepository>();
-		services.AddTransient<ICommonRepository<Story>, StoryRepository>();
+		services.AddTransient<StoryRepository, StoryRepository>();
 		services.AddTransient<ICommonRepository<Page>, PageRepository>();
 		services.AddTransient<ICommonRepository<Event>, EventRepository>();
 		services.AddTransient<StoryVoteRepository, StoryVoteRepository>();
 		services.AddTransient<StoryTagRepository, StoryTagRepository>();
 		services.AddTransient<StoryStoryTagRepository, StoryStoryTagRepository>();
+		services.AddTransient<StoryCommentRepository, StoryCommentRepository>();
 	}
 }

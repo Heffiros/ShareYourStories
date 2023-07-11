@@ -32,7 +32,8 @@ export default {
   plugins: [
     '~/plugins/axios.js',
     '~/plugins/vuetify.js',
-    '~/plugins/toastification'
+    '~/plugins/toastification',
+    '~/plugins/vue-infinite-loading'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -42,14 +43,17 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
-    '@nuxtjs/auth'
+    //'@nuxtjs/auth'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
+
+
   auth: {
     redirect: {
       login: '/auth/login',
@@ -57,13 +61,23 @@ export default {
     },
     strategies: {
       local: {
-        endpoints: {
-          login: { url: '/jwt/login', method: 'post', propertyName: 'token' },
-          register: { url: '/jwt/register', method: 'post', propertyName: 'token' },
-          user: { url: '/user/me', method: 'get', propertyName: 'user' },
-          logout: false
+        scheme: 'local',
+        token: {
+          property: 'accessToken',
+          global: true,
+          maxAge: 60 * 60 * 24 * 30
         },
-        tokenType: 'Bearer'
+        user: {
+          property: 'user',
+          // autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/jwt/login', method: 'post' },
+          register: { url: '/jwt/register', method: 'post' },
+          //refresh: { url: '/jwt/refresh', method: 'post' },
+          user: { url: '/user/me', method: 'get'},
+          logout: false
+        }
       }
     }
   },
@@ -74,12 +88,12 @@ export default {
     headers: {
       common: {
         Authorization: (context) => {
-          const token = context.$auth.getToken('local')
+          /*const token = context.$auth.getToken('local')
           if (token) {
             return `Bearer ${token}`
           } else {
             return null;
-          }
+          }*/
         }
       }
     }

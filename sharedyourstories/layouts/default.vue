@@ -26,6 +26,17 @@
 
         </v-list-item>
       </v-list>
+      <v-list-item
+        v-if="isAuth"
+        @click="logout"
+      >
+        <v-list-item-action>
+          <v-icon>mdi-logout</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>Déconnexion</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"
@@ -56,7 +67,7 @@ export default {
   data () {
     return {
       clipped: false,
-      drawer: false,
+      drawer: true,
       fixed: false,
       items: [
         {
@@ -85,6 +96,16 @@ export default {
   computed: {
     isAuth () {
       return this.$auth.loggedIn
+    }
+  },
+  methods: {
+    async logout() {
+      try {
+        await this.$auth.logout();
+        // Déconnexion réussie, effectuez ici les actions supplémentaires nécessaires
+      } catch (error) {
+        // Gérer les erreurs de déconnexion
+      }
     }
   }
 }

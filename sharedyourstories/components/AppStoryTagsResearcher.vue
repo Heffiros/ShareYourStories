@@ -64,7 +64,7 @@ export default {
     async search() {
       // Effectuer la recherche ici en utilisant l'API en full text
       if (this.searchText && this.searchText.length >= 3) {
-        const result = await this.$axios.get('storyTag', { params: { search: this.searchText } })
+        const result = await this.$axios.get('storyTags', { params: { search: this.searchText } })
         if (result.data && result.data.length > 0) {
           this.searchResults = result.data
           this.searchPerformed = true

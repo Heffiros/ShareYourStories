@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Lovecraft.Model.PublicApi;
 
 namespace Lovecraft.Api.Model.PublicApi
 {
@@ -36,5 +37,8 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "storyTags")]
         public List<PublicApi_StoryTagModel>? StoryTags { get; set; }
+
+        [DataMember(Name = "user")]
+        public PublicApi_UserModel? User { get; set; }
 	}
 }
