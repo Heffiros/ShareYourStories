@@ -4,6 +4,10 @@ export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   debug:true,
+  server: {
+    host: 'front.sharedyourstories.com',
+    port: 3000 // ou tout autre port que vous souhaitez utiliser
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - sharedyourstories',
@@ -84,7 +88,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'https://localhost:7184/',
+    baseURL: 'https://api.sharedyourstories.com:5000/',
     headers: {
       common: {
         Authorization: (context) => {
