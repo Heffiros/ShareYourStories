@@ -3,10 +3,11 @@ using Lovecraft.Api.Model.PublicApi;
 using Lovecraft.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Lovecraft.Api.Controllers
 {
-	[Route("storyTag")]
+	[Route("storyTags")]
 	[ApiController]
 	public class StoryTagController : ControllerBase
 	{
@@ -28,6 +29,24 @@ namespace Lovecraft.Api.Controllers
 			}
 
 			List<PublicApi_StoryTagModel> storyTags = _storyTagRepository.FullTextResearch(search).Select(st => new PublicApi_StoryTagModel
+			{
+				Id = st.Id,
+				Label = st.Label,
+			}).ToList();
+
+			return Ok(storyTags);
+		}
+
+		[HttpGet]
+		[Route("library")]
+		public ActionResult GetUserStoryTagsUsed()
+		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+			if (userIdClaim == null)
+			{
+				return BadRequest();
+			}
+			List<PublicApi_StoryTagModel> storyTags = _storyTagRepository.GetAllStoryTagsUseByUser(Int32.Parse(userIdClaim)).Select(st => new PublicApi_StoryTagModel
 			{
 				Id = st.Id,
 				Label = st.Label,

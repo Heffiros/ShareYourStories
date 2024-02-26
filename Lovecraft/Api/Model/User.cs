@@ -17,6 +17,7 @@ namespace Lovecraft.Model
         public virtual List<UserTeam> UserTeams { get; set; }
         public virtual List<Story> Stories { get; set; }
         public virtual List<StoryVote> StoryVotes { get; set; }
+        public virtual List<StoryComment> StoryComments { get; set; }
 
 	}
 }

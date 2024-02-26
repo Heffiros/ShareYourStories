@@ -38,6 +38,7 @@ namespace Lovecraft.Api.Controllers
 				CoverUrl = e.CoverUrl,
 				DateBegin = e.DateBegin,
 				DateEnd = e.DateEnd,
+				Rules = e.Rules,
 				NbStories = e.Stories.Count,
 				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
 			}).ToList();
@@ -62,6 +63,7 @@ namespace Lovecraft.Api.Controllers
 				CoverUrl = e.CoverUrl,
 				DateBegin = e.DateBegin,
 				DateEnd = e.DateEnd,
+				Rules = e.Rules,
 				NbStories = e.Stories.Count,
 				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
 			});

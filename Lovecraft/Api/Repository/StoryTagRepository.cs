@@ -44,4 +44,12 @@ public class StoryTagRepository : ICommonRepository<StoryTag>
 			.Where(st => st.Label.Contains(text))
 			.ToList();
 	}
+
+	public List<StoryTag> GetAllStoryTagsUseByUser(int userId)
+	{
+		return _dbContext.StoryTags
+			.Where(st => st.StoryStoryTags.Any(sst => sst.Story.UserId == userId))
+			.Distinct()
+			.ToList();
+	}
 }

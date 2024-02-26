@@ -9,11 +9,12 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/auth": "^4.9.1",
+    "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.25.3",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
+    "vue-infinite-loading": "^2.4.5",
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10",
     "vue-toastification": "^1.7.14",

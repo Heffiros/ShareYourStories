@@ -3,14 +3,14 @@ using System.Runtime.Serialization;
 
 namespace Lovecraft.Api.Model.PublicApi;
 
-public class PublicApi_StoryVoteModel
+public class PublicApi_PodiumModel
 {
-	[DataMember(Name = "id")]
-	public int Id { get; set; }
-
 	[DataMember(Name = "storyId")]
 	public int StoryId { get; set; }
 
-	[DataMember(Name = "userId")]
-	public int UserId { get; set; }
+	[DataMember(Name = "count")]
+	public int Count { get; set; }
+
+	[DataMember(Name = "storyName")]
+	public string StoryName { get; set; }
 }
