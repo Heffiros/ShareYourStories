@@ -30,8 +30,9 @@ public class UploadController : ControllerBase
         string targetFolder = $"wonderland";
         string url = "";
 
-        url = ImageUploaderHelper.Upload(new ImageInfo
+        ImageInfo imageInfo = new ImageInfo()
         {
+
             Name = Guid.NewGuid().ToString(),
             Stream = file.OpenReadStream(),
             MimeType = file.ContentType,
@@ -41,8 +42,12 @@ public class UploadController : ControllerBase
                 TargetMaxSize = new Size(1000, 1000),
                 TargetFolder = targetFolder
             }
-        }, connectionString);
-        return Ok(url);
+        };
+
+        ImageUploaderHelper imageUploaderHelper = new ImageUploaderHelper(_configuration);
+        var response = imageUploaderHelper.UploadFileAsyncAmazonS3(imageInfo);
+        
+        return Ok(response);
     }
 
     [HttpPost("file")]
