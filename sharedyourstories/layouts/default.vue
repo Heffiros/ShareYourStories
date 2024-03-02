@@ -9,21 +9,18 @@
     >
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
+          v-for="(item, i) in menuItemsCompiled"
           :key="i"
           :to="item.to"
           router
           exact
-        >
-          <template v-if="(item.hasToBeAuth && isAuth) || !item.hasToBeAuth">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </template>
-
+        >                   
+          <v-list-item-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>                     
         </v-list-item>
       </v-list>
       <v-list-item
@@ -74,19 +71,29 @@ export default {
           icon: 'mdi-apps',
           title: 'Dashboard',
           hasToBeAuth: false,
+          hasToBeAdmin: false,
           to: '/app/dashboard'
         },
         {
           icon: 'mdi-book-open-variant',
           title: 'Ma Bibliothèque',
           hasToBeAuth: true,
+          hasToBeAdmin: false,
           to: '/app/library'
         },
         {
           icon: 'mdi-account',
           title: 'Mon Profil',
           hasToBeAuth: true,
+          hasToBeAdmin: false,
           to: '/app/user/me'
+        },
+        {
+          icon: 'mdi-account',
+          title: 'Admin',
+          hasToBeAuth: true,
+          hasToBeAdmin: true,
+          to: '/app/admin'
         }
       ],
       miniVariant: false,
@@ -94,6 +101,20 @@ export default {
     }
   },
   computed: {
+    menuItemsCompiled () {
+      let computedMenu = []
+      computedMenu = computedMenu.concat(this.items.filter(i => !i.hasToBeAuth))
+      if (this.$auth) {
+        if (this.$auth.loggedIn) {
+          computedMenu = computedMenu.concat(this.items.filter(i => i.hasToBeAuth && !i.hasToBeAdmin))
+        }
+        if (this.$auth.user && this.$auth.user.isAdmin) {
+          computedMenu = computedMenu.concat(this.items.filter(i => i.hasToBeAdmin))
+        }
+      }
+      console.log(computedMenu)
+      return computedMenu
+    },
     isAuth () {
       return this.$auth.loggedIn
     }
@@ -102,9 +123,7 @@ export default {
     async logout() {
       try {
         await this.$auth.logout();
-        // Déconnexion réussie, effectuez ici les actions supplémentaires nécessaires
       } catch (error) {
-        // Gérer les erreurs de déconnexion
       }
     }
   }
