@@ -40,6 +40,7 @@ export default {
             },
           })
           .then(response => {
+            console.log(response.data)
             const imageUrl = response.data;
             this.imageUrl = imageUrl;
             this.$emit('input', this.imageUrl)

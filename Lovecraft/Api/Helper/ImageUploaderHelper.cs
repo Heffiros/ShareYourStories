@@ -44,7 +44,7 @@ public class ImageUploaderHelper
         return pictureUrl;
     }
 
-    public async Task<S3ResponseDto> UploadFileAsyncAmazonS3(ImageInfo s3obj)
+    public S3ResponseDto UploadFileAmazonS3(ImageInfo s3obj)
     {
         var access = _configuration["AWSS3:AccessKey"];
         var secret = _configuration["AWSS3:SecretKey"];
@@ -65,9 +65,9 @@ public class ImageUploaderHelper
                 BucketName = "s3.sharedyourstories",
                 CannedACL = S3CannedACL.NoACL
             };
-            using var client = new AmazonS3Client(credentials, config);
+            var client = new AmazonS3Client(credentials, config);
             var transferUtility = new TransferUtility(client);
-            await transferUtility.UploadAsync(uploadRequest);
+            transferUtility.Upload(uploadRequest);
             response.StatusCode = 200;
             response.Url = $"https://s3.eu-west-3.amazonaws.com/s3.sharedyourstories/{key}";
         }
@@ -76,7 +76,6 @@ public class ImageUploaderHelper
             response.StatusCode = 500;
             response.Message = e.Message;
         }
-
         return response;
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
+using Lovecraft.Api.Model.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -23,17 +24,17 @@ public class UploadController : ControllerBase
     }
 
     [HttpPost]
-	[Route("image")]
-	public async Task<IActionResult> UploadFile(IFormFile file)
+    [Route("image")]
+    public async Task<IActionResult> UploadFile(IFormFile file)
     {
         string connectionString = _configuration["ConnectionStrings:storageConnection"];
         string targetFolder = $"wonderland";
         string url = "";
-
+        string imageName = Guid.NewGuid().ToString();
         ImageInfo imageInfo = new ImageInfo()
         {
 
-            Name = Guid.NewGuid().ToString(),
+            Name = imageName,
             Stream = file.OpenReadStream(),
             MimeType = file.ContentType,
             Extension = file.ContentType == "image/jpeg" ? ".jpg" : "png",
@@ -45,9 +46,15 @@ public class UploadController : ControllerBase
         };
 
         ImageUploaderHelper imageUploaderHelper = new ImageUploaderHelper(_configuration);
-        var response = imageUploaderHelper.UploadFileAsyncAmazonS3(imageInfo);
-        
-        return Ok(response);
+        S3ResponseDto response = imageUploaderHelper.UploadFileAsyncAmazonS3(imageInfo);
+        if (response.StatusCode == 200)
+        {
+            return Ok(response.Url);
+        }
+        else
+        {
+            return BadRequest("Something went wrong during upload");
+        }
     }
 
     [HttpPost("file")]
