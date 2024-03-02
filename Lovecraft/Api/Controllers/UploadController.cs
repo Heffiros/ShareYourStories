@@ -46,7 +46,7 @@ public class UploadController : ControllerBase
         };
 
         ImageUploaderHelper imageUploaderHelper = new ImageUploaderHelper(_configuration);
-        S3ResponseDto response = imageUploaderHelper.UploadFileAsyncAmazonS3(imageInfo);
+        S3ResponseDto response = imageUploaderHelper.UploadFileAmazonS3(imageInfo);
         if (response.StatusCode == 200)
         {
             return Ok(response.Url);

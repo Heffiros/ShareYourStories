@@ -30,6 +30,7 @@ export default {
   methods: {
     handleFileUpload() {
       if (this.file) {
+        this.$emit('start')
         const formData = new FormData();
         formData.append('file', this.file);
 
@@ -47,6 +48,7 @@ export default {
           .catch(error => {
             console.error(error);
           });
+          this.$emit('end')
       }
     },
   },
