@@ -14,7 +14,7 @@
             <v-form @submit.prevent="submit" class="full-form">
               <v-text-field v-model="authorName" label="Nom d'auteur"></v-text-field>
               <v-text-field v-model="email" label="Adresse e-mail"></v-text-field>
-              <app-image-uploader v-model="profilePictureUrl" @start="disabledSubmit = true" @end="disabledSubmit = false"/>
+              <app-image-uploader v-model="profilePictureUrl" :place="'profile'" @start="disabledSubmit = true" @end="disabledSubmit = false"/>
               <v-btn type="submit" color="success" class="mr-4" :disabled="disabledSubmit">Mettre à jour</v-btn>
             </v-form>
           </div>

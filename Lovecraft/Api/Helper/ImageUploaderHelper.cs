@@ -13,37 +13,12 @@ namespace Lovecraft.Api.Helper;
 public class ImageUploaderHelper
 {
     public IConfiguration _configuration;
+    
     public ImageUploaderHelper(IConfiguration configuration)
     {
         _configuration = configuration;
     }
-    public static string Upload(ImageInfo data, string connectionString)
-    {
-        string containerName = data.Constraints.TargetFolder;
-        BlobContainerClient blobContainer;
-        try
-        {
-            BlobServiceClient blobClient = new BlobServiceClient(connectionString);
-            blobContainer = blobClient.GetBlobContainerClient(containerName);
-            blobContainer.CreateIfNotExists(PublicAccessType.Blob);
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-
-        // Create a new blob
-        BlobClient newBlob = blobContainer.GetBlobClient($"{data.Name}{data.Extension}");
-
-        newBlob.Upload(data.Stream, new BlobHttpHeaders
-        {
-            ContentType = data.MimeType
-        });
-
-        string pictureUrl = $"{blobContainer.Uri.ToString()}/{data.Name}{data.Extension}";
-        return pictureUrl;
-    }
-
+    
     public S3ResponseDto UploadFileAmazonS3(ImageInfo s3obj)
     {
         var access = _configuration["AWSS3:AccessKey"];
@@ -57,7 +32,7 @@ public class ImageUploaderHelper
         var response = new S3ResponseDto();
         try
         {
-            string key = string.Format("{0}/{1}", "wonderland", s3obj.Name);
+            string key = string.Format("{0}/{1}/{2}", "wonderland", s3obj.Place.ToString().ToLower() ,s3obj.Name);
             var uploadRequest = new TransferUtilityUploadRequest()
             {
                 InputStream = s3obj.Stream,

@@ -24,12 +24,11 @@ public class UploadController : ControllerBase
     }
 
     [HttpPost]
-    [Route("image")]
-    public async Task<IActionResult> UploadFile(IFormFile file)
+    [Route("image/{place}")]
+    public async Task<IActionResult> UploadFile(IFormFile file, [FromRoute] string place)
     {
-        string connectionString = _configuration["ConnectionStrings:storageConnection"];
-        string targetFolder = $"wonderland";
-        string url = "";
+        Place placeEnum;
+        Enum.TryParse(place, out placeEnum);
         string imageName = Guid.NewGuid().ToString();
         ImageInfo imageInfo = new ImageInfo()
         {
@@ -38,11 +37,7 @@ public class UploadController : ControllerBase
             Stream = file.OpenReadStream(),
             MimeType = file.ContentType,
             Extension = file.ContentType == "image/jpeg" ? ".jpg" : "png",
-            Constraints = new UploadFileInfoConstraints
-            {
-                TargetMaxSize = new Size(1000, 1000),
-                TargetFolder = targetFolder
-            }
+            Place = placeEnum
         };
 
         ImageUploaderHelper imageUploaderHelper = new ImageUploaderHelper(_configuration);
@@ -55,6 +50,9 @@ public class UploadController : ControllerBase
         {
             return BadRequest("Something went wrong during upload");
         }
+        
+        return BadRequest("Something went wrong during upload : Bad Place enum");
+
     }
 
     [HttpPost("file")]

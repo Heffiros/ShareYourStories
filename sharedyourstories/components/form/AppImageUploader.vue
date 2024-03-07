@@ -27,15 +27,20 @@ export default {
       file: null,
     };
   },
+  props: {
+    place: {
+      type: String,
+      default: null
+    }
+  },
   methods: {
     handleFileUpload() {
-      if (this.file) {
+      if (this.file && this.place) {
         this.$emit('start')
         const formData = new FormData();
         formData.append('file', this.file);
-
         this.$axios
-          .post('/upload/image', formData, {
+          .post(`/upload/image/ ${this.place}`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
