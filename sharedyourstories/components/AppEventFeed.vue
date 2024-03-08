@@ -26,7 +26,7 @@
   
   async function fetch(context) {
     let data = { page: context.page, mode: "full"}
-    await context.$store.dispatch('events/RESET_EVENTS', data)
+    await context.$store.dispatch('events/FETCH_EVENTS', data)
     const currentNbEvents = context.events.length
     if (currentNbEvents % 5 != 0) {
       context.hasMore = false
