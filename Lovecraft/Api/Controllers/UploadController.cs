@@ -5,6 +5,7 @@ using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
+using Lovecraft.Api.Model.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -23,26 +24,35 @@ public class UploadController : ControllerBase
     }
 
     [HttpPost]
-	[Route("image")]
-	public async Task<IActionResult> UploadFile(IFormFile file)
+    [Route("image/{place}")]
+    public async Task<IActionResult> UploadFile(IFormFile file, [FromRoute] string place)
     {
-        string connectionString = _configuration["ConnectionStrings:storageConnection"];
-        string targetFolder = $"wonderland";
-        string url = "";
-
-        url = ImageUploaderHelper.Upload(new ImageInfo
+        Place placeEnum;
+        Enum.TryParse(place, out placeEnum);
+        string imageName = Guid.NewGuid().ToString();
+        ImageInfo imageInfo = new ImageInfo()
         {
-            Name = Guid.NewGuid().ToString(),
+
+            Name = imageName,
             Stream = file.OpenReadStream(),
             MimeType = file.ContentType,
             Extension = file.ContentType == "image/jpeg" ? ".jpg" : "png",
-            Constraints = new UploadFileInfoConstraints
-            {
-                TargetMaxSize = new Size(1000, 1000),
-                TargetFolder = targetFolder
-            }
-        }, connectionString);
-        return Ok(url);
+            Place = placeEnum
+        };
+
+        ImageUploaderHelper imageUploaderHelper = new ImageUploaderHelper(_configuration);
+        S3ResponseDto response = imageUploaderHelper.UploadFileAmazonS3(imageInfo);
+        if (response.StatusCode == 200)
+        {
+            return Ok(response.Url);
+        }
+        else
+        {
+            return BadRequest("Something went wrong during upload");
+        }
+        
+        return BadRequest("Something went wrong during upload : Bad Place enum");
+
     }
 
     [HttpPost("file")]

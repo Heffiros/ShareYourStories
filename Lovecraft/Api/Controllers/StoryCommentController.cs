@@ -27,27 +27,27 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet]
 		public ActionResult GetAll([FromQuery] int storyId, [FromQuery] int page = 0)
 		{
-			Expression<Func<StoryComment, bool>> storyCommentFilter = s => true;
-			storyCommentFilter = sc => sc.StoryId == storyId && sc.Status == Status.Online;
-			IQueryable<StoryComment> queryable = _storyCommentRepository.GetAll(page, storyCommentFilter);
-
-			List<PublicApi_StoryCommentModel> results = queryable.Select(storyComment => new PublicApi_StoryCommentModel
-			{
-				Id = storyComment.Id,
-				Text = storyComment.Text,
-				DateCreated = storyComment.DateCreated,
-				User = new PublicApi_UserModel
-				{
-					Id = storyComment.User.Id,
-					AuthorName = storyComment.User.AuthorName,
-					ProfilePictureUrl = storyComment.User.ProfilePictureUrl
-				}
-			}).ToList();
+            List<PublicApi_StoryCommentModel> results = _storyCommentRepository.GetAll()
+                .Where(sc => sc.StoryId == storyId && sc.Status == Status.Online)
+                .OrderByDescending(sc => sc.Id)
+                .Skip(5 * page)
+                .Take(5).Select(storyComment => new PublicApi_StoryCommentModel
+                {
+                    Id = storyComment.Id,
+                    Text = storyComment.Text,
+                    DateCreated = storyComment.DateCreated,
+                    User = new PublicApi_UserModel
+                    {
+                        Id = storyComment.User.Id,
+                        AuthorName = storyComment.User.AuthorName,
+                        ProfilePictureUrl = storyComment.User.ProfilePictureUrl
+                    }
+                }).ToList();
 			return Ok(results);
 		}
 
 		[HttpPost]
-		public ActionResult GetAll([FromBody] PublicApi_StoryCommentModel storyComment)
+		public ActionResult Post([FromBody] PublicApi_StoryCommentModel storyComment)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			StoryComment storyCommentToAdd = new StoryComment

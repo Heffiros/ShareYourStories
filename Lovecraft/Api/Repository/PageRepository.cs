@@ -26,17 +26,22 @@ namespace Lovecraft.Api.Repository
 			throw new NotImplementedException();
 		}
 
-		public IQueryable<Page> GetAll(int? page, Expression<Func<Page, bool>>? whereExpression)
+		public IQueryable<Page> GetAll()
+        {
+            return _dbContext.Pages;
+        }
+
+        public Page? GetById(int id)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Page? GetById(int id)
-		{
-			throw new NotImplementedException();
-		}
+        public IQueryable<Page> GetFullAll()
+        {
+            throw new NotImplementedException();
+        }
 
-		public void Update(Page entity)
+        public void Update(Page entity)
 		{
 			throw new NotImplementedException();
 		}

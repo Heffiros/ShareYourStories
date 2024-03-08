@@ -27,4 +27,7 @@ public class PublicApi_UserModel
     [DataMember(Name = "birthDate")]
     public DateTime? BirthDate { get; set; }
 
+    [DataMember(Name = "isAdmin")]
+    public bool IsAdmin { get; set; }
+
 }

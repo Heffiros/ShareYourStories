@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Repository;
 
-public class StoryCommentRepository
+public class StoryCommentRepository : ICommonRepository<StoryComment>
 {
 	readonly LovecraftDbContext _dbContext = new();
 	readonly int _nbStoriesByFetch = 4;
@@ -15,20 +15,30 @@ public class StoryCommentRepository
 		_dbContext = dbContext;
 	}
 
-	public IQueryable<StoryComment> GetAll(int page, Expression<Func<StoryComment, bool>> whereExpression)
-	{
-		return _dbContext.StoryComments
-			.Include(sc => sc.User)
-			.Where(whereExpression)
-			.OrderByDescending(sc => sc.Id)
-			.Skip(_nbStoriesByFetch * page)
-			.Take(_nbStoriesByFetch);
-	}
-
 	public StoryComment Add(StoryComment entity)
 	{
 		_dbContext.StoryComments.Add(entity);
 		_dbContext.SaveChanges();
 		return entity;
 	}
+
+    public IQueryable<StoryComment> GetAll()
+    {
+        return _dbContext.StoryComments;
+    }
+
+    public StoryComment? GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Update(StoryComment entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete(StoryComment id)
+    {
+        throw new NotImplementedException();
+    }
 }

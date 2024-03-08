@@ -1,5 +1,5 @@
 <template>
-  <v-carousel v-if="events">
+  <v-carousel v-if="events && events.length > 0">
     <v-carousel-item class="carousel-item" v-for="(event, index) in events" :key="index" @click="goEventFeed(event.id)">
       <!-- Image du carrousel -->
       <v-img :src="event.coverUrl" :alt="event.title"></v-img>
@@ -11,11 +11,14 @@
       </div>
     </v-carousel-item>
   </v-carousel>
+  <div v-else>
+    <span class="no-event">Il n'y a pas d'event en cours</span>
+  </div>
 </template>
 
 <script>
 async function fetch(context) {
-  await context.$store.dispatch('events/FETCH_EVENTS', { page: context.page })
+  await context.$store.dispatch('events/FETCH_EVENTS', { page: context.page, mode: 'active' })
 }
 
 export default {
@@ -69,4 +72,5 @@ export default {
   vertical-align: middle;
   clear: both;
 }
+
 </style>

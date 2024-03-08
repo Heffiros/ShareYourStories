@@ -31,7 +31,8 @@ public class UserRepository : IUserRepository
                     AuthorName = model.AuthorName,
                     Email = model.Email,
                     CreatedDate = DateTime.UtcNow,
-                    Password = Argon2.Hash(model.Password)
+                    Password = Argon2.Hash(model.Password),
+                    IsAdmin = false
                 };
 
                 _dbContext.Users.Add(user);
