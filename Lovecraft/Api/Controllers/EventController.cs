@@ -68,5 +68,24 @@ namespace Lovecraft.Api.Controllers
 				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
 			});
 		}
-	}
+
+        [HttpPost]
+        public ActionResult Add([FromBody] PublicApi_EventModel model)
+        {
+            if (model != null)
+            {
+                Event e = new Event
+                {
+                    Title = model.Title,
+                    CoverUrl = model.CoverUrl,
+                    Rules = model.Rules,
+					DateBegin = model.DateBegin,
+					DateEnd = model.DateEnd
+                };
+                e = _eventRepository.Add(e);
+                return Ok(e.Id);
+            }
+            return BadRequest();
+        }
+    }
 }

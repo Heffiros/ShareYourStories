@@ -33,8 +33,10 @@ namespace Lovecraft.Api.Repository
 
 		public Event Add(Event entity)
 		{
-			throw new NotImplementedException();
-		}
+            _dbContext.Events.Add(entity);
+            _dbContext.SaveChanges();
+            return entity;
+        }
 
 		public void Update(Event entity)
 		{

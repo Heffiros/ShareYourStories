@@ -3,7 +3,7 @@
     <v-file-input
       v-model="file"
       accept="image/*"
-      label="Choose an image"
+      label="Choisir une image"
       @change="handleFileUpload"
     ></v-file-input>
     <v-img

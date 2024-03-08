@@ -112,7 +112,6 @@ export default {
           computedMenu = computedMenu.concat(this.items.filter(i => i.hasToBeAdmin))
         }
       }
-      console.log(computedMenu)
       return computedMenu
     },
     isAuth () {

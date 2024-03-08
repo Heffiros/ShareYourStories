@@ -72,7 +72,7 @@
             title: 'Event',
             hasToBeAuth: true,
             hasToBeAdmin: true,
-            to: '/app/admin/event'
+            to: '/app/admin/event/add'
           },
           {
             icon: 'mdi-skull',
@@ -105,7 +105,6 @@
             computedMenu = computedMenu.concat(this.items.filter(i => i.hasToBeAdmin))
           }
         }
-        console.log(computedMenu)
         return computedMenu
       },
       isAuth () {
