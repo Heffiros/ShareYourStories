@@ -72,7 +72,7 @@
             title: 'Event',
             hasToBeAuth: true,
             hasToBeAdmin: true,
-            to: '/app/admin/event/add'
+            to: '/app/admin/event'
           },
           {
             icon: 'mdi-skull',

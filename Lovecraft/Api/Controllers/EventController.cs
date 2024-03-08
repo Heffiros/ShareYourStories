@@ -23,25 +23,36 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult GetAll([FromQuery] int page)
-		{
-			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+		public ActionResult GetAll([FromQuery] int page, [FromQuery] string mode)
+        {
 
-			DateTime today = DateTime.Now;
-			Expression<Func<Event, bool>> eventDateFilter = s => true;
-			eventDateFilter = e => e.DateBegin <= today && e.DateEnd >= today; 
-			IQueryable<Event> queryable = _eventRepository.GetAll(page, eventDateFilter);
-			List<PublicApi_EventModel> results = queryable.Select(e => new PublicApi_EventModel
-			{
-				Id = e.Id,
-				Title = e.Title,
-				CoverUrl = e.CoverUrl,
-				DateBegin = e.DateBegin,
-				DateEnd = e.DateEnd,
-				Rules = e.Rules,
-				NbStories = e.Stories.Count,
-				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
-			}).ToList();
+            DateTime today = DateTime.Now;
+            var userIdClaim = HttpContext.User.FindFirstValue("userId");
+            Expression<Func<Event, bool>> eventDateFilter = s => true;
+            IQueryable<Event> queryable = _eventRepository.GetAll();
+            
+            if (mode == "active")
+            {
+                eventDateFilter = e => e.DateBegin <= today && e.DateEnd >= today;
+            }
+
+            List<PublicApi_EventModel> results = queryable.OrderByDescending(e => e.DateBegin)
+                .Where(eventDateFilter)
+                .Skip(5 * page)
+                .Take(5)
+                .Select(e => new PublicApi_EventModel
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    CoverUrl = e.CoverUrl,
+                    DateBegin = e.DateBegin,
+                    DateEnd = e.DateEnd,
+                    Rules = e.Rules,
+                    NbStories = e.Stories.Count,
+                    HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
+                })
+                .ToList();
+
 			return Ok(results);
 		}
 

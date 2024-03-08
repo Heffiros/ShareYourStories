@@ -12,9 +12,9 @@ public class StoryTagRepository : ICommonRepository<StoryTag>
 	{
 		_dbContext = dbContext;
 	}
-	public IQueryable<StoryTag> GetAll(int? page, Expression<Func<StoryTag, bool>>? whereExpression)
+	public IQueryable<StoryTag> GetAll()
 	{
-		throw new NotImplementedException();
+		return _dbContext.StoryTags;
 	}
 
 	public StoryTag? GetById(int id)

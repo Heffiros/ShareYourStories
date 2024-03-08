@@ -12,6 +12,7 @@
     },
     data() {
       return {
+        page: 0
       }
     },
     computed: {
@@ -19,6 +20,7 @@
     methods: {
     },
     mounted () {
+      this.$store.dispatch('events/FETCH_EVENTS', { page: this.page, mode: 'full' })
     }
   }
   </script>

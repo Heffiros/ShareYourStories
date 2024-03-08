@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Lovecraft.Api.Repository;
 
-public class TeamRepository: ICommonRepository<Team>
+public class TeamRepository : ICommonRepository<Team>
 {
     readonly LovecraftDbContext _dbContext = new();
 
@@ -15,11 +15,12 @@ public class TeamRepository: ICommonRepository<Team>
     {
         _dbContext = dbContext;
     }
+
     public Team Add(Team entity)
     {
         _dbContext.Teams.Add(entity);
         _dbContext.SaveChanges();
-         return entity;
+        return entity;
     }
 
     public void Update(Team entity)
@@ -32,18 +33,13 @@ public class TeamRepository: ICommonRepository<Team>
         throw new NotImplementedException();
     }
 
-    public IQueryable<Team> GetAll(int? page)
+    public IQueryable<Team> GetAll()
     {
-        throw new NotImplementedException();
+        return _dbContext.Teams;
     }
 
     public Team? GetById(int teamId)
     {
         return _dbContext.Teams.Include(t => t.Id == teamId).FirstOrDefault(u => u.Id == teamId);
-    }
-
-    public IQueryable<Team> GetAll(int? page, Expression<Func<Team, bool>>? whereExpression)
-    {
-        throw new NotImplementedException();
     }
 }

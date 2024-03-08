@@ -4,7 +4,7 @@ namespace Lovecraft.Api.Repository;
 
 public interface ICommonRepository<T> where T : class
 {
-    IQueryable<T> GetAll(int? page, Expression<Func<T, bool>>? whereExpression);
+    IQueryable<T> GetAll();
     T? GetById(int id);
     T Add(T entity);
     void Update(T entity);

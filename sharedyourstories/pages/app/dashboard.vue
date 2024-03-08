@@ -18,7 +18,7 @@
 
 <script>
 async function fetch(context) {
-  await context.$store.dispatch('events/FETCH_EVENTS', { page: context.page })
+  await context.$store.dispatch('events/FETCH_EVENTS', { page: context.page, mode: 'active' })
 }
 
 export default {
