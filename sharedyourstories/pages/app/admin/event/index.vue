@@ -32,9 +32,6 @@ export default {
       page: 0
     }
   },
-  mounted () {
-    this.$store.dispatch('events/RESETS_EVENT')
-  },
   methods: {
     goToEventCreation () {
       this.$router.push('/app/admin/event/add')
