@@ -23,6 +23,8 @@ import createStory from '~/components/popups/CreateStory'
 import AppEventFeed from '~/components/AppEventFeed'
 
 export default {
+  layout: 'admin',
+  middleware: 'admin-middleware',
   components: {
     createStory,
     AppEventFeed

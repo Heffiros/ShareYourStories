@@ -8,6 +8,7 @@
     import AppEventCreator from '~/components/form/AppEventCreator'
     export default {
       layout: 'admin',
+      middleware: 'admin-middleware',
       components: {
         AppEventCreator
       },
