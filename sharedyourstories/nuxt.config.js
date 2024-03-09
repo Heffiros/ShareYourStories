@@ -26,7 +26,7 @@ export default {
     ]
   },
   router: {
-    middleware: ['auth', 'admin-middleware']
+    middleware: ['auth']
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [

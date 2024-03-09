@@ -15,7 +15,7 @@
     <div v-else>
       <span class="no-event">Il n'y a pas d'event en cours</span>
     </div>
-    <v-col v-if="lastFinishEvent" cols="4">
+    <v-col v-if="lastFinishEvent && winner" cols="4">
       <v-card class="result-card first-place" color="#FBC02D">
         <div class="result-card-header">1er</div>
         <div class="result-card-content">
@@ -34,7 +34,7 @@ async function fetch(context) {
   await context.$store.dispatch('events/FETCH_EVENTS', { page: context.page, mode: 'active' })
   await context.$store.dispatch('events/FETCH_LAST_FINISH_EVENT')
   if (context.lastFinishEvent) {
-    const result = await this.$axios.get('storyVote/podium/' + context.lastFinishEvent.id)
+    const result = await context.$axios.get('storyVote/podium/' + context.lastFinishEvent.id)
     context.winner = result.data[0]
   }
 }
@@ -42,7 +42,8 @@ async function fetch(context) {
 export default {
   data () {
     return {
-      page:0
+      page:0,
+      winner: null
     }
   },
   computed: {
@@ -50,7 +51,6 @@ export default {
       return this.$store.state.events.events
     },
     lastFinishEvent () {
-      console.log(this.$store.state.events.lastFinishEvent)
       return this.$store.state.events.lastFinishEvent
     }
   },
