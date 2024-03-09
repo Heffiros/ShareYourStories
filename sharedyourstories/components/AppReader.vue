@@ -13,7 +13,7 @@
         <v-sheet class="d-flex justify-center align-center fill-height sheet-with-padding">
           <div v-html="currentPage.content"></div>
         </v-sheet>
-        <div class="fix-right">{{ currentPageIndex }} / {{ story.pages.length - 1}}</div>
+        <div class="fix-right">{{ currentPageIndex + 1 }} / {{ story.pages.length}}</div>
       </v-col>
 
       <!-- Colonne 3 -->
