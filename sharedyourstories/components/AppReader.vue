@@ -9,7 +9,7 @@
       </v-col>
 
       <!-- Colonne 2 -->
-      <v-col cols="8">
+      <v-col cols="6">
         <v-sheet class="d-flex justify-center align-center fill-height sheet-with-padding">
           <div v-html="currentPage.content"></div>
         </v-sheet>
@@ -51,6 +51,7 @@ export default {
 .sheet-with-padding {
   padding: 15px;
   font-size: 18px;
+  font-size: 24px;
 }
 
 .fix-right {
