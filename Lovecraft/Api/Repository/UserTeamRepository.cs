@@ -12,11 +12,7 @@ public class UserTeamRepository : ICommonRepository<UserTeam>
     {
         _dbContext = dbContext;
     }
-    public IQueryable<UserTeam> GetAll(int? page)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public UserTeam GetById(int id)
     {
         throw new NotImplementedException();
@@ -39,8 +35,9 @@ public class UserTeamRepository : ICommonRepository<UserTeam>
         throw new NotImplementedException();
     }
 
-    public IQueryable<UserTeam> GetAll(int? page, Expression<Func<UserTeam, bool>>? whereExpression)
+    public IQueryable<UserTeam> GetAll()
     {
-        throw new NotImplementedException();
+        return _dbContext.UserTeams;
     }
+
 }

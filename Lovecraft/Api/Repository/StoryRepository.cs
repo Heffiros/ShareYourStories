@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Amazon.S3.Model.Internal.MarshallTransformations;
 using Lovecraft.Api.Model;
 using Lovecraft.Datas;
 using Microsoft.EntityFrameworkCore;
@@ -14,26 +15,9 @@ public class StoryRepository
     {
         _dbContext = dbContext;
     }
-    public IQueryable<Story> GetAll(int? page, Expression<Func<Story, bool>>? whereExpression, Expression<Func<Story, bool>>? searchWhereExpression, Expression<Func<Story, bool>>? storyTagsWhereExpression)
+    public IQueryable<Story> GetAll()
     {
-        if (!page.HasValue && whereExpression == null)
-        {
-            return null;
-        }
-        else
-        {
-            return _dbContext.Stories
-	            .Include(s => s.Pages)
-	            .Include(s => s.User)
-	            .Include(s => s.StoryVotes)
-	            .Include(s => s.StoryStoryTags)
-					.ThenInclude(st => st.StoryTag)
-	            .Where(searchWhereExpression)
-	            .Where(storyTagsWhereExpression)
-	            .Where(whereExpression)
-	            .Skip(_nbStoriesByFetch * page.Value)
-	            .Take(_nbStoriesByFetch);
-        }
+        return _dbContext.Stories;
     }
 
     public Story? GetById(int id)

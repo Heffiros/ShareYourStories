@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Azure.Core;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
@@ -10,6 +11,7 @@ using Lovecraft.Model;
 using Lovecraft.Model.PublicApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -70,39 +72,51 @@ namespace Lovecraft.Api.Controllers
 			}
 
 
-			IQueryable<Story> queryable = _storyRepository.GetAll(page, storyAuthorFilter, storyFilter, storyTagsFilter);
-			List<PublicApi_StoryModel> results = queryable.Select(story => new PublicApi_StoryModel
-			{
-				Id = story.Id,
-				Title = story.Title,
-				CoverUrl = story.CoverUrl,
-				Summary = story.Summary,
-				UserId = story.UserId,
-				TeamId = story.TeamId,
-				DateCreated = story.DateCreated,
-				Status = story.Status,
-				EventId = story.EventId,
-				HasVoted = story.StoryVotes.Any(sv =>  sv.UserId == Int32.Parse(userIdClaim)),
-				NbVote = story.StoryVotes.Count,
-				Pages = story.Pages.Select(page => new PublicApi_PageModel
-				{
-					Id = page.Id,
-					Content = page.Content,
-					LastUpdatedDateTime = page.LastUpdatedDateTime,
-					Order = page.Order,
-					StoryId = page.StoryId
-				}).ToList(),
-				StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
-				{
-					Id = sst.StoryTag.Id,
-					Label = sst.StoryTag.Label,
-				}).ToList(),
-				User = new PublicApi_UserModel
-				{
-					AuthorName = story.User.AuthorName,
-					ProfilePictureUrl = story.User.ProfilePictureUrl
-				}
-			}).ToList();
+            List<PublicApi_StoryModel> results = _storyRepository
+                .GetAll()
+                .Include(s => s.Pages)
+                .Include(s => s.User)
+                .Include(s => s.StoryVotes)
+                .Include(s => s.StoryStoryTags)
+                .ThenInclude(st => st.StoryTag)
+                .Where(storyFilter)
+                .Where(storyTagsFilter)
+                .Where(storyAuthorFilter)
+                .Skip(5 * page)
+                .Take(5)
+                .Select(story => new PublicApi_StoryModel
+                {
+                    Id = story.Id,
+                    Title = story.Title,
+                    CoverUrl = story.CoverUrl,
+                    Summary = story.Summary,
+                    UserId = story.UserId,
+                    TeamId = story.TeamId,
+                    DateCreated = story.DateCreated,
+                    Status = story.Status,
+                    EventId = story.EventId,
+                    HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
+                    NbVote = story.StoryVotes.Count,
+                    Pages = story.Pages.Select(page => new PublicApi_PageModel
+                    {
+                        Id = page.Id,
+                        Content = page.Content,
+                        LastUpdatedDateTime = page.LastUpdatedDateTime,
+                        Order = page.Order,
+                        StoryId = page.StoryId
+                    }).ToList(),
+                    StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+                    {
+                        Id = sst.StoryTag.Id,
+                        Label = sst.StoryTag.Label,
+                    }).ToList(),
+                    User = new PublicApi_UserModel
+                    {
+                        AuthorName = story.User.AuthorName,
+                        ProfilePictureUrl = story.User.ProfilePictureUrl
+                    }
+                }).ToList();
+
 			return Ok(results);
 		}
 
@@ -197,10 +211,21 @@ namespace Lovecraft.Api.Controllers
 					await file.CopyToAsync(stream);
 					using (var doc = WordprocessingDocument.Open(stream, false))
 					{
-						var body = doc.MainDocumentPart.Document.Body.InnerText;
-						StoryHelper storyHelper = new StoryHelper();
-						List<string> pages = storyHelper.extractPagesFromText(body);
-						Story story = new Story
+                        var body = doc.MainDocumentPart.Document.Body;
+                        string text = "";
+                        foreach (var paragraph in body.Elements<Paragraph>())
+                        {
+                            foreach (var run in paragraph.Elements<Run>())
+                            {
+                                text += run.InnerText + " ";
+                            }
+                            text += Environment.NewLine; // Ajoute un retour à la ligne après chaque paragraphe
+                        }
+                        
+                        StoryHelper storyHelper = new StoryHelper();
+						List<string> pages = storyHelper.SplitIntoPages(text, 250);
+
+                        Story story = new Story
 						{
 							Title = storyToCreate.Title,
 							CoverUrl = storyToCreate.CoverUrl,

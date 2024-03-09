@@ -47,7 +47,8 @@ namespace Lovecraft.Api.Controllers
 					AuthorName = user.AuthorName,
 					BirthDate = user.BirthDate,
 					DateCreated = user.CreatedDate,
-					ProfilePictureUrl = user.ProfilePictureUrl
+					ProfilePictureUrl = user.ProfilePictureUrl,
+					IsAdmin = user.IsAdmin
 				}
 			});
 		}

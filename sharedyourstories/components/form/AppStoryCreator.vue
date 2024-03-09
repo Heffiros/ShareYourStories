@@ -11,7 +11,7 @@
             label="Nom"
             required
           />
-          <app-image-uploader v-model="story.coverUrl"/>
+          <app-image-uploader v-model="story.coverUrl" :place="'cover'"/>
           <!-- Todo rajouter ici le choix de l'équipe quand on pourra-->
           <v-btn type="submit" color="primary">Suivant</v-btn>
         </v-form>

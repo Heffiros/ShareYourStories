@@ -1,35 +1,56 @@
-﻿using Azure.Storage.Blobs;
+﻿using Amazon.Runtime;
+using Amazon.S3;
+using Amazon.S3.Transfer;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Lovecraft.Api.Model;
+using Lovecraft.Api.Model.DTO;
+using Microsoft.Extensions.Configuration;
+using static System.Net.WebRequestMethods;
 
 namespace Lovecraft.Api.Helper;
 
 public class ImageUploaderHelper
 {
-    public static string Upload(ImageInfo data, string connectionString)
+    public IConfiguration _configuration;
+    
+    public ImageUploaderHelper(IConfiguration configuration)
     {
-        string containerName = data.Constraints.TargetFolder;
-        BlobContainerClient blobContainer;
+        _configuration = configuration;
+    }
+    
+    public S3ResponseDto UploadFileAmazonS3(ImageInfo s3obj)
+    {
+        var access = _configuration["AWSS3:AccessKey"];
+        var secret = _configuration["AWSS3:SecretKey"];
+        var credentials = new BasicAWSCredentials(access, secret);
+        var config = new AmazonS3Config()
+        {
+            RegionEndpoint = Amazon.RegionEndpoint.EUWest3
+        };
+
+        var response = new S3ResponseDto();
         try
         {
-            BlobServiceClient blobClient = new BlobServiceClient(connectionString);
-            blobContainer = blobClient.GetBlobContainerClient(containerName);
-            blobContainer.CreateIfNotExists(PublicAccessType.Blob);
+            string key = string.Format("{0}/{1}/{2}", "wonderland", s3obj.Place.ToString().ToLower() ,s3obj.Name);
+            var uploadRequest = new TransferUtilityUploadRequest()
+            {
+                InputStream = s3obj.Stream,
+                Key = key,
+                BucketName = "s3.sharedyourstories",
+                CannedACL = S3CannedACL.NoACL
+            };
+            var client = new AmazonS3Client(credentials, config);
+            var transferUtility = new TransferUtility(client);
+            transferUtility.Upload(uploadRequest);
+            response.StatusCode = 200;
+            response.Url = $"https://s3.eu-west-3.amazonaws.com/s3.sharedyourstories/{key}";
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            throw ex;
+            response.StatusCode = 500;
+            response.Message = e.Message;
         }
-
-        // Create a new blob
-        BlobClient newBlob = blobContainer.GetBlobClient($"{data.Name}{data.Extension}");
-
-        newBlob.Upload(data.Stream, new BlobHttpHeaders
-        {
-            ContentType = data.MimeType
-        });
-
-        string pictureUrl = $"{blobContainer.Uri.ToString()}/{data.Name}{data.Extension}";
-        return pictureUrl;
+        return response;
     }
 }

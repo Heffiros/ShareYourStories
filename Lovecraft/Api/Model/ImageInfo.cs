@@ -10,15 +10,15 @@ namespace Lovecraft.Api.Model
         
         public string Extension { get; set; }
         public IDictionary<string, string> Metadata { get; set; }
-        
 
-        public UploadFileInfoConstraints Constraints { get; set; }
+        public Place Place { get; set; }
 
     }
 
-    public class UploadFileInfoConstraints
+    public enum Place
     {
-        public string TargetFolder { get; set; }
-        public Size TargetMaxSize { get; set; }
+        profile,
+        cover,
+        events
     }
 }

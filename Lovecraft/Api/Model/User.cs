@@ -13,7 +13,7 @@ namespace Lovecraft.Model
         public DateTime BirthDate { get; set; }
         public string? ProfilePictureUrl { get; set; }
         public  DateTime CreatedDate { get; set; }
-
+        public bool IsAdmin { get; set; }
         public virtual List<UserTeam> UserTeams { get; set; }
         public virtual List<Story> Stories { get; set; }
         public virtual List<StoryVote> StoryVotes { get; set; }

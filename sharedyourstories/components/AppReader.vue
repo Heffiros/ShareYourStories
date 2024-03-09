@@ -9,11 +9,11 @@
       </v-col>
 
       <!-- Colonne 2 -->
-      <v-col cols="8">
+      <v-col cols="6">
         <v-sheet class="d-flex justify-center align-center fill-height sheet-with-padding">
-          {{ currentPage.content }}
+          <div v-html="currentPage.content"></div>
         </v-sheet>
-        <div class="fix-right">{{ currentPageIndex }} / {{ story.pages.length - 1}}</div>
+        <div class="fix-right">{{ currentPageIndex + 1 }} / {{ story.pages.length}}</div>
       </v-col>
 
       <!-- Colonne 3 -->
@@ -51,6 +51,7 @@ export default {
 .sheet-with-padding {
   padding: 15px;
   font-size: 18px;
+  font-size: 24px;
 }
 
 .fix-right {
