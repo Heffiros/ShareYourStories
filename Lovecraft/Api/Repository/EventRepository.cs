@@ -17,15 +17,6 @@ namespace Lovecraft.Api.Repository
         public IQueryable<Event> GetAll()
         {
             return _dbContext.Events;
-
-            /*if (!page.HasValue && whereExpression == null)
-            {
-                return null;
-            }
-            else
-            {
-                return _dbContext.Events.Include(e => e.Stories).Where(whereExpression).Skip(_nbEventByFetch * page.Value).Take(_nbEventByFetch);
-            }*/
         }
 
         public Event? GetById(int id)
