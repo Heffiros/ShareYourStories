@@ -1,5 +1,6 @@
 export const state = () => ({
-  events: []
+  events: [],
+  lastFinishEvent: null
 })
 
 export const getters = {
@@ -15,6 +16,9 @@ export const mutations = {
   SET_EVENT (state, event) {
     state.events = state.events.concat(event)
   },
+  SET_LAST_FINISH_EVENT (state, event) {
+    state.lastFinishEvent = event
+  },
   RESET_EVENTS (state) {
     state.events = []
   }
@@ -28,6 +32,10 @@ export const actions = {
   async FETCH_EVENT (store, params) {
     const result = await this.$axios.get('events/' + params.eventId)
     store.commit('SET_EVENT', result.data)
+  },
+  async FETCH_LAST_FINISH_EVENT (store) {
+    const result = await this.$axios.get('events/last')
+    store.commit('SET_LAST_FINISH_EVENT', result.data)
   },
   async RESET_EVENTS (store) {
     store.commit('RESET_EVENTS')

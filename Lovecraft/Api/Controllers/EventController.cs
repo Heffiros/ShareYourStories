@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System.Linq.Expressions;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Controllers
 {
@@ -79,6 +80,31 @@ namespace Lovecraft.Api.Controllers
 				HasAlreadyParticipate = userIdClaim != null && e.Stories.Any(s => s.UserId == Int32.Parse(userIdClaim))
 			});
 		}
+
+        [Authorize]
+        [HttpGet("last")]
+        public ActionResult Get()
+        {
+            Event e = _eventRepository.GetAll()
+                .Include(e => e.Stories)
+                .Where(e => e.DateEnd <= DateTime.Today)
+                .OrderByDescending(e => e.DateEnd).FirstOrDefault();
+            if (e == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(new PublicApi_EventModel
+            {
+                Id = e.Id,
+                Title = e.Title,
+                CoverUrl = e.CoverUrl,
+                DateBegin = e.DateBegin,
+                DateEnd = e.DateEnd,
+                Rules = e.Rules,
+                NbStories = e.Stories.Count
+            });
+        }
 
         [HttpPost]
         public ActionResult Add([FromBody] PublicApi_EventModel model)
