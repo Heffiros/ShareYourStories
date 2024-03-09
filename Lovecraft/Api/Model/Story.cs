@@ -1,4 +1,5 @@
-﻿using Lovecraft.Model;
+﻿using DocumentFormat.OpenXml.Office.CoverPageProps;
+using Lovecraft.Model;
 
 namespace Lovecraft.Api.Model
 {
@@ -30,6 +31,7 @@ namespace Lovecraft.Api.Model
         Private,
         Deleted,
         ModerateByAdmin,
-        ModerateAuto
+        ModerateAuto,
+        Winner
     }
 }

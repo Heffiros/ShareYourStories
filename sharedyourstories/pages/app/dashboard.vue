@@ -15,15 +15,15 @@
     <div v-else>
       <span class="no-event">Il n'y a pas d'event en cours</span>
     </div>
-    <v-col v-if="lastFinishEvent && winner" cols="4">
-      <v-card class="result-card first-place" color="#FBC02D">
-        <div class="result-card-header">1er</div>
-        <div class="result-card-content">
-          <template>
-            <div>{{ lastFinishEvent.title }}</div>
-            <div>Découvrez le vainqueur</div>
-          </template>
-        </div>
+    <v-col v-if="lastFinishEvent && winner" cols="2">
+      <v-card class="winner">
+        <nuxt-link :to="`/app/story/${winner.id}/reader`" class="ml-auto">
+          <v-img :src="winner.coverUrl" height="200"></v-img>
+          <v-card-subtitle>
+            Découvrez notre dernier vainqueur
+          </v-card-subtitle>
+          <v-card-title>{{ winner.title }}</v-card-title>
+        </nuxt-link>
       </v-card>
     </v-col>
   </div>
@@ -34,8 +34,8 @@ async function fetch(context) {
   await context.$store.dispatch('events/FETCH_EVENTS', { page: context.page, mode: 'active' })
   await context.$store.dispatch('events/FETCH_LAST_FINISH_EVENT')
   if (context.lastFinishEvent) {
-    const result = await context.$axios.get('storyVote/podium/' + context.lastFinishEvent.id)
-    context.winner = result.data[0]
+    const result = await context.$axios.get('stories/winner/' + context.lastFinishEvent.id)
+    context.winner = result.data
   }
 }
 
@@ -93,6 +93,16 @@ export default {
   float: right;
   vertical-align: middle;
   clear: both;
+}
+
+.winner {
+  height: 350px;
+  cursor: pointer;
+}
+
+.winner a {
+  text-decoration: none;
+  color: #ffffff;
 }
 
 </style>

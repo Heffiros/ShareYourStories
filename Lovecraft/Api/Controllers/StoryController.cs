@@ -165,7 +165,30 @@ namespace Lovecraft.Api.Controllers
 			});
 		}
 
-		[HttpPost]
+        [Authorize]
+        [HttpGet("winner/{eventId}")]
+        public ActionResult GetWinner([FromRoute] int eventId)
+        {
+            Story story = _storyRepository.GetAll().FirstOrDefault(s => s.EventId == eventId && s.Status == Status.Winner);
+            if (story == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(new PublicApi_StoryModel
+            {
+                Id = story.Id,
+                Title = story.Title,
+                CoverUrl = story.CoverUrl,
+                Summary = story.Summary,
+                UserId = story.UserId,
+                TeamId = story.TeamId,
+                DateCreated = story.DateCreated,
+                Status = story.Status,
+                EventId = story.EventId
+            });
+        }
+        [HttpPost]
 		[Authorize]
 		public async Task<IActionResult> CreateStory()
 		{
