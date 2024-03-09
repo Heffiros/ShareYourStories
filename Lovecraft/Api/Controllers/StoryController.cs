@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Azure.Core;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
@@ -210,10 +211,21 @@ namespace Lovecraft.Api.Controllers
 					await file.CopyToAsync(stream);
 					using (var doc = WordprocessingDocument.Open(stream, false))
 					{
-						var body = doc.MainDocumentPart.Document.Body.InnerText;
-						StoryHelper storyHelper = new StoryHelper();
-						List<string> pages = storyHelper.extractPagesFromText(body);
-						Story story = new Story
+                        var body = doc.MainDocumentPart.Document.Body;
+                        string text = "";
+                        foreach (var paragraph in body.Elements<Paragraph>())
+                        {
+                            foreach (var run in paragraph.Elements<Run>())
+                            {
+                                text += run.InnerText + " ";
+                            }
+                            text += Environment.NewLine; // Ajoute un retour à la ligne après chaque paragraphe
+                        }
+                        
+                        StoryHelper storyHelper = new StoryHelper();
+						List<string> pages = storyHelper.SplitIntoPages(text, 250);
+
+                        Story story = new Story
 						{
 							Title = storyToCreate.Title,
 							CoverUrl = storyToCreate.CoverUrl,

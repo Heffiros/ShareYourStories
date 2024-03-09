@@ -17,8 +17,8 @@ namespace Lovecraft.Api.Model
 
     public enum Place
     {
-        Profile,
-        Cover,
-        Event
+        profile,
+        cover,
+        events
     }
 }
