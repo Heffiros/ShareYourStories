@@ -11,7 +11,7 @@
       <!-- Colonne 2 -->
       <v-col cols="8">
         <v-sheet class="d-flex justify-center align-center fill-height sheet-with-padding">
-          {{ currentPage.content }}
+          <div v-html="currentPage.content"></div>
         </v-sheet>
         <div class="fix-right">{{ currentPageIndex }} / {{ story.pages.length - 1}}</div>
       </v-col>

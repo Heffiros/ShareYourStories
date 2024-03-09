@@ -1,58 +1,40 @@
-﻿using System.Text;
-
-namespace Lovecraft.Api.Helper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 public class StoryHelper
 {
-	private int minWordsByPage = 240;
-	private int maxWordsByPage = 300;
-	public List<string> extractPagesFromText(string text)
-	{
-		string[] words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+    public List<string> SplitIntoPages(string text, int maxWordsPerPage)
+    {
+        string[] lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-		List<string> pages = new List<string>();
-		string currentPage = "";
+        List<string> pages = new List<string>();
+        string currentPage = "";
+        int wordCount = 0;
 
-		int wordCount = 0;
-		foreach (string word in words)
-		{
-			if (wordCount < minWordsByPage)
-			{
-				currentPage = currentPage +  " " + word;
-				wordCount++;
-			}
-			else
-			{
-				if (IsLastPunctuation(word))
-				{
-					currentPage = currentPage + " " + word;
-					pages.Add(currentPage.TrimEnd());
-					wordCount = 0;
-					currentPage = "";
-				}
-				else
-				{
-					currentPage = currentPage + " " + word;
-					if (wordCount == maxWordsByPage)
-					{
-						pages.Add(currentPage.TrimEnd());
-						wordCount = 0;
-						currentPage = "";
-					}
-					else
-					{
-						wordCount++;
-					}
-				}
+        foreach (string line in lines)
+        {
+            string[] words = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-			}
-		}
-		return pages;
-	}
+            foreach (string word in words)
+            {
+                currentPage += word + " ";
+                wordCount++;
 
-	private bool IsLastPunctuation(string text)
-	{
-		char lastChar = text.TrimEnd().LastOrDefault();
-		return lastChar == '.' || lastChar == '?' || lastChar == '!';
-	}
+                if (wordCount >= maxWordsPerPage)
+                {
+                    pages.Add(currentPage.Trim());
+                    currentPage = "";
+                    wordCount = 0;
+                }
+            }
+            currentPage += "</br>";
+        }
+        if (!string.IsNullOrEmpty(currentPage))
+        {
+            pages.Add(currentPage.Trim());
+        }
+        return pages;
+    }
 }
