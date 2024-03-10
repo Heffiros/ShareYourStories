@@ -22,12 +22,12 @@
 </template>
 
 <script>
-import createStory from '~/components/popups/CreateStory'
+import CreateStory from '~/components/popups/CreateStory'
 import AppStoriesFeed from '~/components/AppStoriesFeed'
 
 export default {
   components: {
-    createStory,
+    CreateStory,
     AppStoriesFeed
   },
   data () {

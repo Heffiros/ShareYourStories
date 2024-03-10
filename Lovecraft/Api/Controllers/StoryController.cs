@@ -22,16 +22,16 @@ namespace Lovecraft.Api.Controllers
 	public class StoryController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly StoryRepository _storyRepository;
+		private readonly ICommonRepository<Story> _storyRepository;
 		private readonly ICommonRepository<Page> _pageRepository;
 		private readonly ICommonRepository<Event> _eventRepository;
-		private readonly StoryStoryTagRepository _storyStoryTagRepository;
+		private readonly ICommonRepository<StoryStoryTag> _storyStoryTagRepository;
 
 		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(StoryRepository storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, StoryStoryTagRepository storyStoryTagRepository)
+		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, ICommonRepository<StoryStoryTag> storyStoryTagRepository)
 		{
 			_storyRepository = storyRepository;
 			_pageRepository = pageRepository;
@@ -41,7 +41,7 @@ namespace Lovecraft.Api.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] string? search, [FromQuery] int? storyTagId, [FromQuery] int page = 0)
+		public ActionResult GetAll([FromQuery] int? teamsId,[FromQuery]int? eventId, [FromQuery] string? search, [FromQuery] int? storyTagId, [FromQuery] int page = 0, [FromQuery] bool isAdmin = false)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
 			if (userIdClaim == null)
@@ -71,7 +71,11 @@ namespace Lovecraft.Api.Controllers
 				storyTagsFilter = s => s.StoryStoryTags.Any(sst => sst.StoryTagId == storyTagId.Value);
 			}
 
-
+            Expression<Func<Story, bool>> storyStatusFilter = s => s.Status == Status.Online || s.Status == Status.Winner;
+            if (isAdmin)
+            {
+                storyStatusFilter = s => s.Status == Status.Pending;
+            }
             List<PublicApi_StoryModel> results = _storyRepository
                 .GetAll()
                 .Include(s => s.Pages)
@@ -80,6 +84,7 @@ namespace Lovecraft.Api.Controllers
                 .Include(s => s.StoryStoryTags)
                 .ThenInclude(st => st.StoryTag)
                 .Where(storyFilter)
+                .Where(storyStatusFilter)
                 .Where(storyTagsFilter)
                 .Where(storyAuthorFilter)
                 .Skip(5 * page)
@@ -125,7 +130,15 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Get([FromRoute] int storyId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-			Story story = _storyRepository.GetById(storyId);
+            Story story = _storyRepository.GetAll()
+                .Include(s => s.User)
+                .Include(s => s.StoryVotes)
+                .Include(s => s.StoryStoryTags)
+                .ThenInclude(st => st.StoryTag)
+                .Include(s => s.Pages)
+                .FirstOrDefault(s => s.Id == storyId);
+
+                
 			if (story == null)
 			{
 				return BadRequest();
@@ -188,6 +201,7 @@ namespace Lovecraft.Api.Controllers
                 EventId = story.EventId
             });
         }
+        
         [HttpPost]
 		[Authorize]
 		public async Task<IActionResult> CreateStory()
@@ -258,7 +272,7 @@ namespace Lovecraft.Api.Controllers
 							EventId = storyToCreate.EventId,
 						};
 						_storyRepository.Add(story);
-
+						_storyRepository.Save();
 						int orderPage = 0;
 						foreach (string page in pages)
 						{
@@ -269,9 +283,9 @@ namespace Lovecraft.Api.Controllers
 								Order = orderPage,
 								StoryId = story.Id
 							};
-
 							_pageRepository.Add(pageToCreate);
-							orderPage++;
+							_pageRepository.Save();
+                            orderPage++;
 						}
 
 						if (storyToCreate.StoryTags != null)
@@ -284,6 +298,7 @@ namespace Lovecraft.Api.Controllers
 									StoryTagId = storyTagToLink.Id
 								};
 								_storyStoryTagRepository.Add(storyStoryTag);
+								_storyStoryTagRepository.Save();
 							}
 						}
 					}
@@ -296,6 +311,31 @@ namespace Lovecraft.Api.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, "Error uploading file");
 			}
 		}
-		
-	}
+
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] PublicApi_StoryModel story)
+        {
+            var userIdClaim = HttpContext.User.FindFirstValue("userId");
+            bool fieldhasBeenChange = false;
+            Story storyToUpdate = _storyRepository.GetById(story.Id);
+            if (storyToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            if (story.Status != storyToUpdate.Status)
+            {
+                storyToUpdate.Status = story.Status;
+            }
+
+            if (fieldhasBeenChange)
+            {
+				_storyRepository.Update(storyToUpdate);
+				_storyRepository.Save();
+            }
+
+            return Ok();
+        }
+    }
 }

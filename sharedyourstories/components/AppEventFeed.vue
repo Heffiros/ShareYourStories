@@ -34,11 +34,11 @@
                 <td>{{ item.nbStories }}</td>
                 <td>
                   <v-btn
-                    size="large"
-                    color="info"
+                    size="medium"
+                    color="#1565C0"
                     @click="$router.push('/app/event/' + item.id)"
                     >
-                    ->
+                    <v-icon>mdi-arrow-right-bold-outline</v-icon>
                   </v-btn>
                 </td>
               </tr>

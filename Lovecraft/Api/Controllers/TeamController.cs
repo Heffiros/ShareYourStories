@@ -30,7 +30,8 @@ namespace Lovecraft.Api.Controllers
                     TeamLogoUrl = model.TeamLogoUrl,
                     CreatedDate = DateTime.UtcNow
                 };
-                team = _teamRepository.Add(team);
+                _teamRepository.Add(team);
+                _teamRepository.Save();
                 return Ok(team.Id);
             }
 

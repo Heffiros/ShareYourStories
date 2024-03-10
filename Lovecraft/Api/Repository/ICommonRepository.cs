@@ -1,12 +1,14 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Lovecraft.Api.Repository;
 
-public interface ICommonRepository<T> where T : class
+public interface ICommonRepository<T>
 {
     IQueryable<T> GetAll();
-    T? GetById(int id);
-    T Add(T entity);
+    T GetById(int id);
+    void Add(T entity);
     void Update(T entity);
     void Delete(T id);
+    public void Save();
 }
