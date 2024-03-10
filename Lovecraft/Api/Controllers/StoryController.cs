@@ -71,7 +71,7 @@ namespace Lovecraft.Api.Controllers
 				storyTagsFilter = s => s.StoryStoryTags.Any(sst => sst.StoryTagId == storyTagId.Value);
 			}
 
-            Expression<Func<Story, bool>> storyStatusFilter = s => s.Status == Status.Online || s.Status == Status.Winner;
+            Expression<Func<Story, bool>> storyStatusFilter = s => s.Status != Status.ModerateAuto && s.Status != Status.ModerateByAdmin;
             if (isAdmin)
             {
                 storyStatusFilter = s => s.Status == Status.Pending;
