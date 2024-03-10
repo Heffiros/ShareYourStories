@@ -327,6 +327,7 @@ namespace Lovecraft.Api.Controllers
             if (story.Status != storyToUpdate.Status)
             {
                 storyToUpdate.Status = story.Status;
+                fieldhasBeenChange = true;
             }
 
             if (fieldhasBeenChange)

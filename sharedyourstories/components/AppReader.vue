@@ -23,11 +23,17 @@
         </v-btn>
       </v-col>
     </v-row>
+    <app-moderation-popover :story="story" class="moderation-popover"/>
   </v-container>
 </template>
 
 <script>
+import AppModerationPopover from '~/components/popover/AppModerationPopover'
+
 export default {
+  components: {
+    AppModerationPopover
+  },
   data () {
     return {
       currentPageIndex: 0
@@ -56,5 +62,10 @@ export default {
 
 .fix-right {
   text-align: right;
+}
+
+.moderation-popover {
+  position: absolute;
+  top: 10px;
 }
 </style>

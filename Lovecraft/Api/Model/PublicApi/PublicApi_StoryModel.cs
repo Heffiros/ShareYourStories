@@ -9,7 +9,7 @@ namespace Lovecraft.Api.Model.PublicApi
         [DataMember(Name = "id")]
         public int Id { get; set; }
         [DataMember(Name = "title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
         [DataMember(Name = "coverUrl")]
         public string? CoverUrl { get; set; }
         [DataMember(Name = "summary")]
@@ -24,7 +24,7 @@ namespace Lovecraft.Api.Model.PublicApi
         public Status Status { get; set; }
 
         [DataMember(Name = "pages")]
-        public List<PublicApi_PageModel> Pages { get; set; }
+        public List<PublicApi_PageModel>? Pages { get; set; }
 
         [DataMember(Name = "eventId")]
         public int? EventId { get; set; }
