@@ -32,7 +32,15 @@
                 <td>{{ item.dateBegin }}</td>
                 <td>{{ item.dateEnd }}</td>
                 <td>{{ item.nbStories }}</td>
-                <td>{{ today }}</td>
+                <td>
+                  <v-btn
+                    size="large"
+                    color="info"
+                    @click="$router.push('/app/event/' + item.id)"
+                    >
+                    ->
+                  </v-btn>
+                </td>
               </tr>
             </tbody>
           </template>
@@ -89,11 +97,6 @@
     methods: {
       loadMore () {
         fetch(this)
-      },
-      async reset () {
-        await this.$store.dispatch('events/RESET_EVENTS')
-        this.page = 0
-        await fetch(this)
       }
     }
   }
@@ -101,19 +104,19 @@
   
   <style>
   .tr-end {
-    background-color: red;
+    background-color: #EF5350;
   }
 
   .tr-end:hover {
-    background-color: brown!important;;
+    background-color: #E53935!important;
   }
 
   .tr-ongoing {
-    background-color: rgb(36, 177, 36);
+    background-color: #43A047;
   }
 
   .tr-ongoing:hover {
-    background-color: rgb(54, 163, 54)!important;;
+    background-color: #388E3C!important;
   }
   
   </style>
