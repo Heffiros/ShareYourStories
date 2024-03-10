@@ -1,11 +1,43 @@
 <template>
     <div>
       <v-row>
-        <v-col v-for="(event, index) in events" :key="index" cols="12" sm="6" md="4" lg="3">
-          <app-event :event="event" />
-        </v-col>
-      </v-row>
-  
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">
+                  Name
+                </th>
+                <th class="text-left">
+                  Date de début
+                </th>
+                <th class="text-left">
+                  Date de fin
+                </th>
+                <th class="text-left">
+                  Nombre de participation
+                </th>
+                <th class="text-left">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="item in events"
+                :key="item.id"
+                :class="new Date(item.dateEnd) < today ? 'tr-end' : 'tr-ongoing'"
+                >
+                <td>{{ item.title }}</td>
+                <td>{{ item.dateBegin }}</td>
+                <td>{{ item.dateEnd }}</td>
+                <td>{{ item.nbStories }}</td>
+                <td>{{ today }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-row>  
       <v-row>
         <v-col cols="auto">
           <v-btn
@@ -41,6 +73,7 @@
       return {
         page: 0,
         hasMore: true,
+        today: new Date()
       }
     },
     computed: {
@@ -67,39 +100,20 @@
   </script>
   
   <style>
-  .searchField {
-    display: inline-block;
-    padding-top: 10px !important;
+  .tr-end {
+    background-color: red;
   }
-  
-  .resetButton {
-    display: inline-block;
+
+  .tr-end:hover {
+    background-color: brown!important;;
   }
-  
-  .item {
-    display: inline-block;
-    margin: 8px;
-    background-color: #4CAF50;
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 10px;
-    height: 45px;
+
+  .tr-ongoing {
+    background-color: rgb(36, 177, 36);
   }
-  
-  .tmp {
-    display: inline-block;
-  }
-  /*
-  Le important là c'est parce que cette classe existe déjà dans AppStoryTagsResearcher.
-  Todo Mettre stylus ou autre pour compilé le nom de classe
-  */
-  .item:hover {
-    background-color: #22552b !important;
-    cursor: pointer;
-  }
-  
-  .item-content {
-    color: white;
+
+  .tr-ongoing:hover {
+    background-color: rgb(54, 163, 54)!important;;
   }
   
   </style>

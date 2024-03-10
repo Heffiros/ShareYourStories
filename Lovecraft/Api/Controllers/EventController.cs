@@ -26,7 +26,6 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet]
 		public ActionResult GetAll([FromQuery] int page, [FromQuery] string mode)
         {
-
             DateTime today = DateTime.Now;
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
             Expression<Func<Event, bool>> eventDateFilter = s => true;
