@@ -23,7 +23,7 @@
         </v-btn>
       </v-col>
     </v-row>
-    <app-moderation-popover :story="story" class="moderation-popover"/>
+    <app-moderation-popover v-if="currentUser && currentUser.isAdmin" :story="story" class="moderation-popover"/>
   </v-container>
 </template>
 
@@ -48,6 +48,9 @@ export default {
   computed: {
     currentPage () {
       return this.story.pages[this.currentPageIndex]
+    },
+    currentUser () {
+      return this.$auth.user
     }
   }
 }
