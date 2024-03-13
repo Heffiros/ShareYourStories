@@ -38,7 +38,8 @@ public class ImageUploaderHelper
                 InputStream = s3obj.Stream,
                 Key = key,
                 BucketName = "s3.sharedyourstories",
-                CannedACL = S3CannedACL.NoACL
+                CannedACL = S3CannedACL.NoACL,
+                ContentType = s3obj.MimeType
             };
             var client = new AmazonS3Client(credentials, config);
             var transferUtility = new TransferUtility(client);

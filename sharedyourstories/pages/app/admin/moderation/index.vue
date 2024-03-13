@@ -1,15 +1,16 @@
 <template>
     <v-container class="bg-surface-variant">
-      Hello Moderation
+      <app-stories-feed :is-moderation="true"/>
     </v-container>
   </template>
   
   <script>
+  import AppStoriesFeed from '~/components/AppStoriesFeed'
   export default {
     layout: 'admin',
     middleware: 'admin-middleware',
     components: {
-      
+      AppStoriesFeed
     },
     data() {
       return {

@@ -10,7 +10,7 @@ public class PublicApi_UserModel
     public int Id { get; set; }
 
     [DataMember(Name = "email")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [DataMember(Name = "authorName")]
     public string? AuthorName { get; set; }

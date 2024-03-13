@@ -4,7 +4,7 @@ using Lovecraft.Datas;
 
 namespace Lovecraft.Api.Repository;
 
-public class StoryTagRepository : ICommonRepository<StoryTag>
+public class StoryTagRepository
 {
 	readonly LovecraftDbContext _dbContext = new();
 	
