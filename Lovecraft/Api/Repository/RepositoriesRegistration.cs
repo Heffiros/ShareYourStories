@@ -7,14 +7,14 @@ public class RepositoriesRegistration
 	public static void RegisterRepositories(IServiceCollection services)
 	{
 		services.AddTransient<IUserRepository, UserRepository>();
-		services.AddTransient<ICommonRepository<Team>, TeamRepository>();
-		services.AddTransient<ICommonRepository<UserTeam>, UserTeamRepository>();
-		services.AddTransient<StoryRepository, StoryRepository>();
-		services.AddTransient<ICommonRepository<Page>, PageRepository>();
-		services.AddTransient<ICommonRepository<Event>, EventRepository>();
+		services.AddTransient<ICommonRepository<Team>, CommonRepository<Team>>();
+		services.AddTransient<ICommonRepository<UserTeam>, CommonRepository<UserTeam>>();
+		services.AddTransient<ICommonRepository<Story>, CommonRepository<Story>>();
+		services.AddTransient<ICommonRepository<Page>, CommonRepository<Page>>();
+		services.AddTransient<ICommonRepository<Event>, CommonRepository<Event>>();
 		services.AddTransient<StoryVoteRepository, StoryVoteRepository>();
 		services.AddTransient<StoryTagRepository, StoryTagRepository>();
-		services.AddTransient<StoryStoryTagRepository, StoryStoryTagRepository>();
-		services.AddTransient<StoryCommentRepository, StoryCommentRepository>();
+		services.AddTransient<ICommonRepository<StoryStoryTag>, CommonRepository<StoryStoryTag>>();
+		services.AddTransient<ICommonRepository<StoryComment>, CommonRepository<StoryComment>>();
 	}
 }

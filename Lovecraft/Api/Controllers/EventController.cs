@@ -26,7 +26,6 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet]
 		public ActionResult GetAll([FromQuery] int page, [FromQuery] string mode)
         {
-
             DateTime today = DateTime.Now;
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
             Expression<Func<Event, bool>> eventDateFilter = s => true;
@@ -62,7 +61,7 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Get([FromRoute] int eventId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-			Event e = _eventRepository.GetById(eventId);
+			Event e = _eventRepository.GetAll().Include(s => s.Stories).FirstOrDefault(s => s.Id == eventId);
 			if (e == null)
 			{
 				return BadRequest();
@@ -119,7 +118,8 @@ namespace Lovecraft.Api.Controllers
 					DateBegin = model.DateBegin,
 					DateEnd = model.DateEnd
                 };
-                e = _eventRepository.Add(e);
+                _eventRepository.Add(e);
+                _eventRepository.Save();
                 return Ok(e.Id);
             }
             return BadRequest();

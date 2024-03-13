@@ -13,11 +13,11 @@ namespace Lovecraft.Api.Controllers
 	public class StoryVoteController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly StoryRepository _storyRepository;
+		private readonly ICommonRepository<Story> _storyRepository;
 		private readonly StoryVoteRepository _storyVoteRepository;
 		private readonly ICommonRepository<Event> _eventRepository;
 
-		public StoryVoteController(StoryRepository storyRepository, StoryVoteRepository storyVoteRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository)
+		public StoryVoteController(ICommonRepository<Story> storyRepository, StoryVoteRepository storyVoteRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository)
 		{
 			_storyRepository = storyRepository;
 			_storyVoteRepository = storyVoteRepository;

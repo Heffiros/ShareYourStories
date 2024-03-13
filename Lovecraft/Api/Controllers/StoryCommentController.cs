@@ -16,9 +16,9 @@ namespace Lovecraft.Api.Controllers
 	public class StoryCommentController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly StoryCommentRepository _storyCommentRepository;
+		private readonly ICommonRepository<StoryComment> _storyCommentRepository;
 
-		public StoryCommentController(StoryCommentRepository storyCommentRepository, IConfiguration configuration)
+		public StoryCommentController(ICommonRepository<StoryComment> storyCommentRepository, IConfiguration configuration)
 		{
 			_storyCommentRepository = storyCommentRepository;
 			_configuration = configuration;
@@ -58,7 +58,8 @@ namespace Lovecraft.Api.Controllers
 				DateCreated = DateTime.Now,
 				Status = Status.Online
 			};
-			storyCommentToAdd = _storyCommentRepository.Add(storyCommentToAdd);
+			_storyCommentRepository.Add(storyCommentToAdd);
+			_storyCommentRepository.Save();
 			return Ok(storyCommentToAdd);
 		}
 	}

@@ -23,11 +23,17 @@
         </v-btn>
       </v-col>
     </v-row>
+    <app-moderation-popover v-if="currentUser && currentUser.isAdmin" :story="story" class="moderation-popover"/>
   </v-container>
 </template>
 
 <script>
+import AppModerationPopover from '~/components/popover/AppModerationPopover'
+
 export default {
+  components: {
+    AppModerationPopover
+  },
   data () {
     return {
       currentPageIndex: 0
@@ -42,6 +48,9 @@ export default {
   computed: {
     currentPage () {
       return this.story.pages[this.currentPageIndex]
+    },
+    currentUser () {
+      return this.$auth.user
     }
   }
 }
@@ -56,5 +65,10 @@ export default {
 
 .fix-right {
   text-align: right;
+}
+
+.moderation-popover {
+  position: absolute;
+  top: 10px;
 }
 </style>

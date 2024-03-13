@@ -57,6 +57,7 @@ async function fetch(context) {
   }
 
   data.search = context.searchText
+  data.isAdmin = context.isModeration
   await context.$store.dispatch('stories/FETCH_STORIES', data)
   const currentNbStories = context.stories.length
   if (currentNbStories % 5 != 0) {
@@ -85,6 +86,10 @@ export default {
     storyVotes: {
       type: Array,
       default: null
+    },
+    isModeration: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

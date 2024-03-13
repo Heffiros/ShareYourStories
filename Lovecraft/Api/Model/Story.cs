@@ -26,7 +26,6 @@ namespace Lovecraft.Api.Model
     public enum Status
     {
         Pending,
-        InValidation,
         Online,
         Private,
         Deleted,
