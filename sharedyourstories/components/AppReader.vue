@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="reader">
     <v-row class="justify-center">
       <!-- Colonne 1 -->
       <v-col cols="2" class="d-flex justify-center align-center">
@@ -70,5 +70,9 @@ export default {
 .moderation-popover {
   position: absolute;
   top: 10px;
+}
+
+.reader br {
+  margin-bottom: 16px
 }
 </style>
