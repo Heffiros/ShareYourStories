@@ -3,6 +3,15 @@
     <v-row class="justify-center">
       <!-- Colonne 1 -->
       <v-col cols="3">
+        <v-btn
+          class="reader"
+          color="green"
+          tonal
+          block
+          @click="$router.push('/app/story/' + storyId + '/reader')"
+          >
+          Lire
+        </v-btn>
         <v-list v-if="story && currentUser.id === story.userId" class="scrollList">
           <v-list-item
             v-for="(item, i) in items"
@@ -158,7 +167,7 @@ export default {
   background-color: transparent;
 }
 
-.scrollList {
-  margin-top: 150px;
+.scrollList, .reader {
+  margin-top: 16px;
 }
 </style>
