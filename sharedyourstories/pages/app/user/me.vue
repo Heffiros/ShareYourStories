@@ -20,16 +20,23 @@
           </div>
         </v-col>
       </v-row>
+      <v-col cols="12">
+        <div class="d-flex flex-column align-center justify-start">
+          <app-badge-feed />
+        </div>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
 import AppImageUploader from '~/components/form/AppImageUploader'
+import AppBadgeFeed from '~/components/AppBadgeFeed'
 
 export default {
   components: {
-    AppImageUploader
+    AppImageUploader,
+    AppBadgeFeed
   },
   data() {
     return {
