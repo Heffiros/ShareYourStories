@@ -26,6 +26,9 @@ namespace Lovecraft.Datas
         public virtual DbSet<StoryTag> StoryTags { get; set; }
         public virtual DbSet<StoryStoryTag> StoryStoryTags { get; set; }
         public virtual DbSet<StoryComment> StoryComments { get; set; }
+        public virtual DbSet<StoryComment> Badges { get; set; }
+
+        public virtual DbSet<StoryComment> UserBadges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,7 +38,8 @@ namespace Lovecraft.Datas
 			modelBuilder.ApplyConfiguration(new EventConfiguration());
 			modelBuilder.ApplyConfiguration(new StoryVoteConfiguration());
 			modelBuilder.ApplyConfiguration(new StoryStoryTagConfiguration());
-			modelBuilder.ApplyConfiguration(new StoryCommentConfiguration());
+            modelBuilder.ApplyConfiguration(new StoryCommentConfiguration());
+            modelBuilder.ApplyConfiguration(new UserBadgeConfiguration());
         }
 	}
 }

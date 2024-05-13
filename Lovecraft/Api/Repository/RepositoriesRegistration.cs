@@ -16,5 +16,7 @@ public class RepositoriesRegistration
 		services.AddTransient<StoryTagRepository, StoryTagRepository>();
 		services.AddTransient<ICommonRepository<StoryStoryTag>, CommonRepository<StoryStoryTag>>();
 		services.AddTransient<ICommonRepository<StoryComment>, CommonRepository<StoryComment>>();
-	}
+        services.AddTransient<ICommonRepository<Badge>, CommonRepository<Badge>>();
+        services.AddTransient<ICommonRepository<UserBadge>, CommonRepository<UserBadge>>();
+    }
 }
