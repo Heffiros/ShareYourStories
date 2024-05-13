@@ -37,13 +37,13 @@ namespace Lovecraft.Api.Controllers
                     EmptyBadgeUrl = e.EmptyBadgeUrl,
                     BadgeUrl = e.BadgeUrl,
                     UserBadges = userIdClaim != null && e.UserBadges.Any(ub => ub.UserId == Int32.Parse(userIdClaim)) ?
-                                e.UserBadges.Where(ub => ub.UserId == Int32.Parse(userIdClaim))
-                                .Select(ub => new PublicApi_UserBadgeModel
-                                {
-                                    UserId = ub.UserId,
-                                    BadgeId = ub.BadgeId,
-                                }).ToList() : null
-                }).ToList();
+                        e.UserBadges.Where(ub => ub.UserId == Int32.Parse(userIdClaim))
+                        .Select(ub => new PublicApi_UserBadgeModel
+                        {
+                            UserId = ub.UserId,
+                            BadgeId = ub.BadgeId,
+                        }).ToList() : null
+                }).ToList();    
             return Ok(badges);
         }
     }

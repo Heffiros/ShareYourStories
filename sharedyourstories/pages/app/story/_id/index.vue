@@ -116,7 +116,6 @@ export default {
     if (!this.$store.getters['stories/getStoryById'](parseInt(this.storyId))) {
       await this.$store.dispatch('stories/FETCH_STORY', {id : parseInt(this.storyId)})
     }
-    console.log(this.story)
   }
 }
 </script>

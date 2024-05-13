@@ -1,10 +1,13 @@
 <template>
-  <v-sheet class="d-flex justify-center align-center fill-height sheet-with-padding scrollContainer">
-    <app-badge
-      v-for="badge in badges"
-      :key="badge.id"
-    />
-  </v-sheet>
+  <div>
+    <div
+      v-for="(badge, index) in badges"
+      :key="badge.id" 
+      :class="{ 'badge-card': index !== 0, 'block-inline': true }"
+    >
+      <app-badge :badge="badge" />
+    </div>
+  </div>  
 </template>
 
 <script>
@@ -49,11 +52,12 @@ export default {
 </script>
 
 <style>
-.sheet-with-padding {
-  padding: 10px;
+.block-inline {
+  display: inline-block;
+  margin-top: 16px;
 }
 
-.full-form {
-  width: 100%;
+.badge-card {
+  margin-left: 32px;
 }
 </style>

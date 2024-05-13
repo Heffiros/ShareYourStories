@@ -8,7 +8,7 @@
           </v-avatar>
         </div>
       </v-col>
-      <v-row no-gutters>
+      <div class="full-form">
         <v-col cols="12" class="col-12 mx-auto">
           <div class="d-flex flex-column align-center justify-center fill-height">
             <v-form @submit.prevent="submit" class="full-form">
@@ -19,12 +19,10 @@
             </v-form>
           </div>
         </v-col>
-      </v-row>
-      <v-col cols="12">
-        <div class="d-flex flex-column align-center justify-start">
-          <app-badge-feed />
-        </div>
-      </v-col>
+      </div>
+      <div>
+        <app-badge-feed class="profile-app-badge-feed"/>
+      </div>
     </v-row>
   </v-container>
 </template>
@@ -85,5 +83,10 @@ export default {
 
 .full-form {
   width: 100%;
+}
+
+.profile-app-badge-feed {
+  margin-top: 24px;
+  text-align: center;
 }
 </style>
