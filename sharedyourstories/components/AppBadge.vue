@@ -9,13 +9,9 @@
       cover
     ></v-img>
 
-    <v-card-title>
+    <v-card-title class="badge-title">
       {{  badge.label }}
     </v-card-title>
-
-    <v-card-subtitle>
-      Todo badge description
-    </v-card-subtitle>
   </v-card>
 </template>
 
@@ -34,3 +30,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.badge-title {
+  text-align: center;
+}
+</style>
