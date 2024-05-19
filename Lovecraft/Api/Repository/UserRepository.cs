@@ -67,6 +67,11 @@ public class UserRepository : IUserRepository
         return _dbContext.Users.Any(u => u.Email == email);
     }
 
+    public bool IsUserAdmin(int userId)
+    {
+        return _dbContext.Users.Any(u => u.Id == userId && u.IsAdmin);
+    }
+
     public void Update(PublicApi_UserModel model)
     {
 	    User? user = _dbContext.Users
