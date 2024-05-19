@@ -13,21 +13,17 @@ namespace Lovecraft.Api.Controllers
     public class BadgeController : ControllerBase
     {
         public IConfiguration _configuration;
-        private readonly ICommonRepository<Badge> _badgeRepository;
-        private readonly IUserRepository _userRepository;
-
-        public BadgeController(ICommonRepository<Badge> badgeRepository,IUserRepository userRepository,IConfiguration configuration)
+        private readonly ILovecraftUnitOfWork _luow;
+        public BadgeController(ILovecraftUnitOfWork luow)
         {
-            _badgeRepository = badgeRepository;
-            _userRepository = userRepository;
-            _configuration = configuration;
+            _luow = luow;
         }
 
         [HttpGet]
         public ActionResult GetAll([FromQuery] int page)
         {
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
-            List<PublicApi_BadgeModel> badges = _badgeRepository
+            List<PublicApi_BadgeModel> badges = _luow.Badges
                 .GetAll()
                 .Include(b => b.UserBadges)
                 .Skip(5 * page)
@@ -60,7 +56,7 @@ namespace Lovecraft.Api.Controllers
                     return BadRequest();
                 }
                 
-                if (_userRepository.IsUserAdmin(Int32.Parse(userIdClaim)))
+                if (_luow.Users.IsUserAdmin(Int32.Parse(userIdClaim)))
                 {
                     return Unauthorized();
                 }
@@ -71,8 +67,8 @@ namespace Lovecraft.Api.Controllers
                     Description = model.Description,
                     EmptyBadgeUrl = model.EmptyBadgeUrl
                 };
-                _badgeRepository.Add(e);
-                _badgeRepository.Save();
+                _luow.Badges.Add(e);
+                _luow.Save();
                 return Ok(e.Id);
             }
             return BadRequest();

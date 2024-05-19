@@ -15,11 +15,10 @@ namespace Lovecraft.Api.Controllers
 	public class EventController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly ICommonRepository<Event> _eventRepository;
-
-		public EventController(ICommonRepository<Event> eventRepository, IConfiguration configuration)
+        private readonly ILovecraftUnitOfWork _luow;
+		public EventController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_eventRepository = eventRepository;
+			_luow = luow;
 			_configuration = configuration;
 		}
 
@@ -29,7 +28,7 @@ namespace Lovecraft.Api.Controllers
             DateTime today = DateTime.Now;
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
             Expression<Func<Event, bool>> eventDateFilter = s => true;
-            IQueryable<Event> queryable = _eventRepository.GetAll();
+            IQueryable<Event> queryable = _luow.Events.GetAll();
             
             if (mode == "active")
             {
@@ -61,7 +60,7 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Get([FromRoute] int eventId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-			Event e = _eventRepository.GetAll().Include(s => s.Stories).FirstOrDefault(s => s.Id == eventId);
+			Event e = _luow.Events.GetAll().Include(s => s.Stories).FirstOrDefault(s => s.Id == eventId);
 			if (e == null)
 			{
 				return BadRequest();
@@ -84,7 +83,7 @@ namespace Lovecraft.Api.Controllers
         [HttpGet("last")]
         public ActionResult Get()
         {
-            Event e = _eventRepository.GetAll()
+            Event e = _luow.Events.GetAll()
                 .Include(e => e.Stories)
                 .Where(e => e.DateEnd <= DateTime.Today)
                 .OrderByDescending(e => e.DateEnd).FirstOrDefault();
@@ -118,8 +117,8 @@ namespace Lovecraft.Api.Controllers
 					DateBegin = model.DateBegin,
 					DateEnd = model.DateEnd
                 };
-                _eventRepository.Add(e);
-                _eventRepository.Save();
+                _luow.Events.Add(e);
+                _luow.Save();
                 return Ok(e.Id);
             }
             return BadRequest();

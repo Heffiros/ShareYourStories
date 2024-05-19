@@ -13,15 +13,11 @@ namespace Lovecraft.Api.Controllers
 	public class StoryVoteController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly ICommonRepository<Story> _storyRepository;
-		private readonly StoryVoteRepository _storyVoteRepository;
-		private readonly ICommonRepository<Event> _eventRepository;
+		private readonly ILovecraftUnitOfWork _luow;
 
-		public StoryVoteController(ICommonRepository<Story> storyRepository, StoryVoteRepository storyVoteRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository)
+		public StoryVoteController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_storyRepository = storyRepository;
-			_storyVoteRepository = storyVoteRepository;
-			_eventRepository = eventRepository;
+			_luow = luow;
 			_configuration = configuration;
 		}
 
@@ -29,13 +25,13 @@ namespace Lovecraft.Api.Controllers
 		[HttpGet("podium/{eventId}")]
 		public ActionResult GetPodium(int eventId)
 		{
-			Event eventToGet = _eventRepository.GetById(eventId);
+			Event eventToGet = _luow.Events.GetById(eventId);
 			if (eventToGet == null)
 			{
 				return NotFound();
 			}
 
-			List<PublicApi_PodiumModel> votes = _storyVoteRepository.GetTop3StoryVotes(eventId);
+			List<PublicApi_PodiumModel> votes = _luow.StoryVotes.GetTop3StoryVotes(eventId);
 			return Ok(votes);
 		}
 
@@ -43,13 +39,13 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult GetStoryVoteAvaible(int eventId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-			Event eventToGet = _eventRepository.GetById(eventId);
+			Event eventToGet = _luow.Events.GetById(eventId);
 			if (eventToGet == null)
 			{
 				return NotFound();
 			}
 
-			List<PublicApi_StoryVoteModel> storyVotes = _storyVoteRepository.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
+			List<PublicApi_StoryVoteModel> storyVotes = _luow.StoryVotes.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
 			return Ok(storyVotes);
 		}
 
@@ -57,13 +53,13 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Vote([FromRoute] int eventId, [FromRoute] int storyId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-			Story storyToVote = _storyRepository.GetById(storyId);
+			Story storyToVote = _luow.Stories.GetById(storyId);
 			if (storyToVote == null)
 			{
 				return NotFound();
 			}
 
-			Event eventToGet = _eventRepository.GetById(eventId);
+			Event eventToGet = _luow.Events.GetById(eventId);
 			if (eventToGet == null)
 			{
 				return NotFound();
@@ -71,7 +67,7 @@ namespace Lovecraft.Api.Controllers
 			//Ce qu'il faut tester : 
 			// - pas déjà voté
 			// - n'a pas dépassé le nombre max
-			List<PublicApi_StoryVoteModel> storyVotes = _storyVoteRepository.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
+			List<PublicApi_StoryVoteModel> storyVotes = _luow.StoryVotes.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
 			if (storyVotes.Count() >= 3 || storyVotes.Count(sv => sv.StoryId == storyId) > 0)
 			{
 				return BadRequest();
@@ -83,7 +79,7 @@ namespace Lovecraft.Api.Controllers
 				StoryId = storyId,
 				DateVoted = DateTime.UtcNow
 			};
-			_storyVoteRepository.Add(storyVoteToAdd);
+			_luow.StoryVotes.Add(storyVoteToAdd);
 			return Ok();
 		}
 	}
