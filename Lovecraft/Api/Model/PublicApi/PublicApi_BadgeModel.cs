@@ -9,6 +9,9 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "label")]
         public string Label { get; set; }
+        
+        [DataMember(Name = "description")]
+        public string Description { get; set; }
 
         [DataMember(Name = "emptyBadgeUrl")]
         public string EmptyBadgeUrl { get; set; }

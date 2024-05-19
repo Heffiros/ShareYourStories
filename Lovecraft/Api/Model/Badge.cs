@@ -6,6 +6,7 @@
         public string Label { get; set; }
         public string EmptyBadgeUrl { get; set; }
         public string BadgeUrl { get; set; }
+        public string Description { get; set; }
 
         public virtual List<UserBadge> UserBadges { get; set; }
     }

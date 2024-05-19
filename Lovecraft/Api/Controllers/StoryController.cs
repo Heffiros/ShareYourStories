@@ -27,17 +27,20 @@ namespace Lovecraft.Api.Controllers
 		private readonly ICommonRepository<Event> _eventRepository;
 		private readonly ICommonRepository<StoryStoryTag> _storyStoryTagRepository;
 
+		private readonly ICommonRepository<UserBadge> _userBadgeRepository;
+
 		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, ICommonRepository<StoryStoryTag> storyStoryTagRepository)
+		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, ICommonRepository<StoryStoryTag> storyStoryTagRepository, ICommonRepository<UserBadge> userBadgeRepository)
 		{
 			_storyRepository = storyRepository;
 			_pageRepository = pageRepository;
 			_eventRepository = eventRepository;
 			_configuration = configuration;
 			_storyStoryTagRepository = storyStoryTagRepository;
+			_userBadgeRepository = userBadgeRepository;
 		}
 
 		[HttpGet]
@@ -300,10 +303,10 @@ namespace Lovecraft.Api.Controllers
 								_storyStoryTagRepository.Add(storyStoryTag);
 								_storyStoryTagRepository.Save();
 							}
-						}
+						}						
 					}
 				}
-
+				HandleGamification();
 				return Ok(new { message = "File uploaded successfully" });
 			}
 			catch (Exception ex)
@@ -338,5 +341,16 @@ namespace Lovecraft.Api.Controllers
 
             return Ok();
         }
+
+		private void HandleGamification(int userId)
+		{
+			BadgeHelper badgeHelper = new BadgeHelper(_userBadgeRepository);
+
+			// Premiere story crée
+			if (_storyRepository.GetAll().Where(s => s.UserId == userId).Count() == 1)
+			{
+				badgeHelper.GiveUserBadge(userId, 1); //Todo en attendant un vrai systeme de condition on force
+			}
+		}
     }
 }
