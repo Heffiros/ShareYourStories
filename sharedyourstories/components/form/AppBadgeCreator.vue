@@ -18,7 +18,6 @@
             />
             <app-image-uploader v-model="badge.badgeUrl" :place="'badge'"/>
             <app-image-uploader v-model="badge.emptyBadgeUrl" :place="'badge'"/>
-            <!-- Todo rajouter ici le choix de l'équipe quand on pourra-->
             <v-btn type="submit" color="primary">Suivant</v-btn>
           </v-form>
         </v-card-text>
