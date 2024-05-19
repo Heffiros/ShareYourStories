@@ -306,7 +306,7 @@ namespace Lovecraft.Api.Controllers
 						}						
 					}
 				}
-				HandleGamification();
+				HandleGamification(Int32.Parse(userIdClaim));
 				return Ok(new { message = "File uploaded successfully" });
 			}
 			catch (Exception ex)
