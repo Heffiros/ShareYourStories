@@ -87,6 +87,13 @@
             hasToBeAuth: true,
             hasToBeAdmin: true,
             to: '/app/dashboard'
+          },
+          {
+            icon: 'mdi-youtube-gaming',
+            title: 'Gamification',
+            hasToBeAuth: true,
+            hasToBeAdmin: true,
+            to: '/app/admin/gamification'
           }
         ],
         miniVariant: false,
