@@ -11,4 +11,5 @@ public interface ICommonRepository<T>
     void Update(T entity);
     void Delete(T id);
     public void Save();
+    public Task SaveAsync();
 }

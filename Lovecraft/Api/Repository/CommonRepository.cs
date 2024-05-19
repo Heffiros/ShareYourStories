@@ -42,4 +42,8 @@ public class CommonRepository<T> : ICommonRepository<T> where T : class
     {
         _dbContext.SaveChanges();
     }
+    public Task SaveAsync()
+    {
+        return _dbContext.SaveChangesAsync();
+    }
 }
