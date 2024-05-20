@@ -56,6 +56,11 @@
         </v-list>
       </v-card>
     </v-menu>
+
+    <v-snackbar v-model="showSnackbar" timeout="3000">
+      Validation prise en compte
+    </v-snackbar>
+
   </div>
 </template>
 
@@ -64,7 +69,8 @@ export default {
   data () {
     return {
       displayMenuModeration: false,
-      menu: false
+      menu: false,
+      showSnackbar: false
     }
   },
   props: {
@@ -79,6 +85,7 @@ export default {
         let storyToUpdate = {...this.story}
         storyToUpdate.status = status
         await this.$axios.put('stories' , storyToUpdate)
+        this.showSnackbar = true
         this.$emit('updated')
       } catch (error) {
         console.error(error)
