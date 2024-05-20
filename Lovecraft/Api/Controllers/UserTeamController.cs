@@ -10,11 +10,11 @@ namespace Lovecraft.Api.Controllers
     public class UserTeamController : ControllerBase
     {
         public IConfiguration _configuration;
-        private readonly ICommonRepository<UserTeam> _userTeamRepository;
+        private readonly ILovecraftUnitOfWork _luow;
 
-        public UserTeamController(ICommonRepository<UserTeam> userTeamRepository, IConfiguration configuration)
+        public UserTeamController(ILovecraftUnitOfWork luow, IConfiguration configuration)
         {
-            _userTeamRepository = userTeamRepository;
+            _luow = luow;
             _configuration = configuration;
         }
 
@@ -28,7 +28,7 @@ namespace Lovecraft.Api.Controllers
                     UserId = model.UserId,
                     TeamId = model.TeamId,
                 };
-                _userTeamRepository.Add(userTeam);
+                _luow.UserTeams.Add(userTeam);
                 return Ok();
             }
 

@@ -12,10 +12,10 @@ namespace Lovecraft.Api.Controllers
     public class TeamController : ControllerBase
     {
         public IConfiguration _configuration;
-        private readonly ICommonRepository<Team> _teamRepository;
-        public TeamController(ICommonRepository<Team> teamRepository, IConfiguration configuration)
+        private readonly ILovecraftUnitOfWork _luow;
+        public TeamController(ILovecraftUnitOfWork luow, IConfiguration configuration)
         {
-            _teamRepository = teamRepository;
+            _luow = luow;
             _configuration = configuration;
         }
 
@@ -30,8 +30,8 @@ namespace Lovecraft.Api.Controllers
                     TeamLogoUrl = model.TeamLogoUrl,
                     CreatedDate = DateTime.UtcNow
                 };
-                _teamRepository.Add(team);
-                _teamRepository.Save();
+                _luow.Teams.Add(team);
+                _luow.Save();
                 return Ok(team.Id);
             }
 
@@ -42,7 +42,7 @@ namespace Lovecraft.Api.Controllers
         [Route("{teamId}")]
         public ActionResult GetById([FromRoute] int teamId)
         {
-            Team? team = _teamRepository.GetById(teamId);
+            Team? team = _luow.Teams.GetById(teamId);
             if (team == null)
             {
                 NotFound();

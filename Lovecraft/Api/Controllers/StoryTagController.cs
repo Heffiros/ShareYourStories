@@ -12,11 +12,10 @@ namespace Lovecraft.Api.Controllers
 	public class StoryTagController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly StoryTagRepository _storyTagRepository;
-
-		public StoryTagController(StoryTagRepository storyTagRepository, IConfiguration configuration)
+		private readonly ILovecraftUnitOfWork _luow;
+		public StoryTagController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_storyTagRepository = storyTagRepository;
+			_luow = luow;
 			_configuration = configuration;
 		}
 
@@ -28,7 +27,7 @@ namespace Lovecraft.Api.Controllers
 				return BadRequest();
 			}
 
-			List<PublicApi_StoryTagModel> storyTags = _storyTagRepository.FullTextResearch(search).Select(st => new PublicApi_StoryTagModel
+			List<PublicApi_StoryTagModel> storyTags = _luow.StoryTags.FullTextResearch(search).Select(st => new PublicApi_StoryTagModel
 			{
 				Id = st.Id,
 				Label = st.Label,
@@ -46,7 +45,7 @@ namespace Lovecraft.Api.Controllers
 			{
 				return BadRequest();
 			}
-			List<PublicApi_StoryTagModel> storyTags = _storyTagRepository.GetAllStoryTagsUseByUser(Int32.Parse(userIdClaim)).Select(st => new PublicApi_StoryTagModel
+			List<PublicApi_StoryTagModel> storyTags = _luow.StoryTags.GetAllStoryTagsUseByUser(Int32.Parse(userIdClaim)).Select(st => new PublicApi_StoryTagModel
 			{
 				Id = st.Id,
 				Label = st.Label,

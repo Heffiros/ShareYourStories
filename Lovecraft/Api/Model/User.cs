@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Lovecraft.Api.Model;
-using Microsoft.AspNetCore.Identity;
+﻿using Lovecraft.Api.Model;
 
 namespace Lovecraft.Model
 {

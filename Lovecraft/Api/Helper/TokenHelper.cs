@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Lovecraft.Datas;
 using Lovecraft.Model;
 using Microsoft.IdentityModel.Tokens;
 

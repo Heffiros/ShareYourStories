@@ -14,11 +14,11 @@ namespace Lovecraft.Api.Controllers
     public class UserController : ControllerBase
     {
         public IConfiguration _configuration;
-        private readonly IUserRepository _userRepository;
+        private readonly ILovecraftUnitOfWork _luow;
 
-        public UserController(IUserRepository userRepository, IConfiguration configuration)
+        public UserController(ILovecraftUnitOfWork luow, IConfiguration configuration)
         {
-            _userRepository = userRepository;
+            _luow = luow;
             _configuration = configuration;
         }
 
@@ -32,7 +32,7 @@ namespace Lovecraft.Api.Controllers
 		        return NotFound();
 	        }
 	        
-			User? user = _userRepository.GetById(userId);
+			User? user = _luow.Users.GetById(userId);
 			if (user == null)
 			{
 				return NotFound();
@@ -63,7 +63,7 @@ namespace Lovecraft.Api.Controllers
 				return NotFound();
 			}
 
-			_userRepository.Update(userToUpdate);
+			_luow.Users.Update(userToUpdate);
 			return Ok();
 		}
 
@@ -71,7 +71,7 @@ namespace Lovecraft.Api.Controllers
         [Route("{userId}")]
         public ActionResult GetById([FromRoute] int userId)
         {
-            User? user = _userRepository.GetById(userId);
+            User? user = _luow.Users.GetById(userId);
             if (user == null)
             {
                 NotFound();

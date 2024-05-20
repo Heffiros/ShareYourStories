@@ -22,25 +22,15 @@ namespace Lovecraft.Api.Controllers
 	public class StoryController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly ICommonRepository<Story> _storyRepository;
-		private readonly ICommonRepository<Page> _pageRepository;
-		private readonly ICommonRepository<Event> _eventRepository;
-		private readonly ICommonRepository<StoryStoryTag> _storyStoryTagRepository;
-
-		private readonly ICommonRepository<UserBadge> _userBadgeRepository;
-
+		private readonly ILovecraftUnitOfWork _luow;
 		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, ICommonRepository<StoryStoryTag> storyStoryTagRepository, ICommonRepository<UserBadge> userBadgeRepository)
+		public StoryController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_storyRepository = storyRepository;
-			_pageRepository = pageRepository;
-			_eventRepository = eventRepository;
-			_configuration = configuration;
-			_storyStoryTagRepository = storyStoryTagRepository;
-			_userBadgeRepository = userBadgeRepository;
+			_luow = luow;
+			_configuration = configuration;			
 		}
 
 		[HttpGet]
@@ -79,7 +69,7 @@ namespace Lovecraft.Api.Controllers
             {
                 storyStatusFilter = s => s.Status == Status.Pending;
             }
-            List<PublicApi_StoryModel> results = _storyRepository
+            List<PublicApi_StoryModel> results = _luow.Stories
                 .GetAll()
                 .Include(s => s.Pages)
                 .Include(s => s.User)
@@ -133,7 +123,7 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Get([FromRoute] int storyId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-            Story story = _storyRepository.GetAll()
+            Story story = _luow.Stories.GetAll()
                 .Include(s => s.User)
                 .Include(s => s.StoryVotes)
                 .Include(s => s.StoryStoryTags)
@@ -185,7 +175,7 @@ namespace Lovecraft.Api.Controllers
         [HttpGet("winner/{eventId}")]
         public ActionResult GetWinner([FromRoute] int eventId)
         {
-            Story story = _storyRepository.GetAll().FirstOrDefault(s => s.EventId == eventId && s.Status == Status.Winner);
+            Story story = _luow.Stories.GetAll().FirstOrDefault(s => s.EventId == eventId && s.Status == Status.Winner);
             if (story == null)
             {
                 return BadRequest();
@@ -223,7 +213,7 @@ namespace Lovecraft.Api.Controllers
 
 				if (storyToCreate.EventId.HasValue)
 				{
-					Event eventLink = _eventRepository.GetById(storyToCreate.EventId.Value);
+					Event eventLink = _luow.Events.GetById(storyToCreate.EventId.Value);
 					if (eventLink != null)
 					{
 						DateTime today = DateTime.Now;
@@ -274,8 +264,8 @@ namespace Lovecraft.Api.Controllers
 							Status = Status.Pending,
 							EventId = storyToCreate.EventId,
 						};
-						_storyRepository.Add(story);
-						_storyRepository.Save();
+						_luow.Stories.Add(story);
+						_luow.Save();
 						int orderPage = 0;
 						foreach (string page in pages)
 						{
@@ -286,8 +276,8 @@ namespace Lovecraft.Api.Controllers
 								Order = orderPage,
 								StoryId = story.Id
 							};
-							_pageRepository.Add(pageToCreate);
-							_pageRepository.Save();
+							_luow.Pages.Add(pageToCreate);
+							_luow.Save();
                             orderPage++;
 						}
 
@@ -300,8 +290,8 @@ namespace Lovecraft.Api.Controllers
 									StoryId = story.Id,
 									StoryTagId = storyTagToLink.Id
 								};
-								_storyStoryTagRepository.Add(storyStoryTag);
-								_storyStoryTagRepository.Save();
+								_luow.StoryStoryTags.Add(storyStoryTag);
+								_luow.Save();
 							}
 						}						
 					}
@@ -321,7 +311,7 @@ namespace Lovecraft.Api.Controllers
         {
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
             bool fieldhasBeenChange = false;
-            Story storyToUpdate = _storyRepository.GetById(story.Id);
+            Story storyToUpdate = _luow.Stories.GetById(story.Id);
             if (storyToUpdate == null)
             {
                 return NotFound();
@@ -335,8 +325,8 @@ namespace Lovecraft.Api.Controllers
 
             if (fieldhasBeenChange)
             {
-				_storyRepository.Update(storyToUpdate);
-				_storyRepository.Save();
+				_luow.Stories.Update(storyToUpdate);
+				_luow.Save();
             }
 
             return Ok();
@@ -344,10 +334,10 @@ namespace Lovecraft.Api.Controllers
 
 		private void HandleGamification(int userId)
 		{
-			BadgeHelper badgeHelper = new BadgeHelper(_userBadgeRepository);
+			BadgeHelper badgeHelper = new BadgeHelper(_luow);
 
 			// Premiere story crée
-			if (_storyRepository.GetAll().Where(s => s.UserId == userId).Count() == 1)
+			if (_luow.Stories.GetAll().Where(s => s.UserId == userId).Count() == 1)
 			{
 				badgeHelper.GiveUserBadge(userId, 1); //Todo en attendant un vrai systeme de condition on force
 			}
