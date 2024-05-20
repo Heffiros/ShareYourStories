@@ -14,9 +14,9 @@ public class LovecraftUnitOfWork : ILovecraftUnitOfWork
     private ICommonRepository<StoryStoryTag> _storyStoryTags;
     private ICommonRepository<UserBadge> _userBadges;
     private ICommonRepository<StoryComment> _storyComments;
-    
+    private ICommonRepository<StoryVote> _storyVotes;
+
     private IUserRepository _users;
-    private StoryVoteRepository _storyVotes;
     private StoryTagRepository _storyTags;
 
     public LovecraftUnitOfWork(LovecraftDbContext context)
