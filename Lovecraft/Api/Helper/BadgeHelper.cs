@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Lovecraft.Api.Model;
-using Lovecraft.Api.Repository;
 
 namespace Lovecraft.Api.Helper;
 public class BadgeHelper

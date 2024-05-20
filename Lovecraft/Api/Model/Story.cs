@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Office.CoverPageProps;
-using Lovecraft.Model;
+﻿using Lovecraft.Model;
 
 namespace Lovecraft.Api.Model
 {

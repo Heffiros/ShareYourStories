@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Lovecraft.Api.Model
+﻿namespace Lovecraft.Api.Model
 {
     public class ImageInfo
     {
