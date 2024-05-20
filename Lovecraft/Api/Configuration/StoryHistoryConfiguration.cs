@@ -17,12 +17,12 @@ public class StoryHistoryConfiguration : IEntityTypeConfiguration<StoryHistory>
             builder.HasOne(sh => sh.User)
                    .WithMany(u => u.StoryHistories)
                    .HasForeignKey(sh => sh.UserId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(sh => sh.Story)
                    .WithMany(s => s.StoryHistories)
                    .HasForeignKey(sh => sh.StoryId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
 	}
 }
