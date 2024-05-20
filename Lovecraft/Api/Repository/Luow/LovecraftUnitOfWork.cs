@@ -34,10 +34,10 @@ public class LovecraftUnitOfWork : ILovecraftUnitOfWork
     public ICommonRepository<StoryStoryTag> StoryStoryTags => _storyStoryTags ??= new CommonRepository<StoryStoryTag>(_context);
     public ICommonRepository<UserBadge> UserBadges => _userBadges ??= new CommonRepository<UserBadge>(_context);
     public ICommonRepository<StoryComment> StoryComments => _storyComments ??= new CommonRepository<StoryComment>(_context);
+    public ICommonRepository<StoryVote> StoryVotes => _storyVotes ??= new CommonRepository<StoryVote>(_context);
     
     // Not common repositories
     public IUserRepository Users => _users ??= new UserRepository(_context);
-    public StoryVoteRepository StoryVotes => _storyVotes ??= new StoryVoteRepository(_context);
     public StoryTagRepository StoryTags => _storyTags ??= new StoryTagRepository(_context);
 
     public async Task<int> SaveChangesAsync()
