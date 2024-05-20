@@ -13,10 +13,10 @@ public interface ILovecraftUnitOfWork : IDisposable
     ICommonRepository<StoryStoryTag> StoryStoryTags { get; }
     ICommonRepository<UserBadge> UserBadges { get; }
     ICommonRepository<StoryComment> StoryComments { get; }
+    ICommonRepository<StoryVote> StoryVotes { get; }
     
     //Not common
     IUserRepository Users { get; }
-    StoryVoteRepository StoryVotes { get; }
     StoryTagRepository StoryTags { get; }
     Task<int> SaveChangesAsync();
     public void Save();

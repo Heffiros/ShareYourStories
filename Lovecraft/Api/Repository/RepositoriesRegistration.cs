@@ -12,7 +12,7 @@ public class RepositoriesRegistration
 		services.AddTransient<ICommonRepository<Story>, CommonRepository<Story>>();
 		services.AddTransient<ICommonRepository<Page>, CommonRepository<Page>>();
 		services.AddTransient<ICommonRepository<Event>, CommonRepository<Event>>();
-		services.AddTransient<StoryVoteRepository, StoryVoteRepository>();
+		services.AddTransient<ICommonRepository<StoryVote>, CommonRepository<StoryVote>>();
 		services.AddTransient<StoryTagRepository, StoryTagRepository>();
 		services.AddTransient<ICommonRepository<StoryStoryTag>, CommonRepository<StoryStoryTag>>();
 		services.AddTransient<ICommonRepository<StoryComment>, CommonRepository<StoryComment>>();

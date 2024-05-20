@@ -1,9 +1,7 @@
 ﻿using Lovecraft.Api.Model;
 using Lovecraft.Api.Model.PublicApi;
-using Lovecraft.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Lovecraft.Api.Controllers
@@ -31,7 +29,23 @@ namespace Lovecraft.Api.Controllers
 				return NotFound();
 			}
 
-			List<PublicApi_PodiumModel> votes = _luow.StoryVotes.GetTop3StoryVotes(eventId);
+			List<PublicApi_PodiumModel> votes = _luow.StoryVotes
+			.GetAll()
+			.Include(sv => sv.Story)
+			.Where(sv => sv.Story.EventId == eventId)
+			.GroupBy(sv => sv.StoryId)
+			.Select(g => new { Count = g.Count(), StoryId = g.Key, Title = g.First().Story.Title })
+			.OrderByDescending(g => g.Count)
+			.ThenBy(g => g.StoryId)
+			.Where(g => g.Count > 0)
+			.Take(3)
+			.Select(r => new PublicApi_PodiumModel
+			{
+				Count = r.Count,
+				StoryId = r.StoryId,
+				StoryName = r.Title
+			}).ToList()
+			.ToList();
 			return Ok(votes);
 		}
 
@@ -44,8 +58,18 @@ namespace Lovecraft.Api.Controllers
 			{
 				return NotFound();
 			}
-
-			List<PublicApi_StoryVoteModel> storyVotes = _luow.StoryVotes.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
+			
+			List<PublicApi_StoryVoteModel> storyVotes = 
+			_luow.StoryVotes
+			.GetAll()
+			.Where(e => e.Story.EventId == eventId && e.UserId == Int32.Parse(userIdClaim))
+			.ToList()
+			.Select(r => new PublicApi_StoryVoteModel()
+			{
+				Id = r.Id,
+				UserId = r.UserId,
+				StoryId = r.StoryId
+			}).ToList();
 			return Ok(storyVotes);
 		}
 
@@ -67,7 +91,17 @@ namespace Lovecraft.Api.Controllers
 			//Ce qu'il faut tester : 
 			// - pas déjà voté
 			// - n'a pas dépassé le nombre max
-			List<PublicApi_StoryVoteModel> storyVotes = _luow.StoryVotes.GetStoryVoteAvaible(eventId, Int32.Parse(userIdClaim));
+			List<PublicApi_StoryVoteModel> storyVotes = 
+				_luow.StoryVotes
+				.GetAll()
+				.Where(e => e.Story.EventId == eventId && e.UserId == Int32.Parse(userIdClaim))
+				.ToList()
+				.Select(r => new PublicApi_StoryVoteModel()
+				{
+					Id = r.Id,
+					UserId = r.UserId,
+					StoryId = r.StoryId
+				}).ToList();
 			if (storyVotes.Count() >= 3 || storyVotes.Count(sv => sv.StoryId == storyId) > 0)
 			{
 				return BadRequest();
