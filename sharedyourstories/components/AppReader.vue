@@ -47,9 +47,9 @@ export default {
   },
   watch: {
     currentPageIndex (n, o) {
-      let tmp = {...this.story.storyHistory}
-      tmp.lastPageReadId = this.currentPage.id
-      this.$axios.put('storyHistories' , tmp)
+      let storyHistory = {...this.story.storyHistory}
+      storyHistory.lastPageReadId = this.currentPage.id
+      this.$axios.put('storyHistories' , storyHistory)
     }
   },
   computed: {
