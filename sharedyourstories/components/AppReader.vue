@@ -47,10 +47,9 @@ export default {
   },
   watch: {
     currentPageIndex (n, o) {
-      console.log(o)
-      console.log(n)
-      this.story.storyHistory.lastPageId = this.currentPage.id
-      this.$axios.put('storyHistories' , this.story.storyHistory)
+      let tmp = {...this.story.storyHistory}
+      tmp.lastPageReadId = this.currentPage.id
+      this.$axios.put('storyHistories' , tmp)
     }
   },
   computed: {
@@ -63,22 +62,17 @@ export default {
   },
   mounted () {
     if (this.story.storyHistory) {
-      const pageIndex = this.story.pages.findIndex((page) => page.id === lastPageId)
-      if (page) {
+      const pageIndex = this.story.pages.findIndex((page) => page.id === this.story.storyHistory.lastPageReadId)
+      if (pageIndex) {
         this.currentPageIndex = pageIndex
       }
-      this.currentPageIndex = this.story.storyHistory.lastPageId
     } else {
       const openingStoryHistory = {
         userId:this.$auth.user.id,
         storyId: this.story.id,
-        lastPageReadId: this.story.pages[0].id,
-        reread: 0,
-        date: '2024-01-01',
-        state: 0
+        lastPageReadId: this.story.pages[0].id
       }
-      console.log(openingStoryHistory)
-      this.$axios.post('storyHistories' , this.story.storyHistory)
+      this.$axios.post('storyHistories' , openingStoryHistory)
     }
   }
 }
