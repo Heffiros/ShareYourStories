@@ -20,6 +20,35 @@ namespace Lovecraft.Api.Controllers
 			_configuration = configuration;
 		}
 
+		[HttpGet] 
+		public ActionResult GetAll([FromQuery] int page)
+		{
+			var userIdClaim = HttpContext.User.FindFirstValue("userId");
+
+			List<PublicApi_StoryHistoryModel> results = _luow.StoryHistories
+				.GetAll()
+				.OrderByDescending(e => e.Date)
+                .Where(sh => sh.UserId == Int32.Parse(userIdClaim))
+                .Skip(5 * page)
+                .Take(5)
+                .Select(sh => new PublicApi_StoryHistoryModel
+                {
+					Id = sh.Id,
+					UserId = sh.UserId,
+					StoryId = sh.StoryId,
+					LastPageReadId = sh.LastPageReadId,
+					Reread = sh.Reread,
+					Date = sh.Date,
+					State = sh.State,
+					Story = new PublicApi_StoryModel
+					{
+						Title = sh.Story.Title
+					}
+				})
+				.ToList();
+			return Ok(results);
+		}
+
 		[HttpPost]
 		public ActionResult Post([FromBody] PublicApi_StoryHistoryModel model)
 		{

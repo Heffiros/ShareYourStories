@@ -25,6 +25,9 @@ namespace Lovecraft.Api.Model.PublicApi
         public DateTime Date { get; set; }
 
         [DataMember(Name = "historyState")]
-        public HistoryState HistoryState { get; set; }
+        public HistoryState State { get; set; }
+
+        [DataMember(Name = "story")]
+        public PublicApi_StoryModel Story { get; set; }
     }
 }
