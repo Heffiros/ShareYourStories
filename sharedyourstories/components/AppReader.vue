@@ -45,12 +45,40 @@ export default {
       default: null
     }
   },
+  watch: {
+    currentPageIndex (n, o) {
+      console.log(o)
+      console.log(n)
+      this.story.storyHistory.lastPageId = this.currentPage.id
+      this.$axios.put('storyHistories' , this.story.storyHistory)
+    }
+  },
   computed: {
     currentPage () {
       return this.story.pages[this.currentPageIndex]
     },
     currentUser () {
       return this.$auth.user
+    }
+  },
+  mounted () {
+    if (this.story.storyHistory) {
+      const pageIndex = this.story.pages.findIndex((page) => page.id === lastPageId)
+      if (page) {
+        this.currentPageIndex = pageIndex
+      }
+      this.currentPageIndex = this.story.storyHistory.lastPageId
+    } else {
+      const openingStoryHistory = {
+        userId:this.$auth.user.id,
+        storyId: this.story.id,
+        lastPageReadId: this.story.pages[0].id,
+        reread: 0,
+        date: '2024-01-01',
+        state: 0
+      }
+      console.log(openingStoryHistory)
+      this.$axios.post('storyHistories' , this.story.storyHistory)
     }
   }
 }

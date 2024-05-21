@@ -10,11 +10,11 @@ namespace Lovecraft.Api.Controllers
 {
 	[Route("storyHistories")]
 	[ApiController]
-	public class StoryHistorController : ControllerBase
+	public class StoryHistoryController : ControllerBase
 	{
 		public IConfiguration _configuration;
 		private readonly ILovecraftUnitOfWork _luow;
-		public StoryHistorController(ILovecraftUnitOfWork luow, IConfiguration configuration)
+		public StoryHistoryController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
 			_luow = luow;
 			_configuration = configuration;
