@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Page = Lovecraft.Api.Model.Page;
+using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
 
 namespace Lovecraft.Api.Controllers
 {
