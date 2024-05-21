@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using static Lovecraft.Api.Model.StoryHistory;
 
 namespace Lovecraft.Api.Model.PublicApi
 {
@@ -18,5 +19,12 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "reread")]
         public int Reread { get; set; }
+
+
+        [DataMember(Name = "date")]
+        public DateTime Date { get; set; }
+
+        [DataMember(Name = "historyState")]
+        public HistoryState HistoryState { get; set; }
     }
 }

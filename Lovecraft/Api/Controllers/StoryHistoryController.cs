@@ -47,7 +47,7 @@ namespace Lovecraft.Api.Controllers
 				LastPageReadId = model.LastPageReadId,
 				Reread = 0,
 				Date = DateTime.UtcNow,
-				HistoryState = StoryHistory.State.Reading
+				State = StoryHistory.HistoryState.Reading
 			};
 
 			_luow.StoryHistories.Add(storyHistory);
@@ -75,7 +75,7 @@ namespace Lovecraft.Api.Controllers
             storyHistoryToUpdate.LastPageReadId = model.LastPageReadId;
             storyHistoryToUpdate.Reread = model.Reread;
             storyHistoryToUpdate.Date = DateTime.UtcNow;
-            storyHistoryToUpdate.HistoryState = StoryHistory.State.Reading;            
+            storyHistoryToUpdate.State = StoryHistory.HistoryState.Reading;            
 
             _luow.StoryHistories.Update(storyHistoryToUpdate);
             _luow.Save();

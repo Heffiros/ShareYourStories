@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
 using System.Security.Claims;
 using Azure.Core;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
@@ -69,53 +71,76 @@ namespace Lovecraft.Api.Controllers
             {
                 storyStatusFilter = s => s.Status == Status.Pending;
             }
-            List<PublicApi_StoryModel> results = _luow.Stories
-                .GetAll()
-                .Include(s => s.Pages)
-                .Include(s => s.User)
-                .Include(s => s.StoryVotes)
-                .Include(s => s.StoryStoryTags)
-                .ThenInclude(st => st.StoryTag)
-                .Where(storyFilter)
-                .Where(storyStatusFilter)
-                .Where(storyTagsFilter)
-                .Where(storyAuthorFilter)
-                .Skip(5 * page)
-                .Take(5)
-                .Select(story => new PublicApi_StoryModel
+			List<Story> stories = _luow.Stories
+				.GetAll()
+				.Include(s => s.Pages)
+				.Include(s => s.User)
+				.Include(s => s.StoryVotes)
+				.Include(s => s.StoryStoryTags)
+				.ThenInclude(st => st.StoryTag)
+				.Include(s => s.StoryHistories)
+				.Where(storyFilter)
+				.Where(storyStatusFilter)
+				.Where(storyTagsFilter)
+				.Where(storyAuthorFilter)
+				.Skip(5 * page)
+				.Take(5)
+				.ToList();
+                
+			List<PublicApi_StoryModel> results = stories.Select(story => new PublicApi_StoryModel
+            {
+                Id = story.Id,
+                Title = story.Title,
+                CoverUrl = story.CoverUrl,
+                Summary = story.Summary,
+                UserId = story.UserId,
+                TeamId = story.TeamId,
+                DateCreated = story.DateCreated,
+                Status = story.Status,
+                EventId = story.EventId,
+                HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
+                NbVote = story.StoryVotes.Count,
+                Pages = story.Pages.Select(page => new PublicApi_PageModel
                 {
-                    Id = story.Id,
-                    Title = story.Title,
-                    CoverUrl = story.CoverUrl,
-                    Summary = story.Summary,
-                    UserId = story.UserId,
-                    TeamId = story.TeamId,
-                    DateCreated = story.DateCreated,
-                    Status = story.Status,
-                    EventId = story.EventId,
-                    HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
-                    NbVote = story.StoryVotes.Count,
-                    Pages = story.Pages.Select(page => new PublicApi_PageModel
-                    {
-                        Id = page.Id,
-                        Content = page.Content,
-                        LastUpdatedDateTime = page.LastUpdatedDateTime,
-                        Order = page.Order,
-                        StoryId = page.StoryId
-                    }).ToList(),
-                    StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
-                    {
-                        Id = sst.StoryTag.Id,
-                        Label = sst.StoryTag.Label,
-                    }).ToList(),
-                    User = new PublicApi_UserModel
-                    {
-                        AuthorName = story.User.AuthorName,
-                        ProfilePictureUrl = story.User.ProfilePictureUrl
-                    }
-                }).ToList();
+                    Id = page.Id,
+                    Content = page.Content,
+                    LastUpdatedDateTime = page.LastUpdatedDateTime,
+                    Order = page.Order,
+                    StoryId = page.StoryId
+                }).ToList(),
+                StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+                {
+                    Id = sst.StoryTag.Id,
+                    Label = sst.StoryTag.Label,
+                }).ToList(),
+                User = new PublicApi_UserModel
+                {
+                    AuthorName = story.User.AuthorName,
+                    ProfilePictureUrl = story.User.ProfilePictureUrl
+                }
+            }).ToList();
 
-			return Ok(results);
+            foreach (var result in results)
+            {
+                var storyHistory = stories
+                    .FirstOrDefault(s => s.Id == result.Id)?
+                .StoryHistories
+                    .FirstOrDefault(sh => sh.UserId == Int32.Parse(userIdClaim));
+
+                if (storyHistory != null)
+                {
+					result.StoryHistory = new PublicApi_StoryHistoryModel
+					{
+						Id = storyHistory.Id,
+						UserId = storyHistory.UserId,
+						StoryId = storyHistory.StoryId,
+						Date = storyHistory.Date,
+						Reread = storyHistory.Reread,
+						LastPageReadId = storyHistory.LastPageReadId
+                    };
+                }
+            }
+            return Ok(results);
 		}
 
 		[Authorize]
@@ -123,21 +148,20 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Get([FromRoute] int storyId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-            Story story = _luow.Stories.GetAll()
+            Story? story = _luow.Stories.GetAll()
                 .Include(s => s.User)
                 .Include(s => s.StoryVotes)
+                .Include(s => s.StoryHistories)
                 .Include(s => s.StoryStoryTags)
                 .ThenInclude(st => st.StoryTag)
                 .Include(s => s.Pages)
                 .FirstOrDefault(s => s.Id == storyId);
-
-                
-			if (story == null)
-			{
+            if (story == null)
+            {
 				return BadRequest();
 			}
 
-			return Ok(new PublicApi_StoryModel
+			var result = new PublicApi_StoryModel
 			{
 				Id = story.Id,
 				Title = story.Title,
@@ -168,7 +192,25 @@ namespace Lovecraft.Api.Controllers
 					AuthorName = story.User.AuthorName,
 					ProfilePictureUrl = story.User.ProfilePictureUrl,
 				}
-			});
+			};
+
+            StoryHistory? storyHistory = story.StoryHistories
+                    .FirstOrDefault(sh => sh.UserId == Int32.Parse(userIdClaim));
+
+            if (storyHistory != null)
+            {
+                result.StoryHistory = new PublicApi_StoryHistoryModel
+                {
+                    Id = storyHistory.Id,
+                    UserId = storyHistory.UserId,
+                    StoryId = storyHistory.StoryId,
+                    Date = storyHistory.Date,
+                    Reread = storyHistory.Reread,
+                    LastPageReadId = storyHistory.LastPageReadId
+                };
+            }
+
+            return Ok(result);
 		}
 
         [Authorize]
