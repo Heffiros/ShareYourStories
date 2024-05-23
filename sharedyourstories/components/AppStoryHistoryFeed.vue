@@ -15,6 +15,7 @@
         <v-list-item
           :key="item.title"
           @click="$router.push('/app/story/' + item.id + '/reader')"
+          :class="item.progression === 100 ? 'history-item' : null "
         >
           <v-list-item-avatar>
             <v-img :src="item.cover"></v-img>
@@ -66,3 +67,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.history-item {
+  background-color: #B71C1C
+}
+</style>
