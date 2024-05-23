@@ -25,7 +25,7 @@
         </nuxt-link>
       </v-card>
     </v-col>
-    <v-col cols="4">
+    <v-col cols="3">
       <app-story-history-feed />
     </v-col>
   </div>
