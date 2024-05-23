@@ -5,6 +5,7 @@ using Lovecraft.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace Lovecraft.Api.Controllers
 {
@@ -44,6 +45,11 @@ namespace Lovecraft.Api.Controllers
 					{
 						Title = sh.Story.Title,
 						CoverUrl = sh.Story.CoverUrl
+					},
+					Progression = new PublicApi_ProgressionModel
+					{
+						MaxNbPages = sh.Story.Pages.Count(),
+						CurrentPagesIndex = sh.Story.Pages.FirstOrDefault(page => page.Id == sh.LastPageReadId).Order
 					}
 				})
 				.ToList();

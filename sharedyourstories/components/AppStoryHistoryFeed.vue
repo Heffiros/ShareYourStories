@@ -22,6 +22,7 @@
 
           <v-list-item-content>
             <v-list-item-title v-html="item.title"></v-list-item-title>
+            <v-progress-linear :value="item.progression"></v-progress-linear>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -51,7 +52,8 @@ export default {
             return {
               cover: item.story.coverUrl,
               title: item.story.title,
-              id: item.storyId
+              id: item.storyId,
+              progression: (item.progression.currentPagesIndex + 1 )* 100 / item.progression.maxNbPages
             }
           })
           this.list.push(...mappedData)
