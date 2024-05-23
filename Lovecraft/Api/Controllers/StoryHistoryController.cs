@@ -42,7 +42,8 @@ namespace Lovecraft.Api.Controllers
 					State = sh.State,
 					Story = new PublicApi_StoryModel
 					{
-						Title = sh.Story.Title
+						Title = sh.Story.Title,
+						CoverUrl = sh.Story.CoverUrl
 					}
 				})
 				.ToList();
