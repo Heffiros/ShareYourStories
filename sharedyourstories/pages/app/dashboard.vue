@@ -6,7 +6,7 @@
         <v-img :src="event.coverUrl" :alt="event.title"></v-img>
         <div class="carousel-header">
           <h2 class="carousel-title">{{ event.title }}</h2>
-          <span class="carousel-date">{{ event.dateEnd }}</span>
+          <span class="carousel-date">{{ event.dateEnd | formatDate }}</span>
         </div>
       </v-carousel-item>
       </v-carousel>
@@ -42,10 +42,17 @@ async function fetch(context) {
 }
 
 import AppStoryHistoryFeed from '~/components/AppStoryHistoryFeed'
+import moment from 'moment'
 
 export default {
   components: {
     AppStoryHistoryFeed
+  },
+  filters: {
+    formatDate: function (value) {
+      moment.locale('fr'); 
+      return moment(value).format('Do MMMM  YYYY')
+    }
   },
   data () {
     return {
