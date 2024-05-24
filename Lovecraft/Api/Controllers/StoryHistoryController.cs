@@ -3,6 +3,7 @@ using Lovecraft.Api.Model.PublicApi;
 using Lovecraft.Api.Repository;
 using Lovecraft.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -102,18 +103,27 @@ namespace Lovecraft.Api.Controllers
                 return BadRequest();
             }
 
-            StoryHistory storyHistoryToUpdate = _luow.StoryHistories.GetById(model.Id);
+            StoryHistory storyHistoryToUpdate = 
+			_luow.StoryHistories
+            .GetAll()
+			.Include(sh => sh.Story.Pages)
+			.FirstOrDefault(sh => sh.Id == model.Id);
+			
             if (storyHistoryToUpdate == null)
             {
                 return NotFound();
             }
+            storyHistoryToUpdate.LastPageReadId = model.LastPageReadId;            
+            
 
-            storyHistoryToUpdate.UserId = model.UserId;
-            storyHistoryToUpdate.StoryId = model.StoryId;
-            storyHistoryToUpdate.LastPageReadId = model.LastPageReadId;
-            storyHistoryToUpdate.Reread = model.Reread;
-            storyHistoryToUpdate.Date = DateTime.UtcNow;
-            storyHistoryToUpdate.State = StoryHistory.HistoryState.Reading;            
+			int maxNbPages = storyHistoryToUpdate.Story.Pages.Count();
+			int currentPagesIndex = storyHistoryToUpdate.Story.Pages.First(page => page.Id == storyHistoryToUpdate.LastPageReadId).Order;
+			if (maxNbPages == currentPagesIndex + 1) 
+			{
+				storyHistoryToUpdate.Reread = storyHistoryToUpdate.Reread + 1;
+				storyHistoryToUpdate.State = StoryHistory.HistoryState.Endend; 
+			}           
+			storyHistoryToUpdate.Date = DateTime.UtcNow;
 
             _luow.StoryHistories.Update(storyHistoryToUpdate);
             _luow.Save();
