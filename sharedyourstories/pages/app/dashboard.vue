@@ -6,7 +6,7 @@
         <v-img :src="event.coverUrl" :alt="event.title"></v-img>
         <div class="carousel-header">
           <h2 class="carousel-title">{{ event.title }}</h2>
-          <span class="carousel-date">{{ event.dateEnd | formatDate }}</span>
+          <span class="carousel-date">Fin : {{ event.dateEnd | formatDate }}</span>
         </div>
       </v-carousel-item>
       </v-carousel>
