@@ -45,12 +45,34 @@ export default {
       default: null
     }
   },
+  watch: {
+    currentPageIndex (n, o) {
+      let storyHistory = {...this.story.storyHistory}
+      storyHistory.lastPageReadId = this.currentPage.id
+      this.$axios.put('storyHistories' , storyHistory)
+    }
+  },
   computed: {
     currentPage () {
       return this.story.pages[this.currentPageIndex]
     },
     currentUser () {
       return this.$auth.user
+    }
+  },
+  mounted () {
+    if (this.story.storyHistory) {
+      const pageIndex = this.story.pages.findIndex((page) => page.id === this.story.storyHistory.lastPageReadId)
+      if (pageIndex) {
+        this.currentPageIndex = pageIndex
+      }
+    } else {
+      const openingStoryHistory = {
+        userId:this.$auth.user.id,
+        storyId: this.story.id,
+        lastPageReadId: this.story.pages[0].id
+      }
+      this.$axios.post('storyHistories' , openingStoryHistory)
     }
   }
 }

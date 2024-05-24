@@ -15,6 +15,7 @@ public class LovecraftUnitOfWork : ILovecraftUnitOfWork
     private ICommonRepository<UserBadge> _userBadges;
     private ICommonRepository<StoryComment> _storyComments;
     private ICommonRepository<StoryVote> _storyVotes;
+    private ICommonRepository<StoryHistory> _storyHistories;
 
     private IUserRepository _users;
     private StoryTagRepository _storyTags;
@@ -35,6 +36,7 @@ public class LovecraftUnitOfWork : ILovecraftUnitOfWork
     public ICommonRepository<UserBadge> UserBadges => _userBadges ??= new CommonRepository<UserBadge>(_context);
     public ICommonRepository<StoryComment> StoryComments => _storyComments ??= new CommonRepository<StoryComment>(_context);
     public ICommonRepository<StoryVote> StoryVotes => _storyVotes ??= new CommonRepository<StoryVote>(_context);
+    public ICommonRepository<StoryHistory> StoryHistories => _storyHistories ??= new CommonRepository<StoryHistory>(_context);
     
     // Not common repositories
     public IUserRepository Users => _users ??= new UserRepository(_context);
