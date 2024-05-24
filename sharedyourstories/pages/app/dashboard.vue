@@ -96,7 +96,6 @@ export default {
 }
 
 .carousel-date {
-  display: inline-block;
   float: right;
   vertical-align: middle;
   clear: both;

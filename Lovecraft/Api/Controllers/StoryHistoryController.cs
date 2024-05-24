@@ -25,7 +25,9 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult GetAll([FromQuery] int page)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-
+			if (userIdClaim == null) {
+				return BadRequest();
+			}
 			List<PublicApi_StoryHistoryModel> results = _luow.StoryHistories
 				.GetAll()
 				.OrderByDescending(e => e.Date)
@@ -49,7 +51,7 @@ namespace Lovecraft.Api.Controllers
 					Progression = new PublicApi_ProgressionModel
 					{
 						MaxNbPages = sh.Story.Pages.Count(),
-						CurrentPagesIndex = sh.Story.Pages.FirstOrDefault(page => page.Id == sh.LastPageReadId).Order
+						CurrentPagesIndex = sh.Story.Pages.First(page => page.Id == sh.LastPageReadId).Order
 					}
 				})
 				.ToList();
