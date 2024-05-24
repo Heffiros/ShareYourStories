@@ -2,10 +2,9 @@
     <v-app dark>
       <v-navigation-drawer
         v-model="drawer"
-        :mini-variant="miniVariant"
-        :clipped="clipped"
         fixed
         app
+        permanent
       >
         <v-list>
           <v-list-item
@@ -82,18 +81,18 @@
             to: '/app/admin/moderation'
           },
           {
-            icon: 'mdi-arrow-left',
-            title: 'Retour sur le site',
-            hasToBeAuth: true,
-            hasToBeAdmin: true,
-            to: '/app/dashboard'
-          },
-          {
             icon: 'mdi-youtube-gaming',
             title: 'Gamification',
             hasToBeAuth: true,
             hasToBeAdmin: true,
             to: '/app/admin/gamification'
+          },
+          {
+            icon: 'mdi-arrow-left',
+            title: 'Retour sur le site',
+            hasToBeAuth: true,
+            hasToBeAdmin: true,
+            to: '/app/dashboard'
           }
         ],
         miniVariant: false,
