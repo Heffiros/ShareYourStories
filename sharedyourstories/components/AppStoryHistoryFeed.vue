@@ -10,7 +10,7 @@
       <v-spacer></v-spacer>
     </v-toolbar>
 
-    <v-list three-line>
+    <v-list three-line class="history-list">
       <template v-for="(item, index) in list">
         <v-list-item
           :key="item.title"
@@ -69,7 +69,12 @@ export default {
 </script>
 
 <style>
+.history-list {
+  overflow: auto;
+  max-height: 300px;
+}
+
 .history-item {
-  background-color: #B71C1C
+  background-color: #B71C1C;
 }
 </style>
