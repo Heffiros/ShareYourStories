@@ -21,11 +21,11 @@ namespace Lovecraft.Api.Controllers
 	{
 
 		public IConfiguration _configuration;
-		private readonly IUserRepository _userRepository;
+		private readonly ILovecraftUnitOfWork _luow;
 
-		public JwtController(IUserRepository userRepository, IConfiguration configuration)
+		public JwtController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_userRepository = userRepository;
+			_luow = luow;
 			_configuration = configuration;
 		}
 
@@ -36,7 +36,7 @@ namespace Lovecraft.Api.Controllers
 		{
 			if (model != null && model.Email != null && model.Password != null)
 			{
-				User? userToLogin = _userRepository.Login(model.Email, model.Password);
+				User? userToLogin = _luow.Users.Login(model.Email, model.Password);
 				if (userToLogin != null)
 				{
 					//create claims details based on the user information
@@ -68,12 +68,12 @@ namespace Lovecraft.Api.Controllers
 		{
 			if (model != null && model.Email != null && model.Password != null)
 			{
-				if (_userRepository.UserEmailAlreadyExist(model.Email))
+				if (_luow.Users.UserEmailAlreadyExist(model.Email))
 				{
 					return BadRequest();
 				}
 
-				User? userToRegister = _userRepository.Add(model);
+				User? userToRegister = _luow.Users.Add(model);
 				if (userToRegister != null)
 				{
 					//create claims details based on the user information
@@ -104,7 +104,7 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Refresh()
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-			User user = _userRepository.GetById(Int32.Parse(userIdClaim));
+			User user = _luow.Users.GetById(Int32.Parse(userIdClaim));
 			//create claims details based on the user information
 			TokenHelper tokenHelper = new TokenHelper(_configuration);
 			JwtSecurityToken token = tokenHelper.CreateJWTToken(user);

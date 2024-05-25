@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Office.CoverPageProps;
-using Lovecraft.Model;
+﻿using Lovecraft.Model;
 
 namespace Lovecraft.Api.Model
 {
@@ -21,6 +20,7 @@ namespace Lovecraft.Api.Model
         public virtual List<StoryVote> StoryVotes { get; set; }
         public virtual List<StoryStoryTag> StoryStoryTags { get; set; }
         public virtual List<StoryComment> StoryComments { get; set; }
+        public virtual List<StoryHistory> StoryHistories { get; set; }
     }
 
     public enum Status

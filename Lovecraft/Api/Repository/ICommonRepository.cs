@@ -10,5 +10,8 @@ public interface ICommonRepository<T>
     void Add(T entity);
     void Update(T entity);
     void Delete(T id);
+
+    //todo remove quand j'aurais terminé le luow
     public void Save();
+    public Task SaveAsync();
 }

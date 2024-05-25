@@ -1,20 +1,19 @@
 <template>
   <div>
-    <v-carousel v-if="events && events.length > 0">
+    <v-col cols="12" class="d-flex justify-center align-center">
+      <v-carousel v-if="events && events.length > 0">
       <v-carousel-item class="carousel-item" v-for="(event, index) in events" :key="index" @click="goEventFeed(event.id)">
-        <!-- Image du carrousel -->
         <v-img :src="event.coverUrl" :alt="event.title"></v-img>
-
-        <!-- En-tête avec titre transparent -->
         <div class="carousel-header">
           <h2 class="carousel-title">{{ event.title }}</h2>
-          <span class="carousel-date">{{ event.dateEnd }}</span>
+          <span class="carousel-date">Fin : {{ event.dateEnd | formatDate }}</span>
         </div>
       </v-carousel-item>
-    </v-carousel>
-    <div v-else>
-      <span class="no-event">Il n'y a pas d'event en cours</span>
-    </div>
+      </v-carousel>
+      <div v-else>
+        <span class="no-event">Il n'y a pas d'event en cours</span>
+      </div>
+    </v-col>
     <v-col v-if="lastFinishEvent && winner" cols="2">
       <v-card class="winner">
         <nuxt-link :to="`/app/story/${winner.id}/reader`" class="ml-auto">
@@ -25,6 +24,9 @@
           <v-card-title>{{ winner.title }}</v-card-title>
         </nuxt-link>
       </v-card>
+    </v-col>
+    <v-col cols="3">
+      <app-story-history-feed />
     </v-col>
   </div>
 </template>
@@ -39,7 +41,19 @@ async function fetch(context) {
   }
 }
 
+import AppStoryHistoryFeed from '~/components/AppStoryHistoryFeed'
+import moment from 'moment'
+
 export default {
+  components: {
+    AppStoryHistoryFeed
+  },
+  filters: {
+    formatDate: function (value) {
+      moment.locale('fr'); 
+      return moment(value).format('Do MMMM  YYYY')
+    }
+  },
   data () {
     return {
       page:0,
@@ -89,7 +103,6 @@ export default {
 }
 
 .carousel-date {
-  display: inline-block;
   float: right;
   vertical-align: middle;
   clear: both;

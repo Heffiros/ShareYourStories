@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
 using System.Security.Claims;
 using Azure.Core;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Lovecraft.Api.Helper;
 using Lovecraft.Api.Model;
@@ -14,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Page = Lovecraft.Api.Model.Page;
+using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
 
 namespace Lovecraft.Api.Controllers
 {
@@ -22,22 +26,15 @@ namespace Lovecraft.Api.Controllers
 	public class StoryController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly ICommonRepository<Story> _storyRepository;
-		private readonly ICommonRepository<Page> _pageRepository;
-		private readonly ICommonRepository<Event> _eventRepository;
-		private readonly ICommonRepository<StoryStoryTag> _storyStoryTagRepository;
-
+		private readonly ILovecraftUnitOfWork _luow;
 		private static readonly JsonSerializerSettings MultiPartMessageJsonSerializerSettings = new JsonSerializerSettings
 		{
 			NullValueHandling = NullValueHandling.Ignore
 		};
-		public StoryController(ICommonRepository<Story> storyRepository, ICommonRepository<Page> pageRepository, IConfiguration configuration, ICommonRepository<Event> eventRepository, ICommonRepository<StoryStoryTag> storyStoryTagRepository)
+		public StoryController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_storyRepository = storyRepository;
-			_pageRepository = pageRepository;
-			_eventRepository = eventRepository;
-			_configuration = configuration;
-			_storyStoryTagRepository = storyStoryTagRepository;
+			_luow = luow;
+			_configuration = configuration;			
 		}
 
 		[HttpGet]
@@ -76,53 +73,76 @@ namespace Lovecraft.Api.Controllers
             {
                 storyStatusFilter = s => s.Status == Status.Pending;
             }
-            List<PublicApi_StoryModel> results = _storyRepository
-                .GetAll()
-                .Include(s => s.Pages)
-                .Include(s => s.User)
-                .Include(s => s.StoryVotes)
-                .Include(s => s.StoryStoryTags)
-                .ThenInclude(st => st.StoryTag)
-                .Where(storyFilter)
-                .Where(storyStatusFilter)
-                .Where(storyTagsFilter)
-                .Where(storyAuthorFilter)
-                .Skip(5 * page)
-                .Take(5)
-                .Select(story => new PublicApi_StoryModel
+			List<Story> stories = _luow.Stories
+				.GetAll()
+				.Include(s => s.Pages)
+				.Include(s => s.User)
+				.Include(s => s.StoryVotes)
+				.Include(s => s.StoryStoryTags)
+				.ThenInclude(st => st.StoryTag)
+				.Include(s => s.StoryHistories)
+				.Where(storyFilter)
+				.Where(storyStatusFilter)
+				.Where(storyTagsFilter)
+				.Where(storyAuthorFilter)
+				.Skip(5 * page)
+				.Take(5)
+				.ToList();
+                
+			List<PublicApi_StoryModel> results = stories.Select(story => new PublicApi_StoryModel
+            {
+                Id = story.Id,
+                Title = story.Title,
+                CoverUrl = story.CoverUrl,
+                Summary = story.Summary,
+                UserId = story.UserId,
+                TeamId = story.TeamId,
+                DateCreated = story.DateCreated,
+                Status = story.Status,
+                EventId = story.EventId,
+                HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
+                NbVote = story.StoryVotes.Count,
+                Pages = story.Pages.Select(page => new PublicApi_PageModel
                 {
-                    Id = story.Id,
-                    Title = story.Title,
-                    CoverUrl = story.CoverUrl,
-                    Summary = story.Summary,
-                    UserId = story.UserId,
-                    TeamId = story.TeamId,
-                    DateCreated = story.DateCreated,
-                    Status = story.Status,
-                    EventId = story.EventId,
-                    HasVoted = story.StoryVotes.Any(sv => sv.UserId == Int32.Parse(userIdClaim)),
-                    NbVote = story.StoryVotes.Count,
-                    Pages = story.Pages.Select(page => new PublicApi_PageModel
-                    {
-                        Id = page.Id,
-                        Content = page.Content,
-                        LastUpdatedDateTime = page.LastUpdatedDateTime,
-                        Order = page.Order,
-                        StoryId = page.StoryId
-                    }).ToList(),
-                    StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
-                    {
-                        Id = sst.StoryTag.Id,
-                        Label = sst.StoryTag.Label,
-                    }).ToList(),
-                    User = new PublicApi_UserModel
-                    {
-                        AuthorName = story.User.AuthorName,
-                        ProfilePictureUrl = story.User.ProfilePictureUrl
-                    }
-                }).ToList();
+                    Id = page.Id,
+                    Content = page.Content,
+                    LastUpdatedDateTime = page.LastUpdatedDateTime,
+                    Order = page.Order,
+                    StoryId = page.StoryId
+                }).ToList(),
+                StoryTags = story.StoryStoryTags.Select(sst => new PublicApi_StoryTagModel
+                {
+                    Id = sst.StoryTag.Id,
+                    Label = sst.StoryTag.Label,
+                }).ToList(),
+                User = new PublicApi_UserModel
+                {
+                    AuthorName = story.User.AuthorName,
+                    ProfilePictureUrl = story.User.ProfilePictureUrl
+                }
+            }).ToList();
 
-			return Ok(results);
+            foreach (var result in results)
+            {
+                var storyHistory = stories
+                    .FirstOrDefault(s => s.Id == result.Id)?
+                .StoryHistories
+                    .FirstOrDefault(sh => sh.UserId == Int32.Parse(userIdClaim));
+
+                if (storyHistory != null)
+                {
+					result.StoryHistory = new PublicApi_StoryHistoryModel
+					{
+						Id = storyHistory.Id,
+						UserId = storyHistory.UserId,
+						StoryId = storyHistory.StoryId,
+						Date = storyHistory.Date,
+						Reread = storyHistory.Reread,
+						LastPageReadId = storyHistory.LastPageReadId
+                    };
+                }
+            }
+            return Ok(results);
 		}
 
 		[Authorize]
@@ -130,21 +150,20 @@ namespace Lovecraft.Api.Controllers
 		public ActionResult Get([FromRoute] int storyId)
 		{
 			var userIdClaim = HttpContext.User.FindFirstValue("userId");
-            Story story = _storyRepository.GetAll()
+            Story? story = _luow.Stories.GetAll()
                 .Include(s => s.User)
                 .Include(s => s.StoryVotes)
+                .Include(s => s.StoryHistories)
                 .Include(s => s.StoryStoryTags)
                 .ThenInclude(st => st.StoryTag)
                 .Include(s => s.Pages)
                 .FirstOrDefault(s => s.Id == storyId);
-
-                
-			if (story == null)
-			{
+            if (story == null)
+            {
 				return BadRequest();
 			}
 
-			return Ok(new PublicApi_StoryModel
+			var result = new PublicApi_StoryModel
 			{
 				Id = story.Id,
 				Title = story.Title,
@@ -175,14 +194,32 @@ namespace Lovecraft.Api.Controllers
 					AuthorName = story.User.AuthorName,
 					ProfilePictureUrl = story.User.ProfilePictureUrl,
 				}
-			});
+			};
+
+            StoryHistory? storyHistory = story.StoryHistories
+                    .FirstOrDefault(sh => sh.UserId == Int32.Parse(userIdClaim));
+
+            if (storyHistory != null)
+            {
+                result.StoryHistory = new PublicApi_StoryHistoryModel
+                {
+                    Id = storyHistory.Id,
+                    UserId = storyHistory.UserId,
+                    StoryId = storyHistory.StoryId,
+                    Date = storyHistory.Date,
+                    Reread = storyHistory.Reread,
+                    LastPageReadId = storyHistory.LastPageReadId
+                };
+            }
+
+            return Ok(result);
 		}
 
         [Authorize]
         [HttpGet("winner/{eventId}")]
         public ActionResult GetWinner([FromRoute] int eventId)
         {
-            Story story = _storyRepository.GetAll().FirstOrDefault(s => s.EventId == eventId && s.Status == Status.Winner);
+            Story story = _luow.Stories.GetAll().FirstOrDefault(s => s.EventId == eventId && s.Status == Status.Winner);
             if (story == null)
             {
                 return BadRequest();
@@ -220,7 +257,7 @@ namespace Lovecraft.Api.Controllers
 
 				if (storyToCreate.EventId.HasValue)
 				{
-					Event eventLink = _eventRepository.GetById(storyToCreate.EventId.Value);
+					Event eventLink = _luow.Events.GetById(storyToCreate.EventId.Value);
 					if (eventLink != null)
 					{
 						DateTime today = DateTime.Now;
@@ -271,8 +308,8 @@ namespace Lovecraft.Api.Controllers
 							Status = Status.Pending,
 							EventId = storyToCreate.EventId,
 						};
-						_storyRepository.Add(story);
-						_storyRepository.Save();
+						_luow.Stories.Add(story);
+						_luow.Save();
 						int orderPage = 0;
 						foreach (string page in pages)
 						{
@@ -283,8 +320,8 @@ namespace Lovecraft.Api.Controllers
 								Order = orderPage,
 								StoryId = story.Id
 							};
-							_pageRepository.Add(pageToCreate);
-							_pageRepository.Save();
+							_luow.Pages.Add(pageToCreate);
+							_luow.Save();
                             orderPage++;
 						}
 
@@ -297,13 +334,13 @@ namespace Lovecraft.Api.Controllers
 									StoryId = story.Id,
 									StoryTagId = storyTagToLink.Id
 								};
-								_storyStoryTagRepository.Add(storyStoryTag);
-								_storyStoryTagRepository.Save();
+								_luow.StoryStoryTags.Add(storyStoryTag);
+								_luow.Save();
 							}
-						}
+						}						
 					}
 				}
-
+				HandleGamification(Int32.Parse(userIdClaim));
 				return Ok(new { message = "File uploaded successfully" });
 			}
 			catch (Exception ex)
@@ -318,7 +355,7 @@ namespace Lovecraft.Api.Controllers
         {
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
             bool fieldhasBeenChange = false;
-            Story storyToUpdate = _storyRepository.GetById(story.Id);
+            Story storyToUpdate = _luow.Stories.GetById(story.Id);
             if (storyToUpdate == null)
             {
                 return NotFound();
@@ -332,11 +369,22 @@ namespace Lovecraft.Api.Controllers
 
             if (fieldhasBeenChange)
             {
-				_storyRepository.Update(storyToUpdate);
-				_storyRepository.Save();
+				_luow.Stories.Update(storyToUpdate);
+				_luow.Save();
             }
 
             return Ok();
         }
+
+		private void HandleGamification(int userId)
+		{
+			BadgeHelper badgeHelper = new BadgeHelper(_luow);
+
+			// Premiere story crée
+			if (_luow.Stories.GetAll().Where(s => s.UserId == userId).Count() == 1)
+			{
+				badgeHelper.GiveUserBadge(userId, 1); //Todo en attendant un vrai systeme de condition on force
+			}
+		}
     }
 }

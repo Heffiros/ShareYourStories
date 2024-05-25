@@ -1,5 +1,4 @@
 ﻿using Lovecraft.Model;
-using Microsoft.EntityFrameworkCore;
 
 namespace Lovecraft.Api.Model
 {

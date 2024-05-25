@@ -17,7 +17,7 @@ builder.Services.AddDbContext<LovecraftDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection")));
 //Repository
 RepositoriesRegistration.RegisterRepositories(builder.Services);
-
+builder.Services.AddScoped<ILovecraftUnitOfWork, LovecraftUnitOfWork>();
 builder.Services.AddControllers();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -45,7 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 	    },
 	    OnTokenValidated = context =>
 	    {
-		    // Récupération de l'identifiant utilisateur
+		    // Rï¿½cupï¿½ration de l'identifiant utilisateur
 		    var userId = context.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 		    Console.WriteLine("User authenticated.");
 		    Console.WriteLine($"UserId: {userId}");

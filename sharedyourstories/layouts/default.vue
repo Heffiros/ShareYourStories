@@ -2,10 +2,9 @@
   <v-app dark>
     <v-navigation-drawer
       v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
       fixed
       app
+      permanent
     >
       <v-list>
         <v-list-item
@@ -132,5 +131,9 @@ export default {
 <style>
 .fill-height {
   height: 100%;
+}
+
+.v-toolbar__content button{
+  display: none;
 }
 </style>

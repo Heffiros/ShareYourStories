@@ -13,19 +13,17 @@ namespace Lovecraft.Api.Controllers
     public class BadgeController : ControllerBase
     {
         public IConfiguration _configuration;
-        private readonly ICommonRepository<Badge> _badgeRepository;
-
-        public BadgeController(ICommonRepository<Badge> badgeRepository, IConfiguration configuration)
+        private readonly ILovecraftUnitOfWork _luow;
+        public BadgeController(ILovecraftUnitOfWork luow)
         {
-            _badgeRepository = badgeRepository;
-            _configuration = configuration;
+            _luow = luow;
         }
 
         [HttpGet]
         public ActionResult GetAll([FromQuery] int page)
         {
             var userIdClaim = HttpContext.User.FindFirstValue("userId");
-            List<PublicApi_BadgeModel> badges = _badgeRepository
+            List<PublicApi_BadgeModel> badges = _luow.Badges
                 .GetAll()
                 .Include(b => b.UserBadges)
                 .Skip(5 * page)
@@ -45,6 +43,35 @@ namespace Lovecraft.Api.Controllers
                         }).ToList() : null
                 }).ToList();    
             return Ok(badges);
+        }
+
+        [HttpPost]
+        public ActionResult Post([FromQuery] PublicApi_BadgeModel model)
+        {
+            if (model != null)
+            {
+                var userIdClaim = HttpContext.User.FindFirstValue("userId");
+                if (userIdClaim == null) 
+                {
+                    return BadRequest();
+                }
+                
+                if (_luow.Users.IsUserAdmin(Int32.Parse(userIdClaim)))
+                {
+                    return Unauthorized();
+                }
+                Badge e = new Badge
+                {
+                    Label = model.Label,
+                    BadgeUrl = model.BadgeUrl,
+                    Description = model.Description,
+                    EmptyBadgeUrl = model.EmptyBadgeUrl
+                };
+                _luow.Badges.Add(e);
+                _luow.Save();
+                return Ok(e.Id);
+            }
+            return BadRequest();
         }
     }
 }

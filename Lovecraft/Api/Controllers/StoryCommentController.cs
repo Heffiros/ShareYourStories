@@ -16,18 +16,18 @@ namespace Lovecraft.Api.Controllers
 	public class StoryCommentController : ControllerBase
 	{
 		public IConfiguration _configuration;
-		private readonly ICommonRepository<StoryComment> _storyCommentRepository;
+		private readonly ILovecraftUnitOfWork _luow;
 
-		public StoryCommentController(ICommonRepository<StoryComment> storyCommentRepository, IConfiguration configuration)
+		public StoryCommentController(ILovecraftUnitOfWork luow, IConfiguration configuration)
 		{
-			_storyCommentRepository = storyCommentRepository;
+			_luow = luow;
 			_configuration = configuration;
 		}
 
 		[HttpGet]
 		public ActionResult GetAll([FromQuery] int storyId, [FromQuery] int page = 0)
 		{
-            List<PublicApi_StoryCommentModel> results = _storyCommentRepository.GetAll()
+            List<PublicApi_StoryCommentModel> results = _luow.StoryComments.GetAll()
                 .Where(sc => sc.StoryId == storyId && sc.Status == Status.Online)
                 .OrderByDescending(sc => sc.Id)
                 .Skip(5 * page)
@@ -58,8 +58,8 @@ namespace Lovecraft.Api.Controllers
 				DateCreated = DateTime.Now,
 				Status = Status.Online
 			};
-			_storyCommentRepository.Add(storyCommentToAdd);
-			_storyCommentRepository.Save();
+			_luow.StoryComments.Add(storyCommentToAdd);
+			_luow.Save();
 			return Ok(storyCommentToAdd);
 		}
 	}

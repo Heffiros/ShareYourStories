@@ -40,5 +40,8 @@ namespace Lovecraft.Api.Model.PublicApi
 
         [DataMember(Name = "user")]
         public PublicApi_UserModel? User { get; set; }
-	}
+
+        [DataMember(Name = "storyHistory")]
+        public PublicApi_StoryHistoryModel? StoryHistory { get; set; }
+    }
 }

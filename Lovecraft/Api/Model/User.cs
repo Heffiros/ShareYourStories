@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Lovecraft.Api.Model;
-using Microsoft.AspNetCore.Identity;
+﻿using Lovecraft.Api.Model;
 
 namespace Lovecraft.Model
 {
@@ -19,6 +17,7 @@ namespace Lovecraft.Model
         public virtual List<StoryVote> StoryVotes { get; set; }
         public virtual List<StoryComment> StoryComments { get; set; }
         public virtual List<UserBadge> UserBadges { get; set; }
+        public virtual List<StoryHistory> StoryHistories { get; set; }
 
     }
 }

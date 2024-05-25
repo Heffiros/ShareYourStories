@@ -4,6 +4,7 @@ using Lovecraft.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lovecraft.Api.Migrations
 {
     [DbContext(typeof(LovecraftDbContext))]
-    partial class LovecraftDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240520121400_update-badge-table")]
+    partial class updatebadgetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,43 +187,6 @@ namespace Lovecraft.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("StoryComment");
-                });
-
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HistoryState")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LastPageReadId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Reread")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LastPageReadId");
-
-                    b.HasIndex("StoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StoryHistory");
                 });
 
             modelBuilder.Entity("Lovecraft.Api.Model.StoryStoryTag", b =>
@@ -446,33 +411,6 @@ namespace Lovecraft.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lovecraft.Api.Model.StoryHistory", b =>
-                {
-                    b.HasOne("Lovecraft.Api.Model.Page", "LastPageRead")
-                        .WithMany()
-                        .HasForeignKey("LastPageReadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lovecraft.Api.Model.Story", "Story")
-                        .WithMany("StoryHistories")
-                        .HasForeignKey("StoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lovecraft.Model.User", "User")
-                        .WithMany("StoryHistories")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LastPageRead");
-
-                    b.Navigation("Story");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Lovecraft.Api.Model.StoryStoryTag", b =>
                 {
                     b.HasOne("Lovecraft.Api.Model.Story", "Story")
@@ -565,8 +503,6 @@ namespace Lovecraft.Api.Migrations
 
                     b.Navigation("StoryComments");
 
-                    b.Navigation("StoryHistories");
-
                     b.Navigation("StoryStoryTags");
 
                     b.Navigation("StoryVotes");
@@ -589,8 +525,6 @@ namespace Lovecraft.Api.Migrations
                     b.Navigation("Stories");
 
                     b.Navigation("StoryComments");
-
-                    b.Navigation("StoryHistories");
 
                     b.Navigation("StoryVotes");
 
