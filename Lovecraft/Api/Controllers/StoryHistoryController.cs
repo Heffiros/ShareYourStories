@@ -43,8 +43,8 @@ namespace Lovecraft.Api.Controllers
 					LastPageReadId = sh.LastPageReadId,
 					Reread = sh.Reread,
 					Date = sh.Date,
-					State = sh.State,
-					Story = new PublicApi_StoryModel
+                    HistoryStateValue = sh.HistoryStateValue,
+                    Story = new PublicApi_StoryModel
 					{
 						Title = sh.Story.Title,
 						CoverUrl = sh.Story.CoverUrl
@@ -86,7 +86,7 @@ namespace Lovecraft.Api.Controllers
 				LastPageReadId = model.LastPageReadId,
 				Reread = 0,
 				Date = DateTime.UtcNow,
-				State = StoryHistory.HistoryState.Reading
+                HistoryStateValue = StoryHistory.HistoryState.Reading
 			};
 
 			_luow.StoryHistories.Add(storyHistory);
@@ -121,7 +121,7 @@ namespace Lovecraft.Api.Controllers
 			if (maxNbPages == currentPagesIndex + 1) 
 			{
 				storyHistoryToUpdate.Reread = storyHistoryToUpdate.Reread + 1;
-				storyHistoryToUpdate.State = StoryHistory.HistoryState.Endend; 
+				storyHistoryToUpdate.HistoryStateValue = StoryHistory.HistoryState.Endend; 
 			}           
 			storyHistoryToUpdate.Date = DateTime.UtcNow;
 

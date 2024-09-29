@@ -9,7 +9,7 @@ public class StoryHistory
 	public int StoryId { get; set; }
     public int LastPageReadId { get; set; }
     public int Reread { get; set; }
-	public HistoryState State { get; set; }
+	public HistoryState HistoryStateValue { get; set; }
 
     public DateTime Date { get; set; }
 	public virtual User User { get; set; }

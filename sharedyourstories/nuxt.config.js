@@ -88,7 +88,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://api.sharedyourstories.com:8080/',
+    baseURL: 'https://api.sharedyourstories.com:5000/',
     headers: {
       common: {
         Authorization: (context) => {
