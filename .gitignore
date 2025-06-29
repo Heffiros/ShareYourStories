@@ -1,1 +1,27 @@
 Lovecraft/.info
+
+
+# Nuxt dev/build outputs
+sysstories/.output
+sysstories/.data
+sysstories/.nuxt
+sysstories/.nitro
+sysstories/.cache
+sysstories/dist
+
+# Node dependencies
+sysstories/node_modules
+
+# Logs
+sysstories/logs
+sysstories/*.log
+
+# Misc
+sysstories/.DS_Store
+sysstories/.fleet
+sysstories/.idea
+
+# Local env files
+sysstories/.env
+sysstories/.env.*
+sysstories/!.env.example
