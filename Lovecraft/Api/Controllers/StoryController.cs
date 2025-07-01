@@ -263,7 +263,7 @@ namespace Lovecraft.Api.Controllers
 						DateTime today = DateTime.Now;
 						if (eventLink.DateBegin <= today && eventLink.DateEnd >= today)
 						{
-							if (eventLink.Stories.Any(s => s.EventId == storyToCreate.EventId))
+							if (eventLink.Stories != null && eventLink.Stories.Any(s => s.EventId == storyToCreate.EventId))
 							{
 								return BadRequest();
 							}

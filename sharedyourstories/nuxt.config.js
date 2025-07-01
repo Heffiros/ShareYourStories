@@ -5,7 +5,7 @@ export default {
   ssr: false,
   debug:true,
   server: {
-    host: 'front.sharedyourstories.com',
+    host: '0.0.0.0',
     port: 3000 // ou tout autre port que vous souhaitez utiliser
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
