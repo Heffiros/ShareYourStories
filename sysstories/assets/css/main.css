@@ -1,1 +1,32 @@
+
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Primary */
+  --color-primary-50:  #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-500: #6366f1;
+  --color-primary-700: #4f46e5;
+
+  /* Accent */
+  --color-accent-500: #f43f5e;
+  --color-accent-700: #e11d48;
+
+  /* Neutral (light) */
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-700: #374151;
+}
+@utility text-xxl {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+@layer base {
+  .dark {
+    --color-neutral-100: #1f2937;
+    --color-neutral-300: #4b5563;
+    --color-neutral-700: #d1d5db;
+  }
+}
