@@ -7,30 +7,205 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//TABLES
 model User {
-  id                Int      @id @default(autoincrement())
-  email             String   @unique
+  id                Int            @id @default(autoincrement())
+  email             String         @unique
   password          String
   authorName        String?
   birthDate         DateTime
   isAdmin           Boolean
   profilePictureUrl String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
   //linq
   stories           Story[]
+  storyHistories    StoryHistory[]
+  storyVotes        StoryVote[]
+  userBadges        UserBadge[]
+  userTeams         UserTeam[]
 }
 
 model Story {
+  id             Int             @id @default(autoincrement())
+  title          String
+  coverUrl       String?
+  summary        String?
+  status         Status          @default(Pending) // par défaut Pending
+  userId         Int
+  eventId        Int?
+  teamId         Int?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  //linq
+  user           User            @relation(fields: [userId], references: [id])
+  pages          Page[]
+  storyComments  StoryComment[]
+  storyHistories StoryHistory[]
+  storyStoryTag  StoryStoryTag[]
+  storyVote      StoryVote[]
+  team           Team?           @relation(fields: [teamId], references: [id])
+  event          Event?          @relation(fields: [eventId], references: [id])
+}
+
+model Page {
+  id             Int            @id @default(autoincrement())
+  order          Int
+  Content        String
+  storyId        Int
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  //linq
+  story          Story          @relation(fields: [storyId], references: [id])
+  StoryHistories StoryHistory[]
+}
+
+model StoryComment {
   id        Int      @id @default(autoincrement())
-  title     String
-  coverUrl  String?
-  summary   String?
+  Text      String
+  status    Status   @default(Online) // par défaut Pending
+  storyId   Int
   userId    Int
-  eventId   Int?
-  teamId    Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   //linq
-  User      User     @relation(fields: [userId], references: [id])
+  story     Story    @relation(fields: [storyId], references: [id])
+}
+
+model StoryHistory {
+  id                Int          @id @default(autoincrement())
+  userId            Int
+  storyId           Int
+  lastPageReadId    Int
+  reread            Int
+  historyStateValue HistoryState
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  //linq
+  user              User         @relation(fields: [userId], references: [id])
+  story             Story        @relation(fields: [storyId], references: [id])
+  lastPageRead      Page         @relation(fields: [lastPageReadId], references: [id])
+}
+
+model StoryTag {
+  id             Int             @id @default(autoincrement())
+  label          String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  //linq
+  storyStoryTags StoryStoryTag[]
+}
+
+model StoryStoryTag {
+  id         Int      @id @default(autoincrement())
+  storyId    Int
+  storyTagId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  //linq
+  story      Story    @relation(fields: [storyId], references: [id])
+  storyTag   StoryTag @relation(fields: [storyTagId], references: [id])
+}
+
+model StoryVote {
+  id        Int      @id @default(autoincrement())
+  storyId   Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //linq
+  story     Story    @relation(fields: [storyId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Badge {
+  id            Int         @id @default(autoincrement())
+  label         String
+  emptyBadgeUrl String
+  badgeUrl      String
+  description   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  //linq
+  userBadges    UserBadge[]
+}
+
+model UserBadge {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  badgeId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //linq
+  user      User     @relation(fields: [userId], references: [id])
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+}
+
+model ImageInfo {
+  id        Int      @id @default(autoincrement())
+  name      String
+  mimeType  String
+  extension String
+  metadata  Json? // équivalent d'un IDictionary<string,string>
+  place     Place
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id          Int        @id @default(autoincrement())
+  name        String
+  teamLogoUrl String? // nullable comme en C#
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  //linq
+  members     UserTeam[]
+  stories     Story[]
+}
+
+model UserTeam {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  teamId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //linq
+  user      User     @relation(fields: [userId], references: [id])
+  team      Team     @relation(fields: [teamId], references: [id])
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  title     String
+  rules     String
+  coverUrl  String
+  dateBegin DateTime
+  dateEnd   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //linq
+  stories   Story[]
+}
+
+//ENUM
+enum Status {
+  Pending
+  Online
+  Private
+  Deleted
+  ModerateByAdmin
+  ModerateAuto
+  Winner
+}
+
+enum HistoryState {
+  Reading
+  Endend
+  Abandonned
+}
+
+enum Place {
+  Profile
+  Cover
+  Events
 }
