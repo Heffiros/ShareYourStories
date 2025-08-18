@@ -13,8 +13,8 @@ model User {
   email             String         @unique
   password          String
   authorName        String?
-  birthDate         DateTime
-  isAdmin           Boolean
+  birthDate         DateTime?
+  isAdmin           Boolean        @default(false)
   profilePictureUrl String?
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt

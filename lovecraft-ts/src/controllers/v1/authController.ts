@@ -1,41 +1,90 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { User } from '../../domain/user'
-import jwt from 'jsonwebtoken'
-
-const JWT_SECRET = 'supersecret' // plus tard mettre en env
+import { prisma } from '../../utils'
+import { ERRORS, handleServerError } from '../../helpers/errors.helper'
+import * as JWT from 'jsonwebtoken'
+import { utils } from '../../utils'
+import { STANDARD } from '../../constants/request'
+import { IUserLoginDto, IUserSignupDto } from '../../schemas/User'
 
 export const authController = {
-  register: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { email, password } = request.body as { email: string; password: string }
+
+  login : async (
+    request: FastifyRequest<{
+      Body: IUserLoginDto
+    }>,
+    reply: FastifyReply,
+  ) => {
     try {
-      const user = await User.register({ email, password })
-      reply.send({ id: user.id, email: user.email })
-    } catch (err: any) {
-      reply.status(400).send({ error: err.message })
+      const { email, password } = request.body
+      const user = await prisma.user.findUnique({ where: { email } })
+      if (!user) {
+        return reply
+          .code(ERRORS.userNotExists.statusCode)
+          .send(ERRORS.userNotExists.message)
+      }
+  
+      const checkPass = await utils.compareHash(user.password, password)
+      if (!checkPass) {
+        return reply
+          .code(ERRORS.userCredError.statusCode)
+          .send(ERRORS.userCredError.message)
+      }
+  
+      const token = JWT.sign(
+        {
+          id: user.id,
+          email: user.email,
+        },
+        process.env.APP_JWT_SECRET as string,
+      )
+      user.password = ''
+      return reply.code(STANDARD.OK.statusCode).send({
+        token,
+        user,
+      })
+    } catch (err) {
+      return handleServerError(reply, err)
     }
   },
-
-  login: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { email, password } = request.body as { email: string; password: string }
+  register: async (
+    request: FastifyRequest<{
+      Body: IUserSignupDto
+    }>,
+    reply: FastifyReply,
+  ) => {
     try {
-      const user = await User.login(email, password)
-      const token = user.generateToken()
-      const refreshToken = user.generateRefreshToken()
-      reply.send({ token, refreshToken })
-    } catch (err: any) {
-      reply.status(401).send({ error: err.message })
+      const { email, password, authorName, } = request.body
+      const user = await prisma.user.findUnique({ where: { email } })
+      if (user) {
+        return reply.code(ERRORS.userExists.statusCode).send(ERRORS.userExists)
+      }
+  
+      const hashPass = await utils.genSalt(10, password)
+      const createUser = await prisma.user.create({
+        data: {
+          email,
+          authorName: authorName.trim(),
+          password: String(hashPass),
+        },
+      })
+  
+      const token = JWT.sign(
+        {
+          id: createUser.id,
+          email: createUser.email,
+        },
+        process.env.APP_JWT_SECRET as string,
+      )
+  
+      createUser.password = ''
+  
+      return reply.code(STANDARD.OK.statusCode).send({
+        token,
+        user: createUser,
+      })
+    } catch (err) {
+      return handleServerError(reply, err)
     }
-  },
+  }  
+} 
 
-  refresh: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { refreshToken } = request.body as { refreshToken: string }
-    try {
-      const payload = jwt.verify(refreshToken, JWT_SECRET) as any
-      const user = await User.login(payload.email, '') // bypass password check car token déjà valide
-      const token = user.generateToken()
-      reply.send({ token })
-    } catch (err: any) {
-      reply.status(401).send({ error: 'Invalid refresh token' })
-    }
-  }
-}
