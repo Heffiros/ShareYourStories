@@ -1,8 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma } from '../../utils'
+import { prisma, utils } from '../../utils'
 import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import * as JWT from 'jsonwebtoken'
-import { utils } from '../../utils'
 import { STANDARD } from '../../constants/request'
 import { IUserLoginDto, IUserSignupDto } from '../../schemas/User'
 

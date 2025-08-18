@@ -2,24 +2,26 @@ import { utils, prisma } from '../utils';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ERRORS } from './errors.helper';
 
-export const checkValidRequest = (
+export const checkValidRequest = async (
   request: FastifyRequest,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
-  const token = utils.getTokenFromHeader(request.headers.authorization);
+  const token = utils.getTokenFromHeader(request.headers.authorization)
   if (!token) {
     return reply
       .code(ERRORS.unauthorizedAccess.statusCode)
-      .send(ERRORS.unauthorizedAccess.message);
+      .send(ERRORS.unauthorizedAccess.message)
   }
 
-  const decoded = utils.verifyToken(token);
+  const decoded = utils.verifyToken(token)
   if (!decoded) {
     return reply
       .code(ERRORS.unauthorizedAccess.statusCode)
-      .send(ERRORS.unauthorizedAccess.message);
+      .send(ERRORS.unauthorizedAccess.message)
   }
-};
+
+  // IMPORTANT : rien à renvoyer, Fastify continue vers le handler
+}
 
 export const checkValidUser = async (
   request: FastifyRequest,
@@ -55,4 +57,4 @@ export const checkValidUser = async (
       .code(ERRORS.unauthorizedAccess.statusCode)
       .send(ERRORS.unauthorizedAccess.message);
   }
-};
+}
