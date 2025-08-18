@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma, utils } from '../../utils'
+import { prisma } from '../../utils'
 import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import { IUserDto } from '../../schemas/User'
 import { STANDARD } from '../../constants/request'
-
+import { toUserDto } from 'src/helpers/user.helper'
 export const userController = {
 
   getAll : async () => {
@@ -26,8 +26,7 @@ export const userController = {
         .code(ERRORS.userNotExists.statusCode)
         .send(ERRORS.userNotExists.message)
       }
-      user.password = ''
-      return reply.code(STANDARD.OK.statusCode).send({user})
+      return reply.code(STANDARD.OK.statusCode).send({ data: toUserDto(user) })
     } catch (err) {
       return handleServerError(reply, err)
     }
@@ -39,6 +38,37 @@ export const userController = {
     }>,
     reply: FastifyReply,
   ) => {
-    
+    const currentUserId = request['authUser'].id
+    const userToUpdate = await prisma.user.findUnique({ where: { id: currentUserId } })
+    const body = request.body
+
+    if (!userToUpdate) {
+      return reply
+        .code(ERRORS.userNotExists.statusCode)
+        .send(ERRORS.userNotExists.message)
+    }
+
+    if (!userToUpdate.isAdmin && body.isAdmin) {
+      return reply
+        .code(ERRORS.permissionDenied.statusCode)
+        .send(ERRORS.permissionDenied.message)
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: currentUserId },
+      data: {
+        authorName: body.authorName,
+        email: body.email,
+        profilePictureUrl: body.profilePictureUrl,        
+        birthDate: body.birthDate,
+        createdAt: body.createdAt,
+        updatedAt: new Date()        
+      }
+    })
+    return reply
+      .code(STANDARD.OK.statusCode)
+      .send({ data: toUserDto(updatedUser) })
   },
+
+  
 }

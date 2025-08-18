@@ -1,5 +1,5 @@
-import Joi from 'joi';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import Joi from 'joi'
+import { FastifyReply, FastifyRequest } from 'fastify'
 
 export const validateSchema = (schema: Joi.ObjectSchema) => {
   return (
@@ -8,13 +8,13 @@ export const validateSchema = (schema: Joi.ObjectSchema) => {
     done: (err?: Error) => void,
   ) => {
     try {
-      const { error } = schema.validate(request.body);
+      const { error } = schema.validate(request.body)
       if (error) {
-        throw error;
+        throw error
       }
-      done();
+      done()
     } catch (error) {
-      done(error);
+      done(error)
     }
-  };
-};
+  }
+}

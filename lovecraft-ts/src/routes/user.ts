@@ -10,5 +10,11 @@ export default async function (server: FastifyInstance) {
       preHandler: [checkValidRequest, checkValidUser],
     }, 
     userController.getById)
-  //server.post('/refresh', authController.refresh)
+  server.put(
+    '/', 
+    {
+      preHandler: [checkValidRequest, checkValidUser],
+    },
+    userController.update
+  )
 }

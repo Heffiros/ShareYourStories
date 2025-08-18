@@ -16,7 +16,7 @@ export interface IUserDto {
   authorName:        string
   birthDate:         Date
   isAdmin:           Boolean       
-  profilePictureUrl: String
+  profilePictureUrl: string
   createdAt:         Date       
   updatedAt:         Date
 }
