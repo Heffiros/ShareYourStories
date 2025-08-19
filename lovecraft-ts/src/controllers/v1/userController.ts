@@ -18,7 +18,7 @@ export const userController = {
       const id = paramId === "me" ? request['authUser'].id : Number(paramId)
 
       const user = await prisma.user.findUnique({
-        where: { id: id }, // attention, id en base est un Int
+        where: { id: id },
       })
   
       if (!user) {

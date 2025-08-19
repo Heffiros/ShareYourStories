@@ -42,8 +42,8 @@ model Story {
   pages          Page[]
   storyComments  StoryComment[]
   storyHistories StoryHistory[]
-  storyStoryTag  StoryStoryTag[]
-  storyVote      StoryVote[]
+  storyStoryTags StoryStoryTag[]
+  storyVotes     StoryVote[]
   team           Team?           @relation(fields: [teamId], references: [id])
   event          Event?          @relation(fields: [eventId], references: [id])
 }
