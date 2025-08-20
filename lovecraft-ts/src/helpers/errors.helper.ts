@@ -1,5 +1,4 @@
 import { FastifyReply } from 'fastify'
-import { permission } from 'process'
 
 export class AppError extends Error {
   statusCode: number

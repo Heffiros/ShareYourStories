@@ -1,8 +1,5 @@
 // app.ts
 import Fastify from 'fastify'
-import authRoutes from './routes/auth'
-import userRoutes from './routes/user'
-import storyRoutes from './routes/story'
 import formbody from '@fastify/formbody';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
@@ -13,6 +10,6 @@ export function buildApp() {
   app.register(formbody)
   app.register(cors)
   app.register(helmet)
-
+  
   return app
 }

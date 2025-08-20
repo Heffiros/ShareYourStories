@@ -1,4 +1,4 @@
-import fastify, { FastifyReply, FastifyRequest } from 'fastify'
+import { FastifyReply, FastifyRequest } from 'fastify'
 import { prisma } from '../../utils'
 import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import { STANDARD } from '../../constants/request'
