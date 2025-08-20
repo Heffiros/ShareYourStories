@@ -1,5 +1,5 @@
-import { Story } from "@prisma/client";
 import { IStoryDto, StoryWithRelations } from '../schemas/Story'
+import { toUserDto } from '../helpers/user.helper'
 
 export const toStoryDto = (story: StoryWithRelations): IStoryDto => ({
   title: story.title,
@@ -8,12 +8,12 @@ export const toStoryDto = (story: StoryWithRelations): IStoryDto => ({
   status: story.status,
   pages: story.pages,
   userId: story.userId,
-  user: story.user,
+  user: toUserDto(story.user),
   eventId: story.eventId,
   event: story.event,
   teamId: story.teamId,
   team: story.team,
-  storyHistories: story.storyHistories,
+  storyHistory: story.storyHistories ? story.storyHistories[0] : null,
   storyVotes: story.storyVotes,
   createdAt: story.createdAt,
   updatedAt: story.updatedAt

@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
+import fastify, { FastifyReply, FastifyRequest } from 'fastify'
 import { prisma } from '../../utils'
 import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import { STANDARD } from '../../constants/request'
@@ -50,7 +50,7 @@ export const storyController = {
           notIn: [Status.ModerateAuto, Status.ModerateByAdmin]
         }
       }
-        
+
       const stories: StoryWithRelations[] = await prisma.story.findMany({
         where: filters,
         include: {
@@ -77,5 +77,40 @@ export const storyController = {
       console.error(error)
       return handleServerError(reply, error)
     }
+  },
+  getById: async (
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply
+  ) => {
+    const storyId = Number(request.params.id)
+    const currentUserId = request['authUser'].id
+    if (!currentUserId) {
+      return reply
+      .code(ERRORS.userNotExists.statusCode)
+      .send(ERRORS.userNotExists.message)
+    }
+    const story: StoryWithRelations = await prisma.story.findUnique({
+      where: { id: storyId },
+      include: {
+        pages: true,
+        user: true,
+        team: true,
+        event: true,
+        storyVotes: true,
+        storyStoryTags: {
+          include: { storyTag: true }
+        },
+        storyHistories: {
+          where: { userId: currentUserId },
+          take: 1
+        }
+      },
+    })
+    if (story == null) {
+      return reply
+        .code(ERRORS.NotFound.statusCode)
+        .send(ERRORS.NotFound.message)
+    }
+    return reply.code(STANDARD.OK.statusCode).send(toStoryDto(story))
   }
 }

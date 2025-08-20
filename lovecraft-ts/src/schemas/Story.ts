@@ -1,4 +1,5 @@
-import { Status, User, Event, Team, StoryVote, StoryHistory, Page } from '@prisma/client'
+import { Status, Event, Team, StoryVote, StoryHistory, Page } from '@prisma/client'
+import { IUserDto } from "../schemas/User";
 import { Prisma } from '@prisma/client'
 
 export interface IStoryDto {
@@ -8,13 +9,13 @@ export interface IStoryDto {
   status:          Status
   pages:           Page[]       
   userId:          Number
-  user:            User
+  user:            IUserDto
   eventId:         Number
   event:           Event
   teamId:          Number
   team:            Team
   storyVotes:      StoryVote[]
-  storyHistories:  StoryHistory[]
+  storyHistory:  StoryHistory
   createdAt:       Date       
   updatedAt:       Date
 }

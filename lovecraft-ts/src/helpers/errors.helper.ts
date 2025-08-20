@@ -15,6 +15,7 @@ export const ERRORS = {
   invalidToken: new AppError('Token is invalid.', 401),
   userExists: new AppError('User already exists', 409),
   userNotExists: new AppError('User not exists', 404),
+  NotFound: new AppError('NotFound', 404),
   userCredError: new AppError('Invalid credential', 401),
   tokenError: new AppError('Invalid Token', 401),
   invalidRequest: new AppError('Invalid Token', 400),
