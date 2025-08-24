@@ -6,7 +6,6 @@ import { STANDARD } from '../../constants/request'
 import { IUserLoginDto, IUserSignupDto } from '../../schemas/User'
 
 export const authController = {
-
   login : async (
     request: FastifyRequest<{
       Body: IUserLoginDto

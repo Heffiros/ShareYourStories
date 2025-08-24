@@ -3,6 +3,7 @@ import { toUserDto } from '../helpers/user.helper'
 import mammoth from "mammoth"
 
 export const toStoryDto = (story: StoryWithRelations): IStoryDto => ({
+  id: story.id,
   title: story.title,
   coverUrl: story.coverUrl,
   summary: story.summary,

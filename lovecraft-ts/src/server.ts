@@ -7,6 +7,7 @@ import authRoutes from './routes/auth'
 import userRoutes from './routes/user'
 import storyRoutes from './routes/story'
 import uploadRoutes from './routes/upload'
+import badgeRoutes from './routes/badge'
 
 const server = Fastify()
 const prisma = new PrismaClient()
@@ -27,6 +28,7 @@ server.register(authRoutes, { prefix: '/auth' })
 server.register(userRoutes, { prefix: '/users' })
 server.register(storyRoutes, { prefix: '/stories' })
 server.register(uploadRoutes, { prefix: '/upload' })
+server.register(badgeRoutes, { prefix: '/badges' })
 
 server.listen({ port: 3000 }, (err, address) => {
   if (err) throw err
