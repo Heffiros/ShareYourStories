@@ -20,7 +20,8 @@ export const ERRORS = {
   invalidRequest: new AppError('Invalid Token', 400),
   internalServerError: new AppError('Internal Server Error', 500),
   unauthorizedAccess: new AppError('Unauthorized access', 401),
-  permissionDenied: new AppError('Permission Denied', 403)
+  permissionDenied: new AppError('Permission Denied', 403),
+  badRequest: new AppError('Bad Request', 400)
 }
 
 export function handleServerError(reply: FastifyReply, error: any) {

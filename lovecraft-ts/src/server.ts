@@ -17,8 +17,11 @@ server.register(fastifyJwt, {
   secret: 'supersecretkey'
 })
 
-// 👇 IMPORTANT : multipart en premier
-server.register(multipart)
+server.register(multipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB max
+  }
+})
 
 server.register(authRoutes, { prefix: '/auth' })
 server.register(userRoutes, { prefix: '/users' })

@@ -3,7 +3,7 @@ import { prisma } from '../../utils'
 import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import { IUserDto } from '../../schemas/User'
 import { STANDARD } from '../../constants/request'
-import { toUserDto } from 'src/helpers/user.helper'
+import { toUserDto } from '../../helpers/user.helper'
 export const userController = {
 
   getAll : async () => {

@@ -13,11 +13,11 @@ export default async function (server: FastifyInstance) {
       preHandler: [checkValidRequest, checkValidUser],
     }, 
     storyController.getById)
-  /*server.put(
+  server.post(
     '/', 
     {
       preHandler: [checkValidRequest, checkValidUser],
     },
-    storyController.update
-  )*/
+    storyController.post
+  )
 }
