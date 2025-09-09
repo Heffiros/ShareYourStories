@@ -26,7 +26,7 @@ export async function extractRawTextFromDocx(fileBuffer: Buffer): Promise<string
   const result = await mammoth.extractRawText({ buffer: fileBuffer })
   return result.value
 }
-export function splitIntoPages(text: string, maxWordsPerPage: number): Promise<string[]> {
+export async function splitIntoPages(text: string, maxWordsPerPage: number): Promise<string[]> {
   const lines = text.split(/\r?\n/)
 
   const pages: string[] = []
