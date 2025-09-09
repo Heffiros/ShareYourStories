@@ -1,5 +1,3 @@
-import Joi from 'joi'
-
 export interface IPageDto {
   id:                 number
   order:              number
