@@ -22,6 +22,7 @@ model User {
   stories           Story[]
   storyHistories    StoryHistory[]
   storyVotes        StoryVote[]
+  storyComments     StoryComment[]
   userBadges        UserBadge[]
   userTeams         UserTeam[]
 }
@@ -62,7 +63,7 @@ model Page {
 
 model StoryComment {
   id        Int      @id @default(autoincrement())
-  Text      String
+  text      String
   status    Status   @default(Online) // par défaut Pending
   storyId   Int
   userId    Int
@@ -70,6 +71,7 @@ model StoryComment {
   updatedAt DateTime @updatedAt
   //linq
   story     Story    @relation(fields: [storyId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model StoryHistory {
