@@ -1,8 +1,6 @@
-import { utils, prisma } from '../utils'
-import { FastifyRequest, FastifyReply } from 'fastify'
+import { FastifyReply, FastifyRequest } from 'fastify'
+import { prisma, utils } from '../utils'
 import { ERRORS } from './errors.helper'
-import { request } from 'http'
-import user from 'src/routes/user'
 
 export const checkValidRequest = async (
   request: FastifyRequest,
@@ -88,11 +86,11 @@ export const checkValidAdmin = async (
         .code(ERRORS.unauthorizedAccess.statusCode)
         .send(ERRORS.unauthorizedAccess.message)
     }
-    
+
     if (!userData.isAdmin) {
       return reply
-      .code(ERRORS.unauthorizedAccess.statusCode)
-      .send(ERRORS.unauthorizedAccess.message)
+        .code(ERRORS.unauthorizedAccess.statusCode)
+        .send(ERRORS.unauthorizedAccess.message)
     }
 
     request['authUser'] = userData

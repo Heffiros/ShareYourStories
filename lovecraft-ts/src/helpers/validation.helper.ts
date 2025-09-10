@@ -1,5 +1,5 @@
-import Joi from 'joi'
 import { FastifyReply, FastifyRequest } from 'fastify'
+import Joi from 'joi'
 
 export const validateSchema = (schema: Joi.ObjectSchema) => {
   return (

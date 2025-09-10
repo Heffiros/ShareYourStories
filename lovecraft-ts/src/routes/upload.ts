@@ -6,5 +6,5 @@ export default async function (server: FastifyInstance) {
   server.post('/:place', {
     preHandler: [checkValidRequest, checkValidUser],
   },
-  uploadController.post)
+    uploadController.post)
 }

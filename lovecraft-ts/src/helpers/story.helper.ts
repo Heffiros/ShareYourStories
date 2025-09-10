@@ -1,6 +1,6 @@
-import { IStoryDto, StoryWithRelations } from '../schemas/Story'
-import { toUserDto } from '../helpers/user.helper'
 import mammoth from "mammoth"
+import { toUserDto } from '../helpers/user.helper'
+import { IStoryDto, StoryWithRelations } from '../schemas/Story'
 
 export const toStoryDto = (story: StoryWithRelations): IStoryDto => ({
   id: story.id,
