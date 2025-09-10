@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION || 'eu-west-3',
@@ -19,7 +19,7 @@ interface ImageInfo {
 
 export async function uploadToS3(image: ImageInfo) {
   const key = `wonderland/${image.place.toLowerCase()}/${image.name}${image.extension}`
-  
+
   try {
     const command = new PutObjectCommand({
       Bucket: 's3.sharedyourstories',

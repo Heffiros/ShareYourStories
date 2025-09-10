@@ -1,4 +1,4 @@
-import { Badge } from "@prisma/client";
+import { Badge } from "@prisma/client"
 import { IBadgeDto } from "../schemas/Badge"
 
 export const toBadgeDto = (badge: Badge): IBadgeDto => ({

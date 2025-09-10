@@ -8,10 +8,10 @@ export default async function (server: FastifyInstance) {
     '/:id',
     {
       preHandler: [checkValidRequest, checkValidUser],
-    }, 
+    },
     userController.getById)
   server.put(
-    '/', 
+    '/',
     {
       preHandler: [checkValidRequest, checkValidUser],
     },

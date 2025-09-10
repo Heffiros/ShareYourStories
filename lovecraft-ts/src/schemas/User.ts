@@ -12,13 +12,13 @@ export interface IUserSignupDto {
 }
 
 export interface IUserDto {
-  email:             string
-  authorName:        string
-  birthDate:         Date
-  isAdmin:           Boolean       
+  email: string
+  authorName: string
+  birthDate: Date
+  isAdmin: Boolean
   profilePictureUrl: string
-  createdAt:         Date       
-  updatedAt:         Date
+  createdAt: Date
+  updatedAt: Date
 }
 
 export const loginSchema = Joi.object({
