@@ -5,3 +5,4 @@ node_modules
 /src/generated/prisma
 /prisma/migrations/migration_lock.toml
 yarn.lock
+.vscode/launch.json
