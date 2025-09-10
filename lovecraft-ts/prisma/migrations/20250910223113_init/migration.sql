@@ -53,7 +53,7 @@ CREATE TABLE "public"."Page" (
 -- CreateTable
 CREATE TABLE "public"."StoryComment" (
     "id" SERIAL NOT NULL,
-    "Text" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
     "status" "public"."Status" NOT NULL DEFAULT 'Online',
     "storyId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
@@ -200,6 +200,9 @@ ALTER TABLE "public"."Page" ADD CONSTRAINT "Page_storyId_fkey" FOREIGN KEY ("sto
 
 -- AddForeignKey
 ALTER TABLE "public"."StoryComment" ADD CONSTRAINT "StoryComment_storyId_fkey" FOREIGN KEY ("storyId") REFERENCES "public"."Story"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."StoryComment" ADD CONSTRAINT "StoryComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."StoryHistory" ADD CONSTRAINT "StoryHistory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

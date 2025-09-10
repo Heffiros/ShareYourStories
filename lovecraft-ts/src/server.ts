@@ -7,6 +7,7 @@ import authRoutes from './routes/auth'
 import badgeRoutes from './routes/badge'
 import eventRoutes from './routes/event'
 import storyRoutes from './routes/story'
+import storyCommentRoutes from './routes/storyComment'
 import uploadRoutes from './routes/upload'
 import userRoutes from './routes/user'
 
@@ -31,6 +32,7 @@ server.register(storyRoutes, { prefix: '/stories' })
 server.register(uploadRoutes, { prefix: '/upload' })
 server.register(badgeRoutes, { prefix: '/badge' })
 server.register(eventRoutes, { prefix: '/event' })
+server.register(storyCommentRoutes, { prefix: '/storyComment' })
 
 server.listen({ port: 3000 }, (err, address) => {
   if (err) throw err
