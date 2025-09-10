@@ -23,4 +23,4 @@ export const STANDARD = {
     message: 'Partial Content',
     statusCode: 206,
   },
-} as const;
+} as const

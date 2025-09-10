@@ -1,8 +1,8 @@
-import * as bcrypt from 'bcryptjs'
 import { PrismaClient } from '@prisma/client'
-import * as JWT from 'jsonwebtoken'
-import Joi from 'joi'
+import * as bcrypt from 'bcryptjs'
 import { FastifyReply, FastifyRequest } from 'fastify'
+import Joi from 'joi'
+import * as JWT from 'jsonwebtoken'
 
 export const prisma = new PrismaClient()
 
