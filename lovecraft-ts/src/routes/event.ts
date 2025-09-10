@@ -6,15 +6,15 @@ export default async function (server: FastifyInstance) {
   server.get('/', {
     preHandler: [checkValidUser],
   },
-  eventController.getAll)
+    eventController.getAll)
   server.get(
     '/:id',
     {
       preHandler: [checkValidUser],
-    }, 
+    },
     eventController.getById)
   server.post(
-    '/', 
+    '/',
     {
       preHandler: [checkValidRequest, checkValidAdmin],
     },

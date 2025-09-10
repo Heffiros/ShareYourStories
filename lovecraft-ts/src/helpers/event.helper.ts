@@ -1,5 +1,4 @@
 import { EventWithRelations } from 'src/schemas/Event'
-import { Event } from '@prisma/client'
 import { IEventDto } from "../schemas/Event"
 
 export const toEventDto = (event: EventWithRelations, userIdClaim: Number): IEventDto => ({

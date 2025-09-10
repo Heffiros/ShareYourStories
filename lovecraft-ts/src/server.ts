@@ -5,6 +5,7 @@ import Fastify from 'fastify'
 
 import authRoutes from './routes/auth'
 import badgeRoutes from './routes/badge'
+import eventRoutes from './routes/event'
 import storyRoutes from './routes/story'
 import uploadRoutes from './routes/upload'
 import userRoutes from './routes/user'
@@ -28,7 +29,8 @@ server.register(authRoutes, { prefix: '/auth' })
 server.register(userRoutes, { prefix: '/users' })
 server.register(storyRoutes, { prefix: '/stories' })
 server.register(uploadRoutes, { prefix: '/upload' })
-server.register(badgeRoutes, { prefix: '/badges' })
+server.register(badgeRoutes, { prefix: '/badge' })
+server.register(eventRoutes, { prefix: '/event' })
 
 server.listen({ port: 3000 }, (err, address) => {
   if (err) throw err

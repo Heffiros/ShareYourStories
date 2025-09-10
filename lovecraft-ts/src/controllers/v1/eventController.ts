@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma } from '../../utils'
-import { ERRORS } from '../../helpers/errors.helper'
+import { EventWithRelations, IPostEventDto } from 'src/schemas/Event'
 import { STANDARD } from '../../constants/request'
+import { ERRORS } from '../../helpers/errors.helper'
 import { toEventDto } from '../../helpers/event.helper'
-import { IPostEventDto, EventWithRelations } from 'src/schemas/Event'
+import { prisma } from '../../utils'
 
 export const eventController = {
   getAll: async (
