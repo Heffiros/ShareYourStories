@@ -6,3 +6,4 @@ node_modules
 /prisma/migrations/migration_lock.toml
 yarn.lock
 .vscode/launch.json
+/tests/test-results.txt
