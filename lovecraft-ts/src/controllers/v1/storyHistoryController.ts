@@ -52,16 +52,15 @@ export const storyHistoryController = {
 
       await prisma.storyHistory.create({
         data: {
-          user: { connect: { id: body.userId } },
-          story: { connect: { id: body.storyId } },
-          lastPageRead: body.lastPageReadId
-            ? { connect: { id: body.lastPageReadId } }
-            : undefined,
+          userId: currentUserId,
+          storyId: storyId,
+          lastPageReadId: body.lastPageReadId,
           reread: 0,
           historyStateValue: 'Reading',
           createdAt: new Date(),
           updatedAt: new Date()
-        }
+        },
+        include: { user: true, story: true, lastPageRead: true }
       })
 
 

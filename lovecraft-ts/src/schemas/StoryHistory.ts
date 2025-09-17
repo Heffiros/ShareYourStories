@@ -4,7 +4,7 @@ export interface IStoryHistoryDto {
   id: number
   userId: number
   storyId: number
-  lastPageReadId: number | null
+  lastPageReadId: number
   reread: number
   historyStateValue: HistoryState
   createdAt: Date
