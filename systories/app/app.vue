@@ -1,8 +1,8 @@
 <template>
-   <h1 class="text-6xl font-bold underline">
-    Hello world!
-
-     <IconRocket />
-    <IconGithub size="32" color="blue" />
-  </h1>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
+<script setup lang="ts">
+  import Default from '~/layouts/default.vue'
+</script>
