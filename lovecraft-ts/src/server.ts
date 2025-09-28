@@ -38,7 +38,7 @@ server.register(storyCommentRoutes, { prefix: '/storyComment' })
 server.register(storyHistoryRoutes, { prefix: '/storyHistory' })
 server.register(storyTagRoutes, { prefix: '/storyTag' })
 
-server.listen({ port: 3000 }, (err, address) => {
+server.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) throw err
   console.log(`Server listening on ${address}`)
 })
