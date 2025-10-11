@@ -9,12 +9,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-definePageMeta({
-  middleware: 'auth',
-})
-
-const api = useNuxtApp().$api
-const users = await api('/users/me') // GET
-</script>
