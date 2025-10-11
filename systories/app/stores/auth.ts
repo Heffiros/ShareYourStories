@@ -1,31 +1,28 @@
 import { defineStore } from 'pinia'
+import type { LoginCredentials, LoginResponse, User } from '~/types/user'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as null | { id: number; email: string },
+    user: null as null | User,
     token: null as string | null,
   }),
 
   actions: {
-    async login(credentials: { email: string; password: string }) {
+    async login(credentials: LoginCredentials) {
       const config = useRuntimeConfig()
 
       try {
-        const response = await $fetch<{ user: { id: number; email: string }, token: string }>('/auth/login', {
+        const response = await $fetch<LoginResponse>('/auth/login', {
           method: 'POST',
           baseURL: config.public.apiBase,
           body: credentials,
         })
-
-        // On récupère le token et le user
         this.user = response.user
         this.token = response.token
 
-        // On stocke le token (simple pour commencer)
         if (this.token !== null) {
           localStorage.setItem('token', this.token)
         }
-
         return true
       } catch (err: any) {
         console.error('Erreur login:', err)
@@ -33,13 +30,10 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async autoLogin() {
-      // Si déjà connecté, rien à faire
       if (this.token) return
-
       const config = useRuntimeConfig()
       try {
-        // Login automatique avec paramètres en dur
-        const response = await $fetch<{ user: { id: number; email: string }, token: string }>('/auth/login', {
+        const response = await $fetch<LoginResponse>('/auth/login', {
           method: 'POST',
           baseURL: config.public.apiBase,
           body: {
@@ -62,8 +56,6 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       localStorage.removeItem('token')
     },
-
-    // Au démarrage, restaure le token
     init() {
       const token = localStorage.getItem('token')
       if (token) this.token = token

@@ -1,11 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "lovecraft-ts"
-		},
-		{
-			"path": "systories"
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "lovecraft-ts"
+    },
+    {
+      "path": "systories"
+    },
+    {
+      "path": "sharedyourstories"
+    }
+  ],
+  "settings": {}
 }
