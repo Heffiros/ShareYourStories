@@ -3,6 +3,7 @@ import multipart from '@fastify/multipart'
 import { PrismaClient } from '@prisma/client'
 import Fastify from 'fastify'
 
+import cors from '@fastify/cors'
 import authRoutes from './routes/auth'
 import badgeRoutes from './routes/badge'
 import eventRoutes from './routes/event'
@@ -37,6 +38,12 @@ server.register(eventRoutes, { prefix: '/event' })
 server.register(storyCommentRoutes, { prefix: '/storyComment' })
 server.register(storyHistoryRoutes, { prefix: '/storyHistory' })
 server.register(storyTagRoutes, { prefix: '/storyTag' })
+
+
+server.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+})
 
 server.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) throw err
