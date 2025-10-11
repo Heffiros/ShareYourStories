@@ -8,6 +8,8 @@ import badgeRoutes from './routes/badge'
 import eventRoutes from './routes/event'
 import storyRoutes from './routes/story'
 import storyCommentRoutes from './routes/storyComment'
+import storyHistoryRoutes from './routes/storyHistory'
+import storyTagRoutes from './routes/storyTag'
 import uploadRoutes from './routes/upload'
 import userRoutes from './routes/user'
 
@@ -33,8 +35,10 @@ server.register(uploadRoutes, { prefix: '/upload' })
 server.register(badgeRoutes, { prefix: '/badge' })
 server.register(eventRoutes, { prefix: '/event' })
 server.register(storyCommentRoutes, { prefix: '/storyComment' })
+server.register(storyHistoryRoutes, { prefix: '/storyHistory' })
+server.register(storyTagRoutes, { prefix: '/storyTag' })
 
-server.listen({ port: 3000 }, (err, address) => {
+server.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) throw err
   console.log(`Server listening on ${address}`)
 })
