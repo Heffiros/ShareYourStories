@@ -1,15 +1,11 @@
 <template>
   <div class="flex h-screen">
-    <Sidebar></Sidebar>
+    <UiSidebar></UiSidebar>
     <div class="flex flex-col flex-1">
-      <Navbar></Navbar>
-      <Main></Main>
+      <UiNavbar></UiNavbar>
+      <main class="flex-1 container mx-auto px-4 py-8">
+        <slot />
+      </main>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-  import Navbar from '~/components/ui/Navbar.vue'
-  import Main from '~/components/ui/Main.vue'
-  import Sidebar from '~/components/ui/Sidebar.vue'
-</script>
