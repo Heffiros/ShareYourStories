@@ -9,7 +9,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-// 👉 si tu utilises Pinia pour la gestion d’auth :
 import { useAuthStore } from '~/stores/auth'
 
 const clipped = ref(false)
@@ -57,33 +56,21 @@ const items = ref<MenuItem[]>([
   }
 ])
 
-// 👉 récupération du store d'auth
 const auth = useAuthStore()
-
-// --- Computed équivalents ---
 const menuItemsCompiled = computed(() => {
   const computedMenu: MenuItem[] = []
-
-  // items publics
   computedMenu.push(...items.value.filter(i => !i.hasToBeAuth))
-
-  // items si connecté
   if (auth.token) {
     computedMenu.push(...items.value.filter(i => i.hasToBeAuth && !i.hasToBeAdmin))
   }
-
-  // items si admin
   if (auth.user?.isAdmin) {
     computedMenu.push(...items.value.filter(i => i.hasToBeAdmin))
   }
-
   return computedMenu
 })
-
 const isAuth = computed(() => !!auth.token)
 const isAdmin = computed(() => !!auth.user?.isAdmin)
 
-// --- Méthodes ---
 const logout = async () => {
   try {
     await auth.logout()

@@ -5,3 +5,9 @@
     <NuxtLink to="/auth/login" class="underline">Aller au login</NuxtLink>
   </div>
 </template>
+
+<script setup lang="ts">
+definePageMeta({
+  middleware: 'auth',
+})
+</script>

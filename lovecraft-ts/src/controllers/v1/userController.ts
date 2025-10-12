@@ -26,7 +26,7 @@ export const userController = {
           .code(ERRORS.userNotExists.statusCode)
           .send(ERRORS.userNotExists.message)
       }
-      return reply.code(STANDARD.OK.statusCode).send({ data: toUserDto(user) })
+      return reply.code(STANDARD.OK.statusCode).send(toUserDto(user))
     } catch (err) {
       return handleServerError(reply, err)
     }
@@ -67,7 +67,7 @@ export const userController = {
     })
     return reply
       .code(STANDARD.OK.statusCode)
-      .send({ data: toUserDto(updatedUser) })
+      .send(toUserDto(updatedUser))
   },
 
 

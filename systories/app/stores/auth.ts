@@ -37,18 +37,30 @@ export const useAuthStore = defineStore('auth', {
           method: 'POST',
           baseURL: config.public.apiBase,
           body: {
-            email: 'user@example.com',
-            password: 'Password123',
+            email: config.public.autoLoginEmail,
+            password: config.public.autoLoginPassword,
           },
           headers: { 'Content-Type': 'application/json' }
         })
-        console.log('response authoLogin', response)
         this.user = response.user
         this.token = response.token
         localStorage.setItem('token', this.token)
-        console.log('✅ Auto login OK', this.user)
       } catch (err) {
         console.error('❌ Auto login failed:', err)
+      }
+    },
+    async fetchCurrentUser() {
+      if (!this.token) return
+      const config = useRuntimeConfig()
+      try {
+        const response = await $fetch<User>('/users/me', {
+          method: 'GET',
+          baseURL: config.public.apiBase,
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+        this.user = response
+      } catch (err) {
+        console.error('Erreur fetchCurrentUser:', err)
       }
     },
     logout() {
@@ -58,7 +70,10 @@ export const useAuthStore = defineStore('auth', {
     },
     init() {
       const token = localStorage.getItem('token')
-      if (token) this.token = token
+      if (token) {
+        this.token = token
+        this.fetchCurrentUser()
+      }
     },
   },
 })

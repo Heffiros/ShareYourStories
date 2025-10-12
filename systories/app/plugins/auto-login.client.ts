@@ -1,10 +1,11 @@
 import { useAuthStore } from '~/stores/auth'
 
 export default defineNuxtPlugin(async () => {
-  console.log('Auto login plugin running...')
   const auth = useAuthStore()
+  const config = useRuntimeConfig()
+
   auth.init()
-  if (!auth.token) {
+  if (!auth.token && config.public.environment === 'development') {
     await auth.autoLogin()
   }
 })
