@@ -1,58 +1,91 @@
 <template>
-  <aside class="w-14 border-r border-gray-800 flex flex-col items-center pt-4 gap-4">
-    <div class="w-10 h-10 bg-gray-700 rounded"></div>
-    <div class="w-10 h-10 bg-gray-700 rounded"></div>
-    <div class="w-10 h-10 bg-gray-700 rounded"></div>
-    <div class="w-10 h-10 bg-gray-700 rounded"></div>
+  <aside class="h-screen border-r border-gray-800 flex flex-col pt-4 transition-all duration-300"
+    :class="full ? 'w-80 items-start px-2' : 'w-14 items-center'">
+    <nav class="flex flex-col gap-2 w-full">
+      <NuxtLink v-for="item in items" :key="item.title" :to="item.to"
+        class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded p-2 transition-colors"
+        :class="full ? 'justify-start' : 'justify-center'">
+        <div v-if="item.type === 'menu' && full">
+          <h2>{{ item.title }}</h2>
+        </div>
+        <div v-if="item.type === 'divider'">
+          toto
+        </div>
+        <div v-if="item.type === 'link'" class="menu flex items-center gap-2">
+          <component v-if="item.icon" :is="icons[item.icon]" class="w-6 h-6" />
+          <span v-else class="w-6 h-6"></span>
+          <span v-if="full">{{ item.title }}</span>
+        </div>
+      </NuxtLink>
+    </nav>
   </aside>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
+import { Home, User, Library, ShieldHalf, FileSliders } from 'lucide-vue-next'
 
-const clipped = ref(false)
-const drawer = ref(true)
-const fixed = ref(false)
-const miniVariant = ref(false)
 const title = ref('SharedYourStories')
-
-interface MenuItem {
-  icon: string
-  title: string
-  hasToBeAuth: boolean
-  hasToBeAdmin: boolean
-  to: string
-}
+const icons = { Home, User, Library, ShieldHalf, FileSliders }
+type IconName = keyof typeof icons
+const props = defineProps({
+  full: Boolean
+})
 
 const items = ref<MenuItem[]>([
   {
-    icon: 'mdi-apps',
-    title: 'Dashboard',
+    title: 'NAVIGATION',
+    type: 'menu'
+  },
+  {
+    icon: 'Home',
+    title: 'Accueil',
     hasToBeAuth: false,
     hasToBeAdmin: false,
-    to: '/app/dashboard'
+    to: '/',
+    type: 'link'
+  },
+  { title: 'DIVIDER', type: 'divider' },
+  {
+    title: 'ECRITURE',
+    type: 'menu'
   },
   {
-    icon: 'mdi-book-open-variant',
-    title: 'Ma Bibliothèque',
+    icon: 'Library',
+    title: 'Ma bibliothèque',
     hasToBeAuth: true,
     hasToBeAdmin: false,
-    to: '/app/library'
+    to: '/library',
+    type: 'link'
   },
   {
-    icon: 'mdi-account',
+    icon: 'FileSliders',
+    title: 'Mes brouillons',
+    hasToBeAuth: true,
+    hasToBeAdmin: false,
+    to: '/library?filter=draft',
+    type: 'link'
+  },
+  {
+    title: 'COMPTE',
+    type: 'menu'
+  },
+  {
+    icon: 'User',
     title: 'Mon Profil',
     hasToBeAuth: true,
     hasToBeAdmin: false,
-    to: '/app/user/me'
+    to: '/me',
+    type: 'link'
   },
   {
-    icon: 'mdi-account',
+    icon: 'ShieldHalf',
     title: 'Admin',
     hasToBeAuth: true,
     hasToBeAdmin: true,
-    to: '/app/admin'
+    to: '/admin',
+    type: 'link'
   }
 ])
 
@@ -78,4 +111,21 @@ const logout = async () => {
     console.error('Logout error:', error)
   }
 }
+
+interface MenuItem {
+  icon?: IconName
+  title?: string
+  hasToBeAuth?: boolean
+  hasToBeAdmin?: boolean
+  to?: string
+  type: 'link' | 'button' | 'divider' | 'menu'
+}
 </script>
+
+<style lang="stylus" scoped>
+.menu
+  cursor pointer
+  padding-left 24px
+  color red
+  
+</style>
