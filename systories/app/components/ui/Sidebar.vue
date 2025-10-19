@@ -1,17 +1,19 @@
 <template>
-  <aside class="h-screen border-r border-gray-800 flex flex-col pt-4 transition-all duration-300"
+  <aside
+    class="h-screen border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col pt-4 transition-all duration-300"
     :class="full ? 'w-80 items-start px-2' : 'w-14 items-center'">
     <nav class="flex flex-col gap-2 w-full">
-      <NuxtLink v-for="item in items" :key="item.title" :to="item.to"
-        class="flex items-center gap-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded p-2 transition-colors"
+      <NuxtLink v-for="item in menuItemsCompiled" :key="item.title" :to="item.to"
+        class="flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-2 transition-colors"
         :class="full ? 'justify-start' : 'justify-center'">
         <div v-if="item.type === 'menu' && full">
           <h2>{{ item.title }}</h2>
         </div>
         <div v-if="item.type === 'divider'">
-          toto
+          divider
         </div>
-        <div v-if="item.type === 'link'" class="menu flex items-center gap-2">
+        <div v-if="item.type === 'link'"
+          :class="{ ['flex items-center gap-2 cursor-pointer']: true, ['menu-full']: full, ['menu-compact']: !full }">
           <component v-if="item.icon" :is="icons[item.icon]" class="w-6 h-6" />
           <span v-else class="w-6 h-6"></span>
           <span v-if="full">{{ item.title }}</span>
@@ -92,12 +94,14 @@ const items = ref<MenuItem[]>([
 const auth = useAuthStore()
 const menuItemsCompiled = computed(() => {
   const computedMenu: MenuItem[] = []
-  computedMenu.push(...items.value.filter(i => !i.hasToBeAuth))
-  if (auth.token) {
-    computedMenu.push(...items.value.filter(i => i.hasToBeAuth && !i.hasToBeAdmin))
-  }
-  if (auth.user?.isAdmin) {
-    computedMenu.push(...items.value.filter(i => i.hasToBeAdmin))
+  for (const item of items.value) {
+    if (!item.hasToBeAuth || item.type === 'menu' || item.type === 'divider') {
+      computedMenu.push(item)
+    } else if (item.hasToBeAuth && auth.token && !item.hasToBeAdmin) {
+      computedMenu.push(item)
+    } else if (item.hasToBeAdmin && auth.user?.isAdmin) {
+      computedMenu.push(item)
+    }
   }
   return computedMenu
 })
@@ -123,9 +127,6 @@ interface MenuItem {
 </script>
 
 <style lang="stylus" scoped>
-.menu
-  cursor pointer
+.menu-full
   padding-left 24px
-  color red
-  
 </style>
