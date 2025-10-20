@@ -10,7 +10,7 @@
       <UiNavbar @toggle="toggleSidebar" />
 
       <!-- Contenu dynamique -->
-      <main class="flex-1 overflow-y-auto container mx-auto px-6 py-8 bg-slate-50 dark:bg-slate-900">
+      <main class="flex-1 overflow-y-auto px-6 py-8 bg-slate-50 dark:bg-slate-900">
         <slot />
       </main>
     </div>
