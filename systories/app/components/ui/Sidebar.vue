@@ -34,9 +34,16 @@
         </div>
         <hr v-else-if="item.type === 'divider'" class="border-slate-300 dark:border-slate-600 my-3" />
         <NuxtLink v-else-if="item.type === 'link'" :to="item.to"
-          class="flex items-center gap-3 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg py-3 px-3 transition-colors group"
-          :class="full ? 'justify-start' : 'justify-center'">
-          <component v-if="item.icon" :is="icons[item.icon]" class="w-5 h-5 flex-shrink-0" />
+          class="flex items-center gap-3 rounded-lg py-3 px-3 transition-all duration-200 group relative" :class="[
+            full ? 'justify-start' : 'justify-center mt-2',
+            isActiveRoute(item.to)
+              ? 'bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 text-yellow-600 dark:text-yellow-400 border border-yellow-500'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700'
+          ]">
+          <component v-if="item.icon" :is="icons[item.icon]" :class="[
+            'w-5 h-5 flex-shrink-0',
+            isActiveRoute(item.to) ? 'text-yellow-600 dark:text-yellow-400' : ''
+          ]" />
           <span v-if="full" class="text-sm font-medium">{{ item.title }}</span>
         </NuxtLink>
       </template>
@@ -48,6 +55,8 @@
 import { computed, ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { Home, User, Library, ShieldHalf, FileSliders, Feather } from 'lucide-vue-next'
+
+const route = useRoute()
 
 const title = ref('SharedYourStories')
 const icons = { Home, User, Library, ShieldHalf, FileSliders, Feather }
@@ -137,6 +146,14 @@ const logout = async () => {
   } catch (error) {
     console.error('Logout error:', error)
   }
+}
+
+const isActiveRoute = (path?: string) => {
+  if (!path) return false
+  if (path === '/') {
+    return route.path === '/'
+  }
+  return route.path.startsWith(path)
 }
 
 interface MenuItem {
