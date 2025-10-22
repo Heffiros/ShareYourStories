@@ -1,6 +1,6 @@
 <template>
    <header
-      class="h-24 border-b border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 flex items-center justify-between px-6 transition-colors duration-300">
+      class="h-28 border-b border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 flex items-center justify-between px-6 transition-colors duration-300">
 
       <div class="flex items-center gap-4">
          <CommonAppButton :iconName="Menu" @click="toggleMenu" />

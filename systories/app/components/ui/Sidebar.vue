@@ -1,24 +1,45 @@
 <template>
   <aside
-    class="h-screen border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col pt-4 transition-all duration-300"
-    :class="full ? 'w-80 items-start px-2' : 'w-14 items-center'">
-    <nav class="flex flex-col gap-2 w-full">
-      <NuxtLink v-for="item in menuItemsCompiled" :key="item.title" :to="item.to"
-        class="flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-2 transition-colors"
-        :class="full ? 'justify-start' : 'justify-center'">
-        <div v-if="item.type === 'menu' && full">
-          <h2>{{ item.title }}</h2>
+    class="h-screen border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col transition-all duration-300"
+    :class="full ? 'w-80 items-start' : 'w-16 items-center'">
+    <div class="w-full border-b border-slate-200 dark:border-slate-700 p-6">
+      <div class="flex items-center gap-4" :class="full ? 'justify-start' : 'justify-center'">
+        <div class="flex-shrink-0">
+          <img src="~/assets/images/logo.png" :alt="title" :class="full ? 'w-10 h-10' : 'w-8 h-8'"
+            class="object-contain" />
         </div>
-        <div v-if="item.type === 'divider'">
-          divider
+        <div v-if="full" class="flex flex-col">
+          <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
+            SHARE YOUR STORIES
+          </h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Plateforme Littéraire
+          </p>
         </div>
-        <div v-if="item.type === 'link'"
-          :class="{ ['flex items-center gap-2 cursor-pointer']: true, ['menu-full']: full, ['menu-compact']: !full }">
-          <component v-if="item.icon" :is="icons[item.icon]" class="w-6 h-6" />
-          <span v-else class="w-6 h-6"></span>
-          <span v-if="full">{{ item.title }}</span>
+      </div>
+    </div>
+    <div v-if="full" class="w-full h-[70px] flex justify-center px-6 py-4">
+      <button
+        class="w-11/12 bg-gradient-to-r from-white to-yellow-500 hover:from-yellow-50 hover:to-yellow-600 text-slate-900 font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+        @click="navigateTo('/write')">
+        <Edit class="w-5 h-5" />
+        <span>Écrire</span>
+      </button>
+    </div>
+    <nav class=" flex flex-col gap-1 w-full px-4 flex-1 overflow-y-auto">
+      <template v-for="item in menuItemsCompiled" :key="item.title">
+        <div v-if="item.type === 'menu' && full"
+          class="px-3 py-2 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-6 first:mt-2">
+          {{ item.title }}
         </div>
-      </NuxtLink>
+        <hr v-else-if="item.type === 'divider'" class="border-slate-300 dark:border-slate-600 my-3" />
+        <NuxtLink v-else-if="item.type === 'link'" :to="item.to"
+          class="flex items-center gap-3 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg py-3 px-3 transition-colors group"
+          :class="full ? 'justify-start' : 'justify-center'">
+          <component v-if="item.icon" :is="icons[item.icon]" class="w-5 h-5 flex-shrink-0" />
+          <span v-if="full" class="text-sm font-medium">{{ item.title }}</span>
+        </NuxtLink>
+      </template>
     </nav>
   </aside>
 </template>
@@ -26,11 +47,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
-import { Home, User, Library, ShieldHalf, FileSliders } from 'lucide-vue-next'
+import { Home, User, Library, ShieldHalf, FileSliders, Edit } from 'lucide-vue-next'
 
 const title = ref('SharedYourStories')
-const icons = { Home, User, Library, ShieldHalf, FileSliders }
+const icons = { Home, User, Library, ShieldHalf, FileSliders, Edit }
 type IconName = keyof typeof icons
+
 const props = defineProps({
   full: Boolean
 })
@@ -105,6 +127,7 @@ const menuItemsCompiled = computed(() => {
   }
   return computedMenu
 })
+
 const isAuth = computed(() => !!auth.token)
 const isAdmin = computed(() => !!auth.user?.isAdmin)
 
@@ -125,8 +148,3 @@ interface MenuItem {
   type: 'link' | 'button' | 'divider' | 'menu'
 }
 </script>
-
-<style lang="stylus" scoped>
-.menu-full
-  padding-left 24px
-</style>
