@@ -22,7 +22,7 @@
       <button
         class="w-11/12 bg-gradient-to-r from-white to-yellow-500 hover:from-yellow-50 hover:to-yellow-600 text-slate-900 font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
         @click="navigateTo('/write')">
-        <Edit class="w-5 h-5" />
+        <Feather class="w-5 h-5" />
         <span>Écrire</span>
       </button>
     </div>
@@ -47,10 +47,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
-import { Home, User, Library, ShieldHalf, FileSliders, Edit } from 'lucide-vue-next'
+import { Home, User, Library, ShieldHalf, FileSliders, Feather } from 'lucide-vue-next'
 
 const title = ref('SharedYourStories')
-const icons = { Home, User, Library, ShieldHalf, FileSliders, Edit }
+const icons = { Home, User, Library, ShieldHalf, FileSliders, Feather }
 type IconName = keyof typeof icons
 
 const props = defineProps({
