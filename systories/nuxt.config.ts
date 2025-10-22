@@ -1,15 +1,11 @@
-import tailwindcss from "@tailwindcss/vite";
-
 export default defineNuxtConfig({
+  ssr: false,
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   devServer: {
     https: false,
     port: 5000,
-  },
-  vite: {
-    plugins: [tailwindcss()],
   },
   runtimeConfig: {
     public: {
@@ -21,6 +17,7 @@ export default defineNuxtConfig({
   },
   modules: [
     "nuxt-lucide-icons",
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxtjs/tailwindcss'
   ]
 });
