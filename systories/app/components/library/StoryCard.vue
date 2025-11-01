@@ -1,25 +1,28 @@
 <template>
   <div
-    class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden relative">
+    class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col">
     <LibraryStoryStateTag v-if="story?.status" :status="story.status" />
 
-    <div class="w-full h-48 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800">
+    <div
+      class="w-full h-48 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex-shrink-0">
       <img v-if="story?.coverUrl" :src="story.coverUrl" alt="Story Cover" class="w-full h-full object-cover" />
     </div>
-    <div class="p-4 space-y-3">
-      <h3 class="font-semibold text-slate-900 dark:text-slate-100 line-clamp-2">
+    <div class="p-4 flex flex-col h-full">
+      <h3 class="font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 mb-3">
         {{ story?.title || 'Coeur entrelacés : Une histoire d\'amour' }}
       </h3>
-      <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
+      <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mb-3">
         {{ story?.summary || 'Lorsque l\'architecte Emma Collins rénove une vieille librairie, elle découvre l\'amour..'
         }}
       </p>
 
-      <div v-if="story?.storyTags && story.storyTags.length > 0" class="flex flex-wrap gap-2">
-        <LibraryStoryTag v-for="tag in story.storyTags" :key="tag.id" :label="tag.label" />
+      <div class="min-h-[2rem] flex flex-wrap gap-2 mb-3">
+        <LibraryStoryTag v-for="tag in story?.storyTags || []" :key="tag.id" :label="tag.label" />
       </div>
 
-      <div class="flex gap-4 text-xs text-slate-500 dark:text-slate-500">
+      <div class="flex-grow"></div>
+
+      <div class="flex gap-4 text-xs text-slate-500 dark:text-slate-500 mb-3">
         <span class="flex items-center gap-1">
           <MessageCircle class="w-3 h-3" />
           {{ story?.commentCount || 0 }}
