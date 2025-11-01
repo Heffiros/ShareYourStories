@@ -1,4 +1,5 @@
 import mammoth from "mammoth"
+import { toStoryTagDto } from '../helpers/storyTag.helper'
 import { toUserDto } from '../helpers/user.helper'
 import { IStoryDto, StoryWithRelations } from '../schemas/Story'
 
@@ -16,7 +17,7 @@ export const toStoryDto = (story: StoryWithRelations): IStoryDto => ({
   teamId: story.teamId,
   team: story.team,
   storyHistory: story.storyHistories ? story.storyHistories[0] : null,
-  storyTags: null,
+  storyTags: story.storyStoryTags ? story.storyStoryTags.map(sst => toStoryTagDto(sst.storyTag)) : [],
   storyVotes: story.storyVotes,
   createdAt: story.createdAt,
   updatedAt: story.updatedAt

@@ -1,7 +1,6 @@
 export interface StoryTag {
   id: number
-  name: string
-  color: string
+  label: string
   createdAt: string
   updatedAt: string
 }
