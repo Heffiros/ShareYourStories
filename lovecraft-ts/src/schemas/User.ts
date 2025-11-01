@@ -12,6 +12,7 @@ export interface IUserSignupDto {
 }
 
 export interface IUserDto {
+  id: number
   email: string
   authorName: string
   birthDate: Date

@@ -3,7 +3,8 @@
     <!-- Header Section -->
     <LibraryHeader />
 
-    <!-- Stats Section -->
+    <!-- Stats Section - TODO: Implémenter les contrôleurs pour les statistiques -->
+    <!-- 
     <section>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div
@@ -51,6 +52,7 @@
         </div>
       </div>
     </section>
+    -->
 
     <!-- Stories Grid Section -->
     <LibraryStoryFeed />

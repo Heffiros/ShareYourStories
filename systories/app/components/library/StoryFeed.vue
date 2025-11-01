@@ -67,20 +67,36 @@ watch([sortOrder, searchTerm], () => {
   infiniteLoadingKey.value++
 })
 
+watch(() => useRoute().query.mode, () => {
+  stories.value = []
+  currentPage.value = 0
+  hasFinished.value = false
+  infiniteLoadingKey.value++
+})
+
 const load = async ($state: InfiniteLoadState) => {
   if (isLoading.value || hasFinished.value) return
 
   try {
     isLoading.value = true
     const config = useRuntimeConfig()
+    const route = useRoute()
 
     const params = new URLSearchParams({
       page: currentPage.value.toString(),
       order: sortOrder.value
     })
 
+    if (auth.user?.id) {
+      params.append('userId', auth.user.id.toString())
+    }
+
     if (searchTerm.value) {
       params.append('search', searchTerm.value)
+    }
+
+    if (route.query.mode) {
+      params.append('mode', route.query.mode as string)
     }
 
     const response = await $fetch<Story[]>(`/stories?${params.toString()}`, {
