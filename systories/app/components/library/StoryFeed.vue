@@ -1,14 +1,12 @@
 <template>
   <section class="flex justify-between items-center">
     <div class="flex items-center gap-4">
-      <button
-        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 flex items-center gap-2 text-slate-700 dark:text-slate-300">
-        <span>Plus récentes</span>
-        <ChevronDown class="w-4 h-4" />
-      </button>
-      <button
-        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-slate-700 dark:text-slate-300">
-        <ArrowUpNarrowWide class="w-4 h-4" />
+      <button @click="toggleOrder"
+        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+        :title="sortOrder === 'desc' ? 'Plus récentes en premier' : 'Plus anciennes en premier'">
+        <span>{{ sortOrder === 'desc' ? 'Plus récentes' : 'Plus anciennes' }}</span>
+        <ArrowUpNarrowWide class="w-4 h-4 transition-transform duration-200"
+          :class="{ 'rotate-180': sortOrder === 'asc' }" />
       </button>
     </div>
   </section>
@@ -18,19 +16,17 @@
       <LibraryStoryCard v-for="story in stories" :key="story.id" :story="story" />
     </div>
 
-    <!-- Loading state -->
     <div v-if="isLoading" class="flex justify-center py-4">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
     </div>
 
-    <!-- Infinite loading trigger (invisible) -->
-    <InfiniteLoading @infinite="load" style="opacity: 0; pointer-events: none;" />
+    <InfiniteLoading :key="infiniteLoadingKey" @infinite="load" style="opacity: 0; pointer-events: none;" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { ChevronDown, ArrowUpNarrowWide } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { ArrowUpNarrowWide } from 'lucide-vue-next'
+import { ref, watch, nextTick } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import InfiniteLoading from "v3-infinite-loading"
 import "v3-infinite-loading/lib/style.css"
@@ -44,20 +40,23 @@ interface InfiniteLoadState {
   error(): void;
 }
 
-// State
-const selectedSort = ref('recent')
+const sortOrder = ref('desc')
 const stories = ref<Story[]>([])
 const currentPage = ref(0)
 const isLoading = ref(false)
 const hasFinished = ref(false)
+const infiniteLoadingKey = ref(0)
 
-const handleSortChange = (sortType: string) => {
-  selectedSort.value = sortType
-  // Reset and reload stories when sort changes
+const toggleOrder = () => {
+  sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
+}
+
+watch(sortOrder, () => {
   stories.value = []
   currentPage.value = 0
   hasFinished.value = false
-}
+  infiniteLoadingKey.value++
+})
 
 const load = async ($state: InfiniteLoadState) => {
   if (isLoading.value || hasFinished.value) return
@@ -65,7 +64,7 @@ const load = async ($state: InfiniteLoadState) => {
   try {
     isLoading.value = true
     const config = useRuntimeConfig()
-    const response = await $fetch<Story[]>(`/stories?mode=active&page=${currentPage.value}&limit=8&sort=${selectedSort.value}`, {
+    const response = await $fetch<Story[]>(`/stories?page=${currentPage.value}&order=${sortOrder.value}`, {
       method: 'GET',
       baseURL: config.public.apiBase,
       headers: { Authorization: `Bearer ${auth.token}` }
