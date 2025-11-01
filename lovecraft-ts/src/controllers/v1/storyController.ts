@@ -69,6 +69,11 @@ export const storyController = {
           storyHistories: {
             where: { userId: currentUserId },
             take: 1
+          },
+          _count: {
+            select: {
+              storyComments: true
+            }
           }
         },
         skip: page * 5,

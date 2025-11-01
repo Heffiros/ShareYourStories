@@ -19,6 +19,7 @@ export const toStoryDto = (story: StoryWithRelations): IStoryDto => ({
   storyHistory: story.storyHistories ? story.storyHistories[0] : null,
   storyTags: story.storyStoryTags ? story.storyStoryTags.map(sst => toStoryTagDto(sst.storyTag)) : [],
   storyVotes: story.storyVotes,
+  commentCount: story._count?.storyComments || 0,
   createdAt: story.createdAt,
   updatedAt: story.updatedAt
 })

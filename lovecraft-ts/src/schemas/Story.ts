@@ -17,6 +17,7 @@ export interface IStoryDto {
   storyVotes: StoryVote[]
   storyTags: StoryTag[]
   storyHistory: StoryHistory
+  commentCount: number
   createdAt: Date
   updatedAt: Date
 }
@@ -30,5 +31,10 @@ export type StoryWithRelations = Prisma.StoryGetPayload<{
     storyVotes: true
     storyHistories: true
     storyStoryTags: { include: { storyTag: true } }
+    _count: {
+      select: {
+        storyComments: true
+      }
+    }
   }
 }>

@@ -1,7 +1,6 @@
 <template>
   <div
     class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden relative">
-    <!-- Story State Tag -->
     <LibraryStoryStateTag v-if="story?.status" :status="story.status" />
 
     <div class="w-full h-48 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800">
@@ -16,14 +15,16 @@
         }}
       </p>
 
-      <!-- Story Tags -->
       <div v-if="story?.storyTags && story.storyTags.length > 0" class="flex flex-wrap gap-2">
         <LibraryStoryTag v-for="tag in story.storyTags" :key="tag.id" :label="tag.label" />
       </div>
 
       <div class="flex gap-4 text-xs text-slate-500 dark:text-slate-500">
-        <span>{{ story?.storyVotes?.length || 0 }} votes</span>
-        <span>{{ story?.pages?.length || 0 }} pages</span>
+        <span class="flex items-center gap-1">
+          <MessageCircle class="w-3 h-3" />
+          {{ story?.commentCount || 0 }}
+        </span>
+        <span>{{ story?.createdAt ? new Date(story.createdAt).getFullYear() : 2024 }}</span>
       </div>
       <div class="flex gap-2">
         <button
@@ -43,7 +44,7 @@
 
 <script setup lang="ts">
 import type { Story } from '~/types/story'
-import { BookOpenText, UsersRound } from 'lucide-vue-next'
+import { BookOpenText, UsersRound, MessageCircle } from 'lucide-vue-next'
 
 interface Props {
   story?: Story
