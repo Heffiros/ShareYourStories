@@ -36,7 +36,7 @@ export const storyController = {
       }
 
       if (search) {
-        filters.title = { contains: search }
+        filters.title = { contains: search, mode: 'insensitive' }
       }
 
       if (storyTagId) {

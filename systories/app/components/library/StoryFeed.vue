@@ -9,6 +9,10 @@
           :class="{ 'rotate-180': sortOrder === 'asc' }" />
       </button>
     </div>
+
+    <div>
+      <LibraryStorySearch @search="handleSearch" />
+    </div>
   </section>
 
   <section>
@@ -41,6 +45,7 @@ interface InfiniteLoadState {
 }
 
 const sortOrder = ref('desc')
+const searchTerm = ref('')
 const stories = ref<Story[]>([])
 const currentPage = ref(0)
 const isLoading = ref(false)
@@ -51,7 +56,11 @@ const toggleOrder = () => {
   sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
 }
 
-watch(sortOrder, () => {
+const handleSearch = (term: string) => {
+  searchTerm.value = term
+}
+
+watch([sortOrder, searchTerm], () => {
   stories.value = []
   currentPage.value = 0
   hasFinished.value = false
@@ -64,7 +73,17 @@ const load = async ($state: InfiniteLoadState) => {
   try {
     isLoading.value = true
     const config = useRuntimeConfig()
-    const response = await $fetch<Story[]>(`/stories?page=${currentPage.value}&order=${sortOrder.value}`, {
+
+    const params = new URLSearchParams({
+      page: currentPage.value.toString(),
+      order: sortOrder.value
+    })
+
+    if (searchTerm.value) {
+      params.append('search', searchTerm.value)
+    }
+
+    const response = await $fetch<Story[]>(`/stories?${params.toString()}`, {
       method: 'GET',
       baseURL: config.public.apiBase,
       headers: { Authorization: `Bearer ${auth.token}` }
