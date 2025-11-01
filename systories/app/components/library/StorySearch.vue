@@ -5,7 +5,6 @@
       <Search class="w-4 h-4" />
     </button>
 
-    <!-- Input de recherche ouvert -->
     <div v-else
       class="h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 flex items-center gap-2 text-slate-700 dark:text-slate-300 transition-all duration-200 w-64">
       <Search class="w-4 h-4 text-slate-400" />
