@@ -1,10 +1,10 @@
+import { Badge } from '@prisma/client'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma } from '../../utils'
-import {  handleServerError } from '../../helpers/errors.helper'
+import { IPostBadgeDto } from 'src/schemas/Badge'
 import { STANDARD } from '../../constants/request'
 import { toBadgeDto } from '../../helpers/badge.helper'
-import { Badge } from '@prisma/client'
-import { IPostBadgeDto } from 'src/schemas/Badge'
+import { handleServerError } from '../../helpers/errors.helper'
+import { prisma } from '../../utils'
 
 export const badgeController = {
   getAll: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -20,8 +20,8 @@ export const badgeController = {
       const paramId = request.params.id
       const badge: Badge = await prisma.badge.findUnique({
         where: { id: Number(paramId) }
-    })
-    return reply.code(STANDARD.OK.statusCode).send(toBadgeDto(badge))
+      })
+      return reply.code(STANDARD.OK.statusCode).send(toBadgeDto(badge))
     } catch (err) {
       return handleServerError(reply, err)
     }
@@ -30,7 +30,7 @@ export const badgeController = {
     request: FastifyRequest<{ Body: IPostBadgeDto }>,
     reply: FastifyReply
   ) => {
-    const { label, emptyBadgeUrl, badgeUrl, description} = request.body
+    const { label, emptyBadgeUrl, badgeUrl, description } = request.body
 
     const badgeCreated = await prisma.badge.create({
       data: {

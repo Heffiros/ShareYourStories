@@ -1,13 +1,19 @@
-import Fastify from 'fastify'
 import fastifyJwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
 import { PrismaClient } from '@prisma/client'
+import Fastify from 'fastify'
 
+import cors from '@fastify/cors'
 import authRoutes from './routes/auth'
-import userRoutes from './routes/user'
-import storyRoutes from './routes/story'
-import uploadRoutes from './routes/upload'
 import badgeRoutes from './routes/badge'
+import eventRoutes from './routes/event'
+import statsRoutes from './routes/stats'
+import storyRoutes from './routes/story'
+import storyCommentRoutes from './routes/storyComment'
+import storyHistoryRoutes from './routes/storyHistory'
+import storyTagRoutes from './routes/storyTag'
+import uploadRoutes from './routes/upload'
+import userRoutes from './routes/user'
 
 const server = Fastify()
 const prisma = new PrismaClient()
@@ -27,10 +33,21 @@ server.register(multipart, {
 server.register(authRoutes, { prefix: '/auth' })
 server.register(userRoutes, { prefix: '/users' })
 server.register(storyRoutes, { prefix: '/stories' })
+server.register(statsRoutes, { prefix: '/stats' })
 server.register(uploadRoutes, { prefix: '/upload' })
-server.register(badgeRoutes, { prefix: '/badges' })
+server.register(badgeRoutes, { prefix: '/badge' })
+server.register(eventRoutes, { prefix: '/event' })
+server.register(storyCommentRoutes, { prefix: '/storyComment' })
+server.register(storyHistoryRoutes, { prefix: '/storyHistory' })
+server.register(storyTagRoutes, { prefix: '/storyTag' })
 
-server.listen({ port: 3000 }, (err, address) => {
+
+server.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+})
+
+server.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) throw err
   console.log(`Server listening on ${address}`)
 })

@@ -1,12 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma } from '../../utils'
-import { ERRORS, handleServerError } from '../../helpers/errors.helper'
-import { IUserDto } from '../../schemas/User'
 import { STANDARD } from '../../constants/request'
+import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import { toUserDto } from '../../helpers/user.helper'
+import { IUserDto } from '../../schemas/User'
+import { prisma } from '../../utils'
 export const userController = {
 
-  getAll : async () => {
+  getAll: async () => {
 
   },
   getById: async (
@@ -20,13 +20,13 @@ export const userController = {
       const user = await prisma.user.findUnique({
         where: { id: id },
       })
-  
+
       if (!user) {
         return reply
-        .code(ERRORS.userNotExists.statusCode)
-        .send(ERRORS.userNotExists.message)
+          .code(ERRORS.userNotExists.statusCode)
+          .send(ERRORS.userNotExists.message)
       }
-      return reply.code(STANDARD.OK.statusCode).send({ data: toUserDto(user) })
+      return reply.code(STANDARD.OK.statusCode).send(toUserDto(user))
     } catch (err) {
       return handleServerError(reply, err)
     }
@@ -59,16 +59,16 @@ export const userController = {
       data: {
         authorName: body.authorName,
         email: body.email,
-        profilePictureUrl: body.profilePictureUrl,        
+        profilePictureUrl: body.profilePictureUrl,
         birthDate: body.birthDate,
         createdAt: body.createdAt,
-        updatedAt: new Date()        
+        updatedAt: new Date()
       }
     })
     return reply
       .code(STANDARD.OK.statusCode)
-      .send({ data: toUserDto(updatedUser) })
+      .send(toUserDto(updatedUser))
   },
 
-  
+
 }

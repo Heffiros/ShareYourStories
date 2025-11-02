@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "windows", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,6 +23,7 @@ model User {
   stories           Story[]
   storyHistories    StoryHistory[]
   storyVotes        StoryVote[]
+  storyComments     StoryComment[]
   userBadges        UserBadge[]
   userTeams         UserTeam[]
 }
@@ -51,7 +53,7 @@ model Story {
 model Page {
   id             Int            @id @default(autoincrement())
   order          Int
-  content        String         @db.LongText
+  content        String
   storyId        Int
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -62,7 +64,7 @@ model Page {
 
 model StoryComment {
   id        Int      @id @default(autoincrement())
-  Text      String
+  text      String
   status    Status   @default(Online) // par défaut Pending
   storyId   Int
   userId    Int
@@ -70,6 +72,7 @@ model StoryComment {
   updatedAt DateTime @updatedAt
   //linq
   story     Story    @relation(fields: [storyId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model StoryHistory {
@@ -196,6 +199,7 @@ enum Status {
   ModerateByAdmin
   ModerateAuto
   Winner
+  Draft
 }
 
 enum HistoryState {

@@ -1,57 +1,65 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma } from '../../utils'
-import { ERRORS, handleServerError } from '../../helpers/errors.helper'
-import { splitIntoPages } from '../../helpers/story.helper'
-import { STANDARD } from '../../constants/request'
-import { Status, Page } from '@prisma/client'
-import { StoryWithRelations, IStoryDto } from "../../schemas/Story"
-import { toStoryDto, extractRawTextFromDocx } from "../../helpers/story.helper"
 import { MultipartFile, MultipartValue } from '@fastify/multipart'
+import { Status } from '@prisma/client'
+import { FastifyReply, FastifyRequest } from 'fastify'
+import { STANDARD } from '../../constants/request'
+import { ERRORS, handleServerError } from '../../helpers/errors.helper'
+import { extractRawTextFromDocx, splitIntoPages, toStoryDto } from '../../helpers/story.helper'
+import { IStoryDto, StoryWithRelations } from "../../schemas/Story"
+import { prisma } from '../../utils'
 
 export const storyController = {
   getAll: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { userId, teamsId, eventId, search, storyTagId, page = 0, isAdmin = false } = request.query as {
-        userId?: number
+      const { userId, teamsId, eventId, search, storyTagId, page = 0, order = 'desc', mode } = request.query as {
+        userId?: string
         teamsId?: number
         eventId?: number
         search?: string
         storyTagId?: number
         page?: number
-        isAdmin?: boolean
+        order?: string
+        mode?: string
       }
       const currentUserId = request['authUser'].id
       if (!currentUserId) {
         return reply
-        .code(ERRORS.userNotExists.statusCode)
-        .send(ERRORS.userNotExists.message)
+          .code(ERRORS.userNotExists.statusCode)
+          .send(ERRORS.userNotExists.message)
       }
-      const filters: any = {}      
+
+      const filters: any = {}
+
       if (teamsId) {
         filters.teamId = teamsId
+        filters.status = 'Online'
       } else if (eventId) {
         filters.eventId = eventId
-      } else if (userId) {
-        filters.userId = currentUserId
-      } 
-      
+        filters.status = 'Online'
+      } else if (userId && userId !== '') {
+        const userIdNumber = Number(userId)
+        filters.userId = userIdNumber
+        if (userIdNumber === currentUserId) {
+          if (mode === 'draft') {
+            filters.status = 'Draft'
+          }
+        } else {
+          filters.status = 'Online'
+        }
+      } else {
+        filters.status = 'Online'
+      }
+
       if (search) {
-        filters.title = { contains: search }
-      }  
-      
+        filters.title = { contains: search, mode: 'insensitive' }
+      }
+
       if (storyTagId) {
         filters.StoryStoryTags = {
           some: { storyTagId }
         }
       }
-  
-      if (isAdmin) {
-        filters.status = true
-      } else {
-        filters.status = {
-          notIn: [Status.ModerateAuto, Status.ModerateByAdmin]
-        }
-      }
+
+      const orderBy = { createdAt: order === 'asc' ? 'asc' as const : 'desc' as const }
 
       const stories: StoryWithRelations[] = await prisma.story.findMany({
         where: filters,
@@ -67,11 +75,16 @@ export const storyController = {
           storyHistories: {
             where: { userId: currentUserId },
             take: 1
+          },
+          _count: {
+            select: {
+              storyComments: true
+            }
           }
         },
         skip: page * 5,
         take: 5,
-        orderBy: { createdAt: 'desc' }
+        orderBy
       })
       const results = stories.map(story => { return toStoryDto(story) })
       return reply.code(STANDARD.OK.statusCode).send(results)
@@ -88,8 +101,8 @@ export const storyController = {
     const currentUserId = request['authUser'].id
     if (!currentUserId) {
       return reply
-      .code(ERRORS.userNotExists.statusCode)
-      .send(ERRORS.userNotExists.message)
+        .code(ERRORS.userNotExists.statusCode)
+        .send(ERRORS.userNotExists.message)
     }
     const story: StoryWithRelations = await prisma.story.findUnique({
       where: { id: storyId },
@@ -105,6 +118,11 @@ export const storyController = {
         storyHistories: {
           where: { userId: currentUserId },
           take: 1
+        },
+        _count: {
+          select: {
+            storyComments: true
+          }
         }
       },
     })
@@ -127,12 +145,12 @@ export const storyController = {
           .send(ERRORS.userNotExists.message)
       }
       const parts = await request.parts()
-      
+
       let fileBuffer: Buffer | null = null
       let fileName: string | null = null
       let mimeType: string | null = null
       let storyToCreate: IStoryDto | null = null
-      let docxText : string
+      let docxText: string
       for await (const part of parts) {
         if (part.type === 'file') {
           const filePart = part as MultipartFile
@@ -168,7 +186,7 @@ export const storyController = {
           return reply.code(ERRORS.badRequest.statusCode).send('Already participated in this event')
         }
       }
-    
+
       const pages = await splitIntoPages(docxText, 250) // 250 mots par page
 
       const createdStory = await prisma.story.create({
@@ -180,7 +198,7 @@ export const storyController = {
           eventId: storyToCreate.eventId
         }
       })
-      
+
       const pagesData = pages.map((content, index) => ({
         storyId: createdStory.id,
         content,
@@ -211,10 +229,15 @@ export const storyController = {
           storyHistories: {
             where: { userId: currentUserId },
             take: 1
+          },
+          _count: {
+            select: {
+              storyComments: true
+            }
           }
         },
         where: { id: createdStory.id }
-        }) 
+      })
       return reply.code(STANDARD.OK.statusCode).send(toStoryDto(finalStory))
     } catch (error) {
       console.error(error)

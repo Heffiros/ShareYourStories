@@ -1,12 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { prisma, utils } from '../../utils'
-import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import * as JWT from 'jsonwebtoken'
 import { STANDARD } from '../../constants/request'
+import { ERRORS, handleServerError } from '../../helpers/errors.helper'
 import { IUserLoginDto, IUserSignupDto } from '../../schemas/User'
+import { prisma, utils } from '../../utils'
 
 export const authController = {
-  login : async (
+  login: async (
     request: FastifyRequest<{
       Body: IUserLoginDto
     }>,
@@ -20,14 +20,14 @@ export const authController = {
           .code(ERRORS.userNotExists.statusCode)
           .send(ERRORS.userNotExists.message)
       }
-  
+
       const checkPass = await utils.compareHash(user.password, password)
       if (!checkPass) {
         return reply
           .code(ERRORS.userCredError.statusCode)
           .send(ERRORS.userCredError.message)
       }
-  
+
       const token = JWT.sign(
         {
           id: user.id,
@@ -56,7 +56,7 @@ export const authController = {
       if (user) {
         return reply.code(ERRORS.userExists.statusCode).send(ERRORS.userExists)
       }
-  
+
       const hashPass = await utils.genSalt(10, password)
       const createUser = await prisma.user.create({
         data: {
@@ -65,7 +65,7 @@ export const authController = {
           password: String(hashPass),
         },
       })
-  
+
       const token = JWT.sign(
         {
           id: createUser.id,
@@ -73,9 +73,9 @@ export const authController = {
         },
         process.env.APP_JWT_SECRET as string,
       )
-  
+
       createUser.password = ''
-  
+
       return reply.code(STANDARD.OK.statusCode).send({
         token,
         user: createUser,
@@ -83,6 +83,6 @@ export const authController = {
     } catch (err) {
       return handleServerError(reply, err)
     }
-  }  
-} 
+  }
+}
 
