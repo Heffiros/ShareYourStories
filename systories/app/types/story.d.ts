@@ -5,13 +5,14 @@ import type { StoryHistory } from './storyHistory'
 import type { StoryVote } from './storyVote'
 import type { StoryTag } from './storyTag'
 import type { Team } from './team'
+import type { StoryStatus } from './storyStatus'
 
 export interface Story {
   id: number
   title: string
   coverUrl: string | null
   summary: string | null
-  status: 'Pending' | 'Active' | 'Completed' | 'Rejected'
+  status: StoryStatus
   pages: Page[]
   userId: number
   user: User
@@ -22,11 +23,11 @@ export interface Story {
   storyHistory: StoryHistory | null
   storyTags: StoryTag[] | null
   storyVotes: StoryVote[]
+  commentCount: number
   createdAt: string
   updatedAt: string
 }
 
-// Types pour les réponses API
 export interface StoriesResponse {
   stories: Story[]
   total: number
@@ -34,7 +35,6 @@ export interface StoriesResponse {
   limit: number
 }
 
-// Types pour la création d'une nouvelle histoire
 export interface CreateStoryDto {
   title: string
   coverUrl?: string
@@ -43,10 +43,9 @@ export interface CreateStoryDto {
   teamId?: number
 }
 
-// Types pour la mise à jour d'une histoire
 export interface UpdateStoryDto {
   title?: string
   coverUrl?: string
   summary?: string
-  status?: 'Pending' | 'Active' | 'Completed' | 'Rejected'
+  status?: StoryStatus
 }

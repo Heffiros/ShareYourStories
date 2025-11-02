@@ -1,7 +1,7 @@
 
 export interface IStoryTagDto {
   id: number
-  label: String
+  label: string
   createdAt: Date
   updatedAt: Date
 }

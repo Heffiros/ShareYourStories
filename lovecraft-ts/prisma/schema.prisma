@@ -199,6 +199,7 @@ enum Status {
   ModerateByAdmin
   ModerateAuto
   Winner
+  Draft
 }
 
 enum HistoryState {

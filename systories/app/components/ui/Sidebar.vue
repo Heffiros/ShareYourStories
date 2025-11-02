@@ -97,7 +97,7 @@ const items = ref<MenuItem[]>([
     title: 'Mes brouillons',
     hasToBeAuth: true,
     hasToBeAdmin: false,
-    to: '/library?filter=draft',
+    to: '/library?mode=draft',
     type: 'link'
   },
   {
@@ -150,10 +150,27 @@ const logout = async () => {
 
 const isActiveRoute = (path?: string) => {
   if (!path) return false
+
   if (path === '/') {
-    return route.path === '/'
+    return route.path === '/' && Object.keys(route.query).length === 0
   }
-  return route.path.startsWith(path)
+
+  if (path.includes('?')) {
+    const [pathname, queryString] = path.split('?')
+    if (route.path !== pathname) return false
+
+    const urlParams = new URLSearchParams(queryString)
+    for (const [key, value] of urlParams) {
+      if (route.query[key] !== value) return false
+    }
+    return true
+  }
+
+  if (path === '/library') {
+    return route.path === '/library' && !route.query.mode
+  }
+
+  return route.path === path || route.path.startsWith(path + '/')
 }
 
 interface MenuItem {

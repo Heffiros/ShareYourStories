@@ -1,5 +1,6 @@
 // types/auth.d.ts
 export interface User {
+  id: number
   email: string
   authorName: string
   birthDate: Date

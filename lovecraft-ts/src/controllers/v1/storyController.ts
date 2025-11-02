@@ -10,14 +10,15 @@ import { prisma } from '../../utils'
 export const storyController = {
   getAll: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { userId, teamsId, eventId, search, storyTagId, page = 0, isAdmin = false } = request.query as {
-        userId?: number
+      const { userId, teamsId, eventId, search, storyTagId, page = 0, order = 'desc', mode } = request.query as {
+        userId?: string
         teamsId?: number
         eventId?: number
         search?: string
         storyTagId?: number
         page?: number
-        isAdmin?: boolean
+        order?: string
+        mode?: string
       }
       const currentUserId = request['authUser'].id
       if (!currentUserId) {
@@ -25,17 +26,31 @@ export const storyController = {
           .code(ERRORS.userNotExists.statusCode)
           .send(ERRORS.userNotExists.message)
       }
+
       const filters: any = {}
+
       if (teamsId) {
         filters.teamId = teamsId
+        filters.status = 'Online'
       } else if (eventId) {
         filters.eventId = eventId
-      } else if (userId) {
-        filters.userId = currentUserId
+        filters.status = 'Online'
+      } else if (userId && userId !== '') {
+        const userIdNumber = Number(userId)
+        filters.userId = userIdNumber
+        if (userIdNumber === currentUserId) {
+          if (mode === 'draft') {
+            filters.status = 'Draft'
+          }
+        } else {
+          filters.status = 'Online'
+        }
+      } else {
+        filters.status = 'Online'
       }
 
       if (search) {
-        filters.title = { contains: search }
+        filters.title = { contains: search, mode: 'insensitive' }
       }
 
       if (storyTagId) {
@@ -44,13 +59,7 @@ export const storyController = {
         }
       }
 
-      if (isAdmin) {
-        filters.status = true
-      } else {
-        filters.status = {
-          notIn: [Status.ModerateAuto, Status.ModerateByAdmin]
-        }
-      }
+      const orderBy = { createdAt: order === 'asc' ? 'asc' as const : 'desc' as const }
 
       const stories: StoryWithRelations[] = await prisma.story.findMany({
         where: filters,
@@ -66,11 +75,16 @@ export const storyController = {
           storyHistories: {
             where: { userId: currentUserId },
             take: 1
+          },
+          _count: {
+            select: {
+              storyComments: true
+            }
           }
         },
         skip: page * 5,
         take: 5,
-        orderBy: { createdAt: 'desc' }
+        orderBy
       })
       const results = stories.map(story => { return toStoryDto(story) })
       return reply.code(STANDARD.OK.statusCode).send(results)
@@ -104,6 +118,11 @@ export const storyController = {
         storyHistories: {
           where: { userId: currentUserId },
           take: 1
+        },
+        _count: {
+          select: {
+            storyComments: true
+          }
         }
       },
     })
@@ -210,6 +229,11 @@ export const storyController = {
           storyHistories: {
             where: { userId: currentUserId },
             take: 1
+          },
+          _count: {
+            select: {
+              storyComments: true
+            }
           }
         },
         where: { id: createdStory.id }

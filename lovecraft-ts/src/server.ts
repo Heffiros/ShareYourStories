@@ -7,6 +7,7 @@ import cors from '@fastify/cors'
 import authRoutes from './routes/auth'
 import badgeRoutes from './routes/badge'
 import eventRoutes from './routes/event'
+import statsRoutes from './routes/stats'
 import storyRoutes from './routes/story'
 import storyCommentRoutes from './routes/storyComment'
 import storyHistoryRoutes from './routes/storyHistory'
@@ -32,6 +33,7 @@ server.register(multipart, {
 server.register(authRoutes, { prefix: '/auth' })
 server.register(userRoutes, { prefix: '/users' })
 server.register(storyRoutes, { prefix: '/stories' })
+server.register(statsRoutes, { prefix: '/stats' })
 server.register(uploadRoutes, { prefix: '/upload' })
 server.register(badgeRoutes, { prefix: '/badge' })
 server.register(eventRoutes, { prefix: '/event' })
