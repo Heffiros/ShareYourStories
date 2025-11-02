@@ -1,5 +1,5 @@
 // Enum pour les statuts des histoires
-export type StoryStatus = 'Pending' | 'Online' | 'Private' | 'Deleted' | 'ModerateByAdmin' | 'ModerateAuto' | 'Winner'
+export type StoryStatus = 'Pending' | 'Online' | 'Private' | 'Deleted' | 'ModerateByAdmin' | 'ModerateAuto' | 'Winner' | 'Draft'
 
 // Configuration pour l'affichage des tags de statut
 export interface StoryStatusConfig {

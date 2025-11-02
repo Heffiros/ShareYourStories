@@ -40,7 +40,7 @@ export const storyController = {
         filters.userId = userIdNumber
         if (userIdNumber === currentUserId) {
           if (mode === 'draft') {
-            filters.status = 'Pending'
+            filters.status = 'Draft'
           }
         } else {
           filters.status = 'Online'

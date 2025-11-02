@@ -9,28 +9,24 @@
           :class="{ 'rotate-180': sortOrder === 'asc' }" />
       </button>
     </div>
-
     <div>
       <LibraryStorySearch @search="handleSearch" />
     </div>
   </section>
-
   <section>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <LibraryStoryCard v-for="story in stories" :key="story.id" :story="story" />
     </div>
-
     <div v-if="isLoading" class="flex justify-center py-4">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
     </div>
-
     <InfiniteLoading :key="infiniteLoadingKey" @infinite="load" style="opacity: 0; pointer-events: none;" />
   </section>
 </template>
 
 <script setup lang="ts">
 import { ArrowUpNarrowWide } from 'lucide-vue-next'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import InfiniteLoading from "v3-infinite-loading"
 import "v3-infinite-loading/lib/style.css"
@@ -60,18 +56,15 @@ const handleSearch = (term: string) => {
   searchTerm.value = term
 }
 
-watch([sortOrder, searchTerm], () => {
+const resetFeed = () => {
   stories.value = []
   currentPage.value = 0
   hasFinished.value = false
   infiniteLoadingKey.value++
-})
+}
 
-watch(() => useRoute().query.mode, () => {
-  stories.value = []
-  currentPage.value = 0
-  hasFinished.value = false
-  infiniteLoadingKey.value++
+watch([sortOrder, searchTerm, () => useRoute().query.mode], () => {
+  resetFeed()
 })
 
 const load = async ($state: InfiniteLoadState) => {
@@ -120,4 +113,7 @@ const load = async ($state: InfiniteLoadState) => {
     isLoading.value = false
   }
 }
+onMounted(() => {
+  resetFeed()
+})
 </script>
