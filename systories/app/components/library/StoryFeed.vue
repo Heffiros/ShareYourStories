@@ -26,13 +26,9 @@
 
 <script setup lang="ts">
 import { ArrowUpNarrowWide } from 'lucide-vue-next'
-import { ref, watch, onMounted } from 'vue'
-import { useAuthStore } from '~/stores/auth'
+import { useStoryStore } from '~/stores/story'
 import InfiniteLoading from "v3-infinite-loading"
 import "v3-infinite-loading/lib/style.css"
-import type { Story } from '~/types/story'
-
-const auth = useAuthStore()
 
 interface InfiniteLoadState {
   loaded(): void;
@@ -40,80 +36,48 @@ interface InfiniteLoadState {
   error(): void;
 }
 
-const sortOrder = ref('desc')
-const searchTerm = ref('')
-const stories = ref<Story[]>([])
-const currentPage = ref(0)
-const isLoading = ref(false)
-const hasFinished = ref(false)
+const storyStore = useStoryStore()
 const infiniteLoadingKey = ref(0)
 
+const stories = computed(() => storyStore.stories)
+const sortOrder = computed(() => storyStore.sortOrder)
+const isLoading = computed(() => storyStore.isLoading)
+
 const toggleOrder = () => {
-  sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
-}
-
-const handleSearch = (term: string) => {
-  searchTerm.value = term
-}
-
-const resetFeed = () => {
-  stories.value = []
-  currentPage.value = 0
-  hasFinished.value = false
+  const newOrder = storyStore.sortOrder === 'desc' ? 'asc' : 'desc'
+  storyStore.updateFilters({ sortOrder: newOrder })
   infiniteLoadingKey.value++
 }
 
-watch([sortOrder, searchTerm, () => useRoute().query.mode], () => {
-  resetFeed()
+const handleSearch = (term: string) => {
+  storyStore.updateFilters({ searchTerm: term })
+  infiniteLoadingKey.value++
+}
+
+watch(() => useRoute().query.mode, (newMode) => {
+  storyStore.updateFilters({ mode: newMode as string || null })
+  infiniteLoadingKey.value++
 })
 
 const load = async ($state: InfiniteLoadState) => {
-  if (isLoading.value || hasFinished.value) return
-
   try {
-    isLoading.value = true
-    const config = useRuntimeConfig()
-    const route = useRoute()
-
-    const params = new URLSearchParams({
-      page: currentPage.value.toString(),
-      order: sortOrder.value
-    })
-
-    if (auth.user?.id) {
-      params.append('userId', auth.user.id.toString())
-    }
-
-    if (searchTerm.value) {
-      params.append('search', searchTerm.value)
-    }
-
-    if (route.query.mode) {
-      params.append('mode', route.query.mode as string)
-    }
-
-    const response = await $fetch<Story[]>(`/stories?${params.toString()}`, {
-      method: 'GET',
-      baseURL: config.public.apiBase,
-      headers: { Authorization: `Bearer ${auth.token}` }
-    })
+    const response = await storyStore.loadStories()
 
     if (response && response.length > 0) {
-      stories.value.push(...response)
-      currentPage.value++
       $state.loaded()
     } else {
-      hasFinished.value = true
       $state.complete()
     }
   } catch (error) {
     console.error('Error loading stories:', error)
     $state.error()
-  } finally {
-    isLoading.value = false
   }
 }
+
 onMounted(() => {
-  resetFeed()
+  const route = useRoute()
+  storyStore.updateFilters({
+    mode: route.query.mode as string || null
+  })
 })
 </script>

@@ -30,7 +30,7 @@
         <span>{{ story?.createdAt ? new Date(story.createdAt).getFullYear() : 2024 }}</span>
       </div>
       <div class="flex gap-2">
-        <button
+        <button @click="goToReader()"
           class="bg-gradient-to-r py-3 px-6 rounded-lg duration-200 flex items-center gap-2 transition-colors bg-yellow-600 hover:bg-yellow-700 text-white dark:text-slate-900">
           <BookOpenText class="w-5 h-5" />
           Lire
@@ -54,4 +54,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const goToReader = async () => {
+  if (props.story) {
+    await useRouter().push(`/story/${props.story.id}`)
+  }
+}
 </script>
