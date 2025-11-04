@@ -44,6 +44,7 @@
 <script setup lang="ts">
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import type { Story } from '~/types/story'
+import type { StoryHistory } from '~/types/storyHistory'
 
 interface Props {
   story?: Story
@@ -51,23 +52,8 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const storyStore = useStoryStore()
 const currentPageIndex = ref(0)
 const pages = computed(() => props.story?.pages || [])
-
-const initialPageIndex = computed(() => {
-  const story = props.story
-  if (!story?.pages || story.pages.length === 0) {
-    return 0
-  }
-
-  if (!story.storyHistory?.lastPageReadId) {
-    return 0
-  }
-
-  const pageIndex = story.pages.findIndex(page => page.id === story.storyHistory?.lastPageReadId)
-  return pageIndex >= 0 ? pageIndex : 0
-})
 
 const currentPage = computed(() => {
   if (pages.value.length === 0) return null
@@ -82,36 +68,84 @@ const progressPercentage = computed(() => {
   return Math.round(((currentPageIndex.value + 1) / pages.value.length) * 100)
 })
 
-const updateHistory = async () => {
+const initializeCurrentPage = () => {
+  if (!props.story?.pages || props.story.pages.length === 0) {
+    currentPageIndex.value = 0
+    return
+  }
+
+  if (!props.story.storyHistory) {
+    currentPageIndex.value = 0
+    saveStoryHistory()
+  } else {
+    const pageIndex = props.story.pages.findIndex(page =>
+      page.id === props.story?.storyHistory?.lastPageReadId
+    )
+    currentPageIndex.value = pageIndex >= 0 ? pageIndex : 0
+  }
+}
+
+const saveStoryHistory = async () => {
   if (!props.story?.id || !currentPage.value?.id) return
 
   try {
-    await storyStore.updateStoryHistory(props.story.id, currentPage.value.id)
+    const { useAuthStore } = await import('~/stores/auth')
+    const auth = useAuthStore()
+    const config = useRuntimeConfig()
 
-    if (props.story.storyHistory) {
+    const isFirstTime = !props.story.storyHistory
+
+    const url = '/storyHistory'
+    const method = isFirstTime ? 'POST' : 'PUT'
+
+    await $fetch(url, {
+      method: method,
+      baseURL: config.public.apiBase,
+      headers: { Authorization: `Bearer ${auth.token}` },
+      body: {
+        storyId: props.story.id,
+        lastPageReadId: currentPage.value.id
+      }
+    })
+
+    if (isFirstTime && props.story) {
+      props.story.storyHistory = {
+        id: 0,
+        userId: auth.user?.id || 0,
+        storyId: props.story.id,
+        lastPageReadId: currentPage.value.id,
+        reread: 0,
+        historyStateValue: 'Reading',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    } else if (props.story?.storyHistory) {
       props.story.storyHistory.lastPageReadId = currentPage.value.id
       props.story.storyHistory.updatedAt = new Date().toISOString()
     }
+
   } catch (error) {
-    console.error('Error updating story history:', error)
+    console.error('Error saving story history:', error)
   }
 }
 
 const goToPreviousPage = async () => {
   if (canGoBack.value) {
     currentPageIndex.value--
-    await updateHistory()
+    await saveStoryHistory()
   }
 }
 
 const goToNextPage = async () => {
   if (canGoForward.value) {
     currentPageIndex.value++
-    await updateHistory()
+    await saveStoryHistory()
   }
 }
 
 watch(() => props.story, () => {
-  currentPageIndex.value = initialPageIndex.value
+  if (props.story) {
+    initializeCurrentPage()
+  }
 }, { immediate: true })
 </script>

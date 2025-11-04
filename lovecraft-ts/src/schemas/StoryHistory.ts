@@ -11,5 +11,12 @@ export interface IStoryHistoryDto {
   updatedAt: Date
 }
 
-export type IPostStoryHistoryDto = Omit<IStoryHistoryDto, "id" | "createdAt" | "updatedAt">
-export type IPutStoryHistoryDto = Omit<IStoryHistoryDto, "createdAt" | "updatedAt">
+export type IPostStoryHistoryDto = {
+  storyId: number
+  lastPageReadId: number
+}
+
+export type IPutStoryHistoryDto = {
+  storyId: number
+  lastPageReadId: number
+}

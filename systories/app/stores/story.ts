@@ -93,11 +93,6 @@ export const useStoryStore = defineStore('story', {
     },
 
     async getStoryById(id: number): Promise<Story | null> {
-      const existingStory = this.stories.find(story => story.id === id)
-      if (existingStory) {
-        return existingStory
-      }
-
       try {
         const { useAuthStore } = await import('~/stores/auth')
         const auth = useAuthStore()
@@ -113,47 +108,6 @@ export const useStoryStore = defineStore('story', {
       } catch (error) {
         console.error('Error loading story:', error)
         return null
-      }
-    },
-
-    async updateStoryHistory(storyId: number, pageId: number) {
-      try {
-        const { useAuthStore } = await import('~/stores/auth')
-        const auth = useAuthStore()
-        const config = useRuntimeConfig()
-
-        const story = await this.getStoryById(storyId)
-        if (!story?.storyHistory?.id) {
-          throw new Error('Story history not found')
-        }
-
-        const response = await $fetch(`/storyHistory`, {
-          method: 'PUT',
-          baseURL: config.public.apiBase,
-          headers: { Authorization: `Bearer ${auth.token}` },
-          body: {
-            id: story.storyHistory.id,
-            userId: story.storyHistory.userId,
-            storyId: story.storyHistory.storyId,
-            lastPageReadId: pageId,
-            reread: story.storyHistory.reread,
-            historyStateValue: story.storyHistory.historyStateValue
-          }
-        })
-
-        const storyIndex = this.stories.findIndex(story => story.id === storyId)
-        if (storyIndex !== -1) {
-          const story = this.stories[storyIndex]
-          if (story?.storyHistory) {
-            story.storyHistory.lastPageReadId = pageId
-            story.storyHistory.updatedAt = new Date().toISOString()
-          }
-        }
-
-        return response
-      } catch (error) {
-        console.error('Error updating story history:', error)
-        throw error
       }
     }
   }

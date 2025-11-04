@@ -12,21 +12,18 @@
 
 <script setup lang="ts">
 import { useStoryStore } from '~/stores/story'
+import type { Story } from '~/types/story'
 
 const route = useRoute()
 const storyStore = useStoryStore()
 
 const isLoading = ref(false)
 const error = ref(false)
+const story = ref<Story | null>(null)
 
 const storyId = computed(() => {
   const id = route.params.id
   return typeof id === 'string' ? parseInt(id) : null
-})
-
-const story = computed(() => {
-  if (!storyId.value) return null
-  return storyStore.stories.find(s => s.id === storyId.value) || null
 })
 
 const fetchStory = async (id: number) => {
@@ -37,10 +34,7 @@ const fetchStory = async (id: number) => {
     error.value = false
 
     const fetchedStory = await storyStore.getStoryById(id)
-
-    if (fetchedStory && !storyStore.stories.find(s => s.id === id)) {
-      storyStore.stories.push(fetchedStory)
-    }
+    story.value = fetchedStory
 
     if (!fetchedStory) {
       error.value = true
@@ -54,7 +48,7 @@ const fetchStory = async (id: number) => {
 }
 
 watch(storyId, async (newId) => {
-  if (newId && !story.value) {
+  if (newId) {
     await fetchStory(newId)
   }
 }, { immediate: true })
