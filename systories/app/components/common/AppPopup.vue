@@ -6,25 +6,30 @@
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
 
         <div ref="popupContent"
-          class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-hidden"
-          @click.stop>
-          <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-h-[80vh] overflow-hidden"
+          :class="sizeClass" @click.stop>
+          <div class="flex items-center justify-center p-4 border-b border-gray-200 dark:border-gray-700 relative">
             <slot name="header">
-              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 text-center">
                 {{ effectiveTitle }}
               </h3>
             </slot>
 
             <button @click="closePopup"
-              class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+              class="absolute right-4 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
               <X class="w-5 h-5" />
             </button>
           </div>
 
-          <div class="p-4 overflow-y-auto">
-            <slot name="content">
-              <component v-if="currentComponent" :is="currentComponent" v-bind="popupStore.props" />
-            </slot>
+          <div class="p-4 overflow-y-auto relative"
+            :class="{ 'bg-cover bg-center bg-no-repeat': effectiveBackgroundUrl }"
+            :style="effectiveBackgroundUrl ? { backgroundImage: `url('${effectiveBackgroundUrl}')` } : {}">
+            <div v-if="effectiveBackgroundUrl" class="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div>
+            <div class="relative z-10" :class="{ 'text-white': effectiveBackgroundUrl }">
+              <slot name="content">
+                <component v-if="currentComponent" :is="currentComponent" v-bind="popupStore.props" />
+              </slot>
+            </div>
           </div>
 
           <div v-if="$slots.footer" class="p-4 border-t border-gray-200 dark:border-gray-700">
@@ -44,11 +49,15 @@ interface Props {
   title?: string
   closeOnOverlayClick?: boolean
   confetti?: boolean
+  backgroundUrl?: string
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   closeOnOverlayClick: true,
-  confetti: false
+  confetti: false,
+  backgroundUrl: '',
+  size: 'lg'
 })
 
 const popupStore = usePopupStore()
@@ -65,6 +74,23 @@ const effectiveConfetti = computed(() =>
     ? popupStore.popupOptions.confetti
     : props.confetti
 )
+const effectiveBackgroundUrl = computed(() =>
+  popupStore.popupOptions?.backgroundUrl || props.backgroundUrl || ''
+)
+const effectiveSize = computed(() =>
+  popupStore.popupOptions?.size || props.size || 'lg'
+)
+
+const sizeClass = computed(() => {
+  const sizeMap: Record<string, string> = {
+    'sm': 'max-w-sm',
+    'md': 'max-w-md',
+    'lg': 'max-w-lg',
+    'xl': 'max-w-xl',
+    '2xl': 'max-w-2xl'
+  }
+  return sizeMap[effectiveSize.value] || 'max-w-lg'
+})
 
 const currentComponent = computed(() => {
   if (!popupStore.component) return null

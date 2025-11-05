@@ -24,6 +24,10 @@
         Popup avec confettis
       </button>
 
+      <button @click="openBackgroundPopup" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+        Popup avec background
+      </button>
+
       <button @click="closePopup" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
         Fermer popup
       </button>
@@ -89,6 +93,21 @@ const openConfettiPopup = () => {
     title: '🎊 Félicitations ! 🎊',
     closeOnOverlayClick: true,
     confetti: true
+  })
+}
+
+const openBackgroundPopup = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: 'Background User',
+      email: 'bg@example.com',
+      isAdmin: false,
+      createdAt: '2024-01-01T00:00:00Z'
+    }
+  }, {
+    title: 'Popup avec image de fond',
+    closeOnOverlayClick: true,
+    backgroundUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500'
   })
 }
 

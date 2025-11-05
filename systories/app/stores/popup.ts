@@ -8,6 +8,8 @@ interface PopupState {
     title?: string
     closeOnOverlayClick?: boolean
     confetti?: boolean
+    backgroundUrl?: string
+    size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   }
 }
 
@@ -20,7 +22,7 @@ export const usePopupStore = defineStore('popup', {
   }),
 
   actions: {
-    openPopup(component: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean, confetti?: boolean }) {
+    openPopup(component: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean, confetti?: boolean, backgroundUrl?: string, size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' }) {
       this.component = component
       this.props = props || {}
       this.popupOptions = options || {}
