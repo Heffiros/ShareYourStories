@@ -1,0 +1,117 @@
+<template>
+  <div class="space-y-4">
+    <h1 class="text-2xl font-bold">Test du système de popup</h1>
+
+    <div class="space-x-4">
+      <button @click="openUserPopup" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+        Ouvrir popup User
+      </button>
+
+      <button @click="openUserPopupWithData" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+        Ouvrir popup User avec données
+      </button>
+
+      <button @click="openUserPopupWithOptions"
+        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+        Popup avec titre personnalisé
+      </button>
+
+      <button @click="openUserPopupNoClose" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg">
+        Popup sans fermeture overlay
+      </button>
+
+      <button @click="openConfettiPopup" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg">
+        Popup avec confettis
+      </button>
+
+      <button @click="openBackgroundPopup" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+        Popup avec background
+      </button>
+
+      <button @click="closePopup" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+        Fermer popup
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const { $popup } = useNuxtApp()
+
+const openUserPopup = () => {
+  $popup.emit('User')
+}
+
+const openUserPopupWithData = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: 'Alexandre Test',
+      email: 'alexandre@example.com',
+      isAdmin: true,
+      createdAt: '2023-01-15T10:30:00Z'
+    }
+  })
+}
+
+const openUserPopupWithOptions = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: 'Marie Dubois',
+      email: 'marie@example.com',
+      isAdmin: false,
+      createdAt: '2024-03-20T14:15:00Z'
+    }
+  }, {
+    title: 'Profil Utilisateur Personnalisé',
+    closeOnOverlayClick: true
+  })
+}
+
+const openUserPopupNoClose = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: 'Admin User',
+      email: 'admin@example.com',
+      isAdmin: true,
+      createdAt: '2022-01-01T00:00:00Z'
+    }
+  }, {
+    title: 'Popup Bloquée (ESC pour fermer)',
+    closeOnOverlayClick: false
+  })
+}
+
+const openConfettiPopup = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: '🎉 Party User',
+      email: 'party@example.com',
+      isAdmin: true,
+      createdAt: '2025-11-05T15:00:00Z'
+    }
+  }, {
+    title: '🎊 Félicitations ! 🎊',
+    closeOnOverlayClick: true,
+    confetti: true
+  })
+}
+
+const openBackgroundPopup = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: 'Background User',
+      email: 'bg@example.com',
+      isAdmin: false,
+      createdAt: '2024-01-01T00:00:00Z'
+    }
+  }, {
+    title: 'Popup avec image de fond',
+    closeOnOverlayClick: true,
+    backgroundUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500'
+  })
+}
+
+const closePopup = () => {
+  $popup.close()
+}
+</script>

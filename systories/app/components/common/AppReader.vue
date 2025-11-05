@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <button v-if="canGoForward" @click="goToNextPage"
+      <button @click="goToNextPage"
         class="absolute right-4 z-10 p-3 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white transition-colors duration-200 shadow-lg hover:shadow-xl">
         <ChevronRight class="w-6 h-6" />
       </button>
@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import type { Story } from '~/types/story'
-import type { StoryHistory } from '~/types/storyHistory'
+const { $popup } = useNuxtApp()
 
 interface Props {
   story?: Story
@@ -140,6 +140,17 @@ const goToNextPage = async () => {
   if (canGoForward.value) {
     currentPageIndex.value++
     await saveStoryHistory()
+  } else {
+    $popup.emit('StoryEnded', {
+      storyId: props.story?.id || 0,
+      authorName: props.story?.user.authorName || 'Auteur'
+    }, {
+      title: '🎊 Vous avez terminé ' + props.story?.title + ' 🎊',
+      closeOnOverlayClick: true,
+      confetti: true,
+      backgroundUrl: props.story?.coverUrl || '',
+      size: 'xl'
+    })
   }
 }
 

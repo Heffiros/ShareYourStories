@@ -8,6 +8,8 @@
         <slot />
       </main>
     </div>
+
+    <CommonAppPopup />
   </div>
 </template>
 
