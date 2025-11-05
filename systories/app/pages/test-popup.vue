@@ -20,6 +20,10 @@
         Popup sans fermeture overlay
       </button>
 
+      <button @click="openConfettiPopup" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg">
+        Popup avec confettis
+      </button>
+
       <button @click="closePopup" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
         Fermer popup
       </button>
@@ -70,6 +74,21 @@ const openUserPopupNoClose = () => {
   }, {
     title: 'Popup Bloquée (ESC pour fermer)',
     closeOnOverlayClick: false
+  })
+}
+
+const openConfettiPopup = () => {
+  $popup.emit('User', {
+    user: {
+      authorName: '🎉 Party User',
+      email: 'party@example.com',
+      isAdmin: true,
+      createdAt: '2025-11-05T15:00:00Z'
+    }
+  }, {
+    title: '🎊 Félicitations ! 🎊',
+    closeOnOverlayClick: true,
+    confetti: true
   })
 }
 

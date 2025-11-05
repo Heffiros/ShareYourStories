@@ -7,6 +7,7 @@ interface PopupState {
   popupOptions?: {
     title?: string
     closeOnOverlayClick?: boolean
+    confetti?: boolean
   }
 }
 
@@ -19,7 +20,7 @@ export const usePopupStore = defineStore('popup', {
   }),
 
   actions: {
-    openPopup(component: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean }) {
+    openPopup(component: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean, confetti?: boolean }) {
       this.component = component
       this.props = props || {}
       this.popupOptions = options || {}

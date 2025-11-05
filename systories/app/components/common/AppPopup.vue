@@ -43,21 +43,27 @@ import { usePopupStore } from '~/stores/popup'
 interface Props {
   title?: string
   closeOnOverlayClick?: boolean
+  confetti?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  closeOnOverlayClick: true
+  closeOnOverlayClick: true,
+  confetti: false
 })
 
 const popupStore = usePopupStore()
 const popupContent = ref<HTMLElement>()
 
-// Utiliser les options du store en priorité, puis les props par défaut
 const effectiveTitle = computed(() => popupStore.popupOptions?.title || props.title || 'Popup')
 const effectiveCloseOnOverlay = computed(() =>
   popupStore.popupOptions?.closeOnOverlayClick !== undefined
     ? popupStore.popupOptions.closeOnOverlayClick
     : props.closeOnOverlayClick
+)
+const effectiveConfetti = computed(() =>
+  popupStore.popupOptions?.confetti !== undefined
+    ? popupStore.popupOptions.confetti
+    : props.confetti
 )
 
 const currentComponent = computed(() => {
@@ -78,6 +84,46 @@ const closeOnOverlay = () => {
     closePopup()
   }
 }
+
+const createConfetti = () => {
+  const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7b731', '#5f27cd', '#00d2d3', '#ff9ff3', '#54a0ff']
+  const confettiCount = 50
+
+  for (let i = 0; i < confettiCount; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div')
+      confetti.className = 'confetti-piece'
+      confetti.style.cssText = `
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        left: ${Math.random() * 100}vw;
+        top: -10px;
+        z-index: 9999;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+        animation: confetti-fall ${2 + Math.random() * 3}s linear forwards;
+        transform: rotate(${Math.random() * 360}deg);
+      `
+
+      document.body.appendChild(confetti)
+
+      setTimeout(() => {
+        if (confetti.parentNode) {
+          confetti.parentNode.removeChild(confetti)
+        }
+      }, 5000)
+    }, i * 20)
+  }
+}
+
+watch(() => popupStore.isOpen, (newValue, oldValue) => {
+  if (newValue && !oldValue && effectiveConfetti.value) {
+    nextTick(() => {
+      createConfetti()
+    })
+  }
+})
 
 onMounted(() => {
   document.addEventListener('keydown', onEscapeKey)
@@ -113,5 +159,19 @@ const onEscapeKey = (event: KeyboardEvent) => {
 .popup-fade-enter-from .relative,
 .popup-fade-leave-to .relative {
   transform: scale(0.95);
+}
+</style>
+
+<style>
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
 }
 </style>

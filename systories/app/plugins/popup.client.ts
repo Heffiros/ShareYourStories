@@ -4,7 +4,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const popupStore = usePopupStore()
 
   const popupEmitter = {
-    emit(popupName: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean }) {
+    emit(popupName: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean, confetti?: boolean }) {
       popupStore.openPopup(popupName, props, options)
     },
 
@@ -19,7 +19,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 declare module '#app' {
   interface NuxtApp {
     $popup: {
-      emit(popupName: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean }): void
+      emit(popupName: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean, confetti?: boolean }): void
       close(): void
     }
   }
@@ -28,7 +28,7 @@ declare module '#app' {
 declare module 'vue' {
   interface ComponentCustomProperties {
     $popup: {
-      emit(popupName: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean }): void
+      emit(popupName: string, props?: Record<string, any>, options?: { title?: string, closeOnOverlayClick?: boolean, confetti?: boolean }): void
       close(): void
     }
   }
