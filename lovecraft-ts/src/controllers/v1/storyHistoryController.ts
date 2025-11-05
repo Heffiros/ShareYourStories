@@ -112,6 +112,8 @@ export const storyHistoryController = {
       if (maxNbPages === currentPagesIndex + 1) {
         reread += 1
         historyStateValue = HistoryState.Endend
+      } else {
+        historyStateValue = HistoryState.Reading
       }
 
       await prisma.storyHistory.update({
