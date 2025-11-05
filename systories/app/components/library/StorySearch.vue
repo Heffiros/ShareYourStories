@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 import { Search, X } from 'lucide-vue-next'
-import { ref, watch, nextTick } from 'vue'
 
 const emit = defineEmits<{
   search: [term: string]

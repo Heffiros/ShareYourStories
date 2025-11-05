@@ -36,16 +36,17 @@ export const storyHistoryController = {
   ) => {
     try {
       const currentUserId = request['authUser'].id
-
       const body = request.body
       const { storyId, lastPageReadId } = body
 
+      // Vérifier si un historique existe déjà pour cette story et cet utilisateur
       const exists = await prisma.storyHistory.findFirst({
         where: {
           userId: currentUserId,
           storyId: storyId
         }
       })
+
       if (exists) {
         return reply.status(409).send({ error: 'Resource already exists' })
       }
@@ -54,15 +55,13 @@ export const storyHistoryController = {
         data: {
           userId: currentUserId,
           storyId: storyId,
-          lastPageReadId: body.lastPageReadId,
+          lastPageReadId: lastPageReadId,
           reread: 0,
           historyStateValue: 'Reading',
           createdAt: new Date(),
           updatedAt: new Date()
-        },
-        include: { user: true, story: true, lastPageRead: true }
+        }
       })
-
 
       return reply.status(200).send({ success: true })
     } catch (err) {
@@ -75,10 +74,16 @@ export const storyHistoryController = {
     reply: FastifyReply
   ) => {
     try {
+      const currentUserId = request['authUser'].id
       const body = request.body
+      const { storyId, lastPageReadId } = body
 
-      const storyHistory = await prisma.storyHistory.findUnique({
-        where: { id: body.id },
+      // Trouver l'historique existant par storyId + userId
+      const storyHistory = await prisma.storyHistory.findFirst({
+        where: {
+          storyId: storyId,
+          userId: currentUserId
+        },
         include: {
           story: {
             include: { pages: true }
@@ -95,7 +100,7 @@ export const storyHistoryController = {
 
       const maxNbPages = storyHistory.story.pages.length
       const currentPage = storyHistory.story.pages.find(
-        p => p.id === body.lastPageReadId
+        p => p.id === lastPageReadId
       )
 
       if (!currentPage) {
@@ -107,12 +112,14 @@ export const storyHistoryController = {
       if (maxNbPages === currentPagesIndex + 1) {
         reread += 1
         historyStateValue = HistoryState.Endend
+      } else {
+        historyStateValue = HistoryState.Reading
       }
 
       await prisma.storyHistory.update({
-        where: { id: body.id },
+        where: { id: storyHistory.id },
         data: {
-          lastPageReadId: body.lastPageReadId,
+          lastPageReadId: lastPageReadId,
           reread,
           historyStateValue,
           updatedAt: new Date()

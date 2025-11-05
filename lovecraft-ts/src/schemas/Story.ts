@@ -16,7 +16,7 @@ export interface IStoryDto {
   team: Team
   storyVotes: StoryVote[]
   storyTags: StoryTag[]
-  storyHistory: StoryHistory
+  storyHistory: StoryHistory | null
   commentCount: number
   createdAt: Date
   updatedAt: Date
