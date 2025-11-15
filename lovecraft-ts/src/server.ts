@@ -7,6 +7,7 @@ import cors from '@fastify/cors'
 import authRoutes from './routes/auth'
 import badgeRoutes from './routes/badge'
 import eventRoutes from './routes/event'
+import feedRoutes from './routes/feed'
 import statsRoutes from './routes/stats'
 import storyRoutes from './routes/story'
 import storyCommentRoutes from './routes/storyComment'
@@ -40,7 +41,7 @@ server.register(eventRoutes, { prefix: '/event' })
 server.register(storyCommentRoutes, { prefix: '/storyComment' })
 server.register(storyHistoryRoutes, { prefix: '/storyHistory' })
 server.register(storyTagRoutes, { prefix: '/storyTag' })
-
+server.register(feedRoutes, { prefix: '/feed' })
 
 server.register(cors, {
   origin: '*',

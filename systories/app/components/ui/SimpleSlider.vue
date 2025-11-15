@@ -4,7 +4,7 @@
       <div class="overflow-hidden">
         <div class="flex transition-transform duration-500 ease-in-out"
           :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }">
-          <div v-for="item in contests" :key="item.id" class="flex-shrink-0 w-full">
+          <div v-for="item in items" :key="item.id" class="flex-shrink-0 w-full">
             <div
               class="relative h-96 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group cursor-pointer"
               :style="{ backgroundImage: `url(${item.coverUrl})`, backgroundSize: '120%', backgroundPosition: 'center' }">
@@ -40,14 +40,15 @@
 
 <script setup lang="ts">
 import type { Event } from '~/types/event'
-import { useAuthStore } from '~/stores/auth'
 
-const contests = ref<Event[]>([])
-const auth = useAuthStore()
+const props = defineProps<{
+  items: Event[]
+}>()
+
 const slidesPerView = 1
 const currentIndex = ref(0)
 const slideWidth = computed(() => 100 / slidesPerView)
-const totalSlides = computed(() => contests.value.length)
+const totalSlides = computed(() => props.items.length)
 const maxIndex = computed(() => Math.max(0, totalSlides.value - 1))
 let autoPlayTimer: ReturnType<typeof setInterval> | null = null
 
@@ -79,14 +80,7 @@ const goTo = (index: number) => {
   startAutoPlay()
 }
 
-onMounted(async () => {
-  const config = useRuntimeConfig()
-  const response = await $fetch<Event[]>('/event?mode=active', {
-    method: 'GET',
-    baseURL: config.public.apiBase,
-    headers: { Authorization: `Bearer ${auth.token}` }
-  })
-  contests.value = response
+onMounted(() => {
   startAutoPlay()
 })
 
